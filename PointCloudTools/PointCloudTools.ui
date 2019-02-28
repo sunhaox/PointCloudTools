@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1177</width>
-    <height>736</height>
+    <width>1295</width>
+    <height>792</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -68,7 +68,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1177</width>
+     <width>1295</width>
      <height>23</height>
     </rect>
    </property>
@@ -82,7 +82,6 @@
      <string>File</string>
     </property>
     <addaction name="openAction"/>
-    <addaction name="addAction"/>
     <addaction name="clearAction"/>
     <addaction name="saveAction"/>
     <addaction name="saveBinaryAction"/>
@@ -192,7 +191,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="openAction"/>
-   <addaction name="addAction"/>
    <addaction name="clearAction"/>
    <addaction name="saveAction"/>
    <addaction name="saveBinaryAction"/>
@@ -220,13 +218,13 @@
   <widget class="QDockWidget" name="imageDock">
    <property name="minimumSize">
     <size>
-     <width>300</width>
-     <height>467</height>
+     <width>338</width>
+     <height>584</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>50000</width>
+     <width>338</width>
      <height>524287</height>
     </size>
    </property>
@@ -240,6 +238,18 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLabel" name="imageDepth">
+       <property name="minimumSize">
+        <size>
+         <width>320</width>
+         <height>240</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>320</width>
+         <height>240</height>
+        </size>
+       </property>
        <property name="text">
         <string>Depth Image</string>
        </property>
@@ -249,7 +259,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="colormapBtn">
        <property name="text">
         <string>Colormap</string>
        </property>
@@ -257,6 +267,18 @@
      </item>
      <item>
       <widget class="QLabel" name="imageColor">
+       <property name="minimumSize">
+        <size>
+         <width>320</width>
+         <height>240</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>320</width>
+         <height>240</height>
+        </size>
+       </property>
        <property name="text">
         <string>Colormap Image</string>
        </property>
@@ -330,6 +352,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="propertyDock">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>250</width>
@@ -339,7 +367,7 @@
    <property name="maximumSize">
     <size>
      <width>250</width>
-     <height>524287</height>
+     <height>186</height>
     </size>
    </property>
    <property name="font">
@@ -635,13 +663,13 @@
    <property name="minimumSize">
     <size>
      <width>250</width>
-     <height>170</height>
+     <height>220</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>250</width>
-     <height>150</height>
+     <height>190</height>
     </size>
    </property>
    <property name="font">
@@ -663,10 +691,50 @@
        <x>10</x>
        <y>0</y>
        <width>231</width>
-       <height>91</height>
+       <height>141</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Point Size</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLCDNumber" name="sizeLCD">
+          <property name="intValue" stdset="0">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QSlider" name="pSlider">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <property name="spacing">
@@ -766,7 +834,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>90</y>
+       <y>140</y>
        <width>211</width>
        <height>23</height>
       </rect>
@@ -785,7 +853,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
+       <y>160</y>
        <width>201</width>
        <height>23</height>
       </rect>
@@ -981,15 +1049,6 @@
    </property>
    <property name="text">
     <string>Clear</string>
-   </property>
-  </action>
-  <action name="addAction">
-   <property name="icon">
-    <iconset resource="pointcloudtools.qrc">
-     <normaloff>:/Resources/images/add.png</normaloff>:/Resources/images/add.png</iconset>
-   </property>
-   <property name="text">
-    <string>Add</string>
    </property>
   </action>
   <action name="sphereAction">

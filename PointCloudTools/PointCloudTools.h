@@ -38,7 +38,12 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <QTextEdit>
 #include <QTime>
 #include <QMouseEvent> 
+#include <string>
+#include "tools.h"
 #include "AboutWin.h"
+#include "MyCloud.h"
+#include "MyPicture.h"
+#include "ColormapWin.h"
 #include "ui_PointCloudTools.h"
 
 class PointCloudTools : public QMainWindow
@@ -51,11 +56,18 @@ public:
 private:
 	Ui::PointCloudToolsClass ui;
 
+	MyCloud mycloud;
+	MyPicture mypicture;
+	vector<MyCloud> mycloud_vec;
+	vector<MyPicture> mypicture_vec;
+
+	bool enable_console = true;		//console可用状态
+	bool save_as_binary = false;	//二进制保存
+
 
 	/***** Slots of QMenuBar and QToolBar *****/
 	// File menu slots
 	void open();
-	void add();
 	void clear();
 	void save();
 	void saveBinary();
@@ -87,11 +99,26 @@ private:
 	void about();
 	void help();
 
+	/***** Methods ******/
+	void initial();			//初始化
+	void consoleLog(QString operation, QString object, QString details, QString note);		//控制台显示操作
+	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//伪彩色转换
+	
+
+public slots:
+	/***** Slots of image widget *****/
+	void colormapBtnPressed();
+	void convertBtnPressed();
+	void colormap(ColormapClass cc);
+	void convert();
+
 	/***** Slots of RGB widget *****/
 	// Change color or size of cloud when slider is released or colorBtn is pressed
+	void pSliderChanged(int value);
+	void pSliderReleased();
+	void colorBtnPressed();
 	// colorMap slot
-	void colormap();
-	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);
+	void pColormap();
 
 	/***** Slots of dataTree(QTreeWidget) widget *****/
 	// Item in dataTree is left-clicked
@@ -107,4 +134,6 @@ private:
 	void clearConsole();
 	void enableConsole();
 	void disableConsole();
+
+	
 };

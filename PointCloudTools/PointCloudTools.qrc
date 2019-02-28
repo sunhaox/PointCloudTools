@@ -23,5 +23,7 @@
         <file>Resources/images/language.png</file>
         <file>Resources/images/theme.png</file>
         <file>Resources/images/logo.png</file>
+        <file>Resources/images/point.png</file>
+        <file>Resources/images/pic.png</file>
     </qresource>
 </RCC>

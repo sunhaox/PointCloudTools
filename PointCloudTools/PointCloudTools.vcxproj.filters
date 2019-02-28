@@ -38,12 +38,27 @@
     <ClCompile Include="AboutWin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MyCloud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPicture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColormapWin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudTools.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="AboutWin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="ColormapWin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -57,9 +72,21 @@
     <QtUic Include="AboutWin.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="ColormapWin.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyPicture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCloud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

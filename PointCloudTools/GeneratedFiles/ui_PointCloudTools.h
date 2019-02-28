@@ -18,6 +18,7 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -25,6 +26,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QToolBar>
@@ -55,7 +57,6 @@ public:
     QAction *consoleAction;
     QAction *RGBAction;
     QAction *clearAction;
-    QAction *addAction;
     QAction *sphereAction;
     QAction *cylinderAction;
     QAction *meshsurfaceAction;
@@ -88,7 +89,7 @@ public:
     QWidget *dockWidgetContents_4;
     QVBoxLayout *verticalLayout_2;
     QLabel *imageDepth;
-    QPushButton *pushButton;
+    QPushButton *colormapBtn;
     QLabel *imageColor;
     QPushButton *convertBtn;
     QDockWidget *dataDock;
@@ -127,6 +128,10 @@ public:
     QWidget *dockWidgetContents;
     QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
+    QHBoxLayout *horizontalLayout;
+    QLabel *label_14;
+    QLCDNumber *sizeLCD;
+    QSlider *pSlider;
     QHBoxLayout *horizontalLayout_6;
     QLabel *label_5;
     QRadioButton *colormap_x;
@@ -143,7 +148,7 @@ public:
     {
         if (PointCloudToolsClass->objectName().isEmpty())
             PointCloudToolsClass->setObjectName(QStringLiteral("PointCloudToolsClass"));
-        PointCloudToolsClass->resize(1177, 736);
+        PointCloudToolsClass->resize(1295, 792);
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(85);
         sizePolicy.setVerticalStretch(0);
@@ -233,31 +238,26 @@ public:
         QIcon icon11;
         icon11.addFile(QStringLiteral(":/Resources/images/clean.png"), QSize(), QIcon::Normal, QIcon::Off);
         clearAction->setIcon(icon11);
-        addAction = new QAction(PointCloudToolsClass);
-        addAction->setObjectName(QStringLiteral("addAction"));
-        QIcon icon12;
-        icon12.addFile(QStringLiteral(":/Resources/images/add.png"), QSize(), QIcon::Normal, QIcon::Off);
-        addAction->setIcon(icon12);
         sphereAction = new QAction(PointCloudToolsClass);
         sphereAction->setObjectName(QStringLiteral("sphereAction"));
-        QIcon icon13;
-        icon13.addFile(QStringLiteral(":/Resources/images/sphere.png"), QSize(), QIcon::Normal, QIcon::Off);
-        sphereAction->setIcon(icon13);
+        QIcon icon12;
+        icon12.addFile(QStringLiteral(":/Resources/images/sphere.png"), QSize(), QIcon::Normal, QIcon::Off);
+        sphereAction->setIcon(icon12);
         cylinderAction = new QAction(PointCloudToolsClass);
         cylinderAction->setObjectName(QStringLiteral("cylinderAction"));
-        QIcon icon14;
-        icon14.addFile(QStringLiteral(":/Resources/images/sylinder.png"), QSize(), QIcon::Normal, QIcon::Off);
-        cylinderAction->setIcon(icon14);
+        QIcon icon13;
+        icon13.addFile(QStringLiteral(":/Resources/images/sylinder.png"), QSize(), QIcon::Normal, QIcon::Off);
+        cylinderAction->setIcon(icon13);
         meshsurfaceAction = new QAction(PointCloudToolsClass);
         meshsurfaceAction->setObjectName(QStringLiteral("meshsurfaceAction"));
-        QIcon icon15;
-        icon15.addFile(QStringLiteral(":/Resources/images/meshsurface.png"), QSize(), QIcon::Normal, QIcon::Off);
-        meshsurfaceAction->setIcon(icon15);
+        QIcon icon14;
+        icon14.addFile(QStringLiteral(":/Resources/images/meshsurface.png"), QSize(), QIcon::Normal, QIcon::Off);
+        meshsurfaceAction->setIcon(icon14);
         wireframeAction = new QAction(PointCloudToolsClass);
         wireframeAction->setObjectName(QStringLiteral("wireframeAction"));
-        QIcon icon16;
-        icon16.addFile(QStringLiteral(":/Resources/images/wireframe.png"), QSize(), QIcon::Normal, QIcon::Off);
-        wireframeAction->setIcon(icon16);
+        QIcon icon15;
+        icon15.addFile(QStringLiteral(":/Resources/images/wireframe.png"), QSize(), QIcon::Normal, QIcon::Off);
+        wireframeAction->setIcon(icon15);
         windowsThemeAction = new QAction(PointCloudToolsClass);
         windowsThemeAction->setObjectName(QStringLiteral("windowsThemeAction"));
         darculaThemeAction = new QAction(PointCloudToolsClass);
@@ -268,19 +268,19 @@ public:
         chineseAction->setObjectName(QStringLiteral("chineseAction"));
         saveBinaryAction = new QAction(PointCloudToolsClass);
         saveBinaryAction->setObjectName(QStringLiteral("saveBinaryAction"));
-        QIcon icon17;
-        icon17.addFile(QStringLiteral(":/Resources/images/saveBinary.png"), QSize(), QIcon::Normal, QIcon::Off);
-        saveBinaryAction->setIcon(icon17);
+        QIcon icon16;
+        icon16.addFile(QStringLiteral(":/Resources/images/saveBinary.png"), QSize(), QIcon::Normal, QIcon::Off);
+        saveBinaryAction->setIcon(icon16);
         filterAction = new QAction(PointCloudToolsClass);
         filterAction->setObjectName(QStringLiteral("filterAction"));
-        QIcon icon18;
-        icon18.addFile(QStringLiteral(":/Resources/images/filter.png"), QSize(), QIcon::Normal, QIcon::Off);
-        filterAction->setIcon(icon18);
+        QIcon icon17;
+        icon17.addFile(QStringLiteral(":/Resources/images/filter.png"), QSize(), QIcon::Normal, QIcon::Off);
+        filterAction->setIcon(icon17);
         voxelAction = new QAction(PointCloudToolsClass);
         voxelAction->setObjectName(QStringLiteral("voxelAction"));
-        QIcon icon19;
-        icon19.addFile(QStringLiteral(":/Resources/images/voxel.png"), QSize(), QIcon::Normal, QIcon::Off);
-        voxelAction->setIcon(icon19);
+        QIcon icon18;
+        icon18.addFile(QStringLiteral(":/Resources/images/voxel.png"), QSize(), QIcon::Normal, QIcon::Off);
+        voxelAction->setIcon(icon18);
         centralWidget = new QWidget(PointCloudToolsClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -301,7 +301,7 @@ public:
         PointCloudToolsClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PointCloudToolsClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1177, 23));
+        menuBar->setGeometry(QRect(0, 0, 1295, 23));
         QFont font;
         font.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         menuBar->setFont(font);
@@ -311,23 +311,23 @@ public:
         menuGenerate->setObjectName(QStringLiteral("menuGenerate"));
         menuBasic_shapes = new QMenu(menuGenerate);
         menuBasic_shapes->setObjectName(QStringLiteral("menuBasic_shapes"));
-        QIcon icon20;
-        icon20.addFile(QStringLiteral(":/Resources/images/shape.png"), QSize(), QIcon::Normal, QIcon::Off);
-        menuBasic_shapes->setIcon(icon20);
+        QIcon icon19;
+        icon19.addFile(QStringLiteral(":/Resources/images/shape.png"), QSize(), QIcon::Normal, QIcon::Off);
+        menuBasic_shapes->setIcon(icon19);
         menuAbout = new QMenu(menuBar);
         menuAbout->setObjectName(QStringLiteral("menuAbout"));
         menuOption = new QMenu(menuBar);
         menuOption->setObjectName(QStringLiteral("menuOption"));
         themeAction = new QMenu(menuOption);
         themeAction->setObjectName(QStringLiteral("themeAction"));
-        QIcon icon21;
-        icon21.addFile(QStringLiteral(":/Resources/images/theme.png"), QSize(), QIcon::Normal, QIcon::Off);
-        themeAction->setIcon(icon21);
+        QIcon icon20;
+        icon20.addFile(QStringLiteral(":/Resources/images/theme.png"), QSize(), QIcon::Normal, QIcon::Off);
+        themeAction->setIcon(icon20);
         langAction = new QMenu(menuOption);
         langAction->setObjectName(QStringLiteral("langAction"));
-        QIcon icon22;
-        icon22.addFile(QStringLiteral(":/Resources/images/language.png"), QSize(), QIcon::Normal, QIcon::Off);
-        langAction->setIcon(icon22);
+        QIcon icon21;
+        icon21.addFile(QStringLiteral(":/Resources/images/language.png"), QSize(), QIcon::Normal, QIcon::Off);
+        langAction->setIcon(icon21);
         menuView = new QMenu(menuBar);
         menuView->setObjectName(QStringLiteral("menuView"));
         menuAngle_view = new QMenu(menuView);
@@ -345,8 +345,8 @@ public:
         PointCloudToolsClass->setStatusBar(statusBar);
         imageDock = new QDockWidget(PointCloudToolsClass);
         imageDock->setObjectName(QStringLiteral("imageDock"));
-        imageDock->setMinimumSize(QSize(300, 467));
-        imageDock->setMaximumSize(QSize(50000, 524287));
+        imageDock->setMinimumSize(QSize(338, 584));
+        imageDock->setMaximumSize(QSize(338, 524287));
         dockWidgetContents_4 = new QWidget();
         dockWidgetContents_4->setObjectName(QStringLiteral("dockWidgetContents_4"));
         verticalLayout_2 = new QVBoxLayout(dockWidgetContents_4);
@@ -355,17 +355,21 @@ public:
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         imageDepth = new QLabel(dockWidgetContents_4);
         imageDepth->setObjectName(QStringLiteral("imageDepth"));
+        imageDepth->setMinimumSize(QSize(320, 240));
+        imageDepth->setMaximumSize(QSize(320, 240));
         imageDepth->setAlignment(Qt::AlignCenter);
 
         verticalLayout_2->addWidget(imageDepth);
 
-        pushButton = new QPushButton(dockWidgetContents_4);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        colormapBtn = new QPushButton(dockWidgetContents_4);
+        colormapBtn->setObjectName(QStringLiteral("colormapBtn"));
 
-        verticalLayout_2->addWidget(pushButton);
+        verticalLayout_2->addWidget(colormapBtn);
 
         imageColor = new QLabel(dockWidgetContents_4);
         imageColor->setObjectName(QStringLiteral("imageColor"));
+        imageColor->setMinimumSize(QSize(320, 240));
+        imageColor->setMaximumSize(QSize(320, 240));
         imageColor->setAlignment(Qt::AlignCenter);
 
         verticalLayout_2->addWidget(imageColor);
@@ -406,8 +410,10 @@ public:
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dataDock);
         propertyDock = new QDockWidget(PointCloudToolsClass);
         propertyDock->setObjectName(QStringLiteral("propertyDock"));
+        sizePolicy1.setHeightForWidth(propertyDock->sizePolicy().hasHeightForWidth());
+        propertyDock->setSizePolicy(sizePolicy1);
         propertyDock->setMinimumSize(QSize(250, 186));
-        propertyDock->setMaximumSize(QSize(250, 524287));
+        propertyDock->setMaximumSize(QSize(250, 186));
         propertyDock->setFont(font1);
         dockWidgetContents_6 = new QWidget();
         dockWidgetContents_6->setObjectName(QStringLiteral("dockWidgetContents_6"));
@@ -565,19 +571,46 @@ public:
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(8), consoleDock);
         RGBDock = new QDockWidget(PointCloudToolsClass);
         RGBDock->setObjectName(QStringLiteral("RGBDock"));
-        RGBDock->setMinimumSize(QSize(250, 170));
-        RGBDock->setMaximumSize(QSize(250, 150));
+        RGBDock->setMinimumSize(QSize(250, 220));
+        RGBDock->setMaximumSize(QSize(250, 190));
         RGBDock->setFont(font1);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
         layoutWidget = new QWidget(dockWidgetContents);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 0, 231, 91));
+        layoutWidget->setGeometry(QRect(10, 0, 231, 141));
         verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 0, -1, -1);
+        label_14 = new QLabel(layoutWidget);
+        label_14->setObjectName(QStringLiteral("label_14"));
+
+        horizontalLayout->addWidget(label_14);
+
+        sizeLCD = new QLCDNumber(layoutWidget);
+        sizeLCD->setObjectName(QStringLiteral("sizeLCD"));
+        sizeLCD->setProperty("intValue", QVariant(1));
+
+        horizontalLayout->addWidget(sizeLCD);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+
+        pSlider = new QSlider(layoutWidget);
+        pSlider->setObjectName(QStringLiteral("pSlider"));
+        pSlider->setMinimum(1);
+        pSlider->setMaximum(10);
+        pSlider->setValue(1);
+        pSlider->setOrientation(Qt::Horizontal);
+
+        verticalLayout->addWidget(pSlider);
+
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
@@ -637,11 +670,11 @@ public:
 
         cooCbx = new QCheckBox(dockWidgetContents);
         cooCbx->setObjectName(QStringLiteral("cooCbx"));
-        cooCbx->setGeometry(QRect(10, 90, 211, 23));
+        cooCbx->setGeometry(QRect(10, 140, 211, 23));
         cooCbx->setFont(font1);
         bgcCbx = new QCheckBox(dockWidgetContents);
         bgcCbx->setObjectName(QStringLiteral("bgcCbx"));
-        bgcCbx->setGeometry(QRect(10, 110, 201, 23));
+        bgcCbx->setGeometry(QRect(10, 160, 201, 23));
         bgcCbx->setFont(font1);
         RGBDock->setWidget(dockWidgetContents);
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), RGBDock);
@@ -687,7 +720,6 @@ public:
         menuBar->addAction(menuOption->menuAction());
         menuBar->addAction(menuAbout->menuAction());
         menuFile->addAction(openAction);
-        menuFile->addAction(addAction);
         menuFile->addAction(clearAction);
         menuFile->addAction(saveAction);
         menuFile->addAction(saveBinaryAction);
@@ -719,7 +751,6 @@ public:
         menuProcess->addAction(filterAction);
         menuProcess->addAction(voxelAction);
         mainToolBar->addAction(openAction);
-        mainToolBar->addAction(addAction);
         mainToolBar->addAction(clearAction);
         mainToolBar->addAction(saveAction);
         mainToolBar->addAction(saveBinaryAction);
@@ -786,7 +817,6 @@ public:
         consoleAction->setText(QApplication::translate("PointCloudToolsClass", "Console", 0));
         RGBAction->setText(QApplication::translate("PointCloudToolsClass", "RGB Manager", 0));
         clearAction->setText(QApplication::translate("PointCloudToolsClass", "Clear", 0));
-        addAction->setText(QApplication::translate("PointCloudToolsClass", "Add", 0));
         sphereAction->setText(QApplication::translate("PointCloudToolsClass", "Sphere", 0));
         cylinderAction->setText(QApplication::translate("PointCloudToolsClass", "Cylinder", 0));
         meshsurfaceAction->setText(QApplication::translate("PointCloudToolsClass", "Surface", 0));
@@ -820,7 +850,7 @@ public:
         menuProcess->setTitle(QApplication::translate("PointCloudToolsClass", "Process", 0));
         imageDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "Image", 0));
         imageDepth->setText(QApplication::translate("PointCloudToolsClass", "Depth Image", 0));
-        pushButton->setText(QApplication::translate("PointCloudToolsClass", "Colormap", 0));
+        colormapBtn->setText(QApplication::translate("PointCloudToolsClass", "Colormap", 0));
         imageColor->setText(QApplication::translate("PointCloudToolsClass", "Colormap Image", 0));
         convertBtn->setText(QApplication::translate("PointCloudToolsClass", "Convert", 0));
         dataDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "PointCloud", 0));
@@ -859,6 +889,7 @@ public:
         QTableWidgetItem *___qtablewidgetitem4 = consoleTable->horizontalHeaderItem(4);
         ___qtablewidgetitem4->setText(QApplication::translate("PointCloudToolsClass", "Note", 0));
         RGBDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "RGB", 0));
+        label_14->setText(QApplication::translate("PointCloudToolsClass", "Point Size", 0));
         label_5->setText(QApplication::translate("PointCloudToolsClass", "Color Map", 0));
         colormap_x->setText(QApplication::translate("PointCloudToolsClass", "X", 0));
         colormap_y->setText(QApplication::translate("PointCloudToolsClass", "Y", 0));
