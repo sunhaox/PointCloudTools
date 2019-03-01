@@ -336,6 +336,18 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>minLineedit</tabstop>
+  <tabstop>maxLineedit</tabstop>
+  <tabstop>radioButton_0</tabstop>
+  <tabstop>radioButton_1</tabstop>
+  <tabstop>radioButton_11</tabstop>
+  <tabstop>radioButton_9</tabstop>
+  <tabstop>radioButton_2</tabstop>
+  <tabstop>radioButton_4</tabstop>
+  <tabstop>yesBtn</tabstop>
+  <tabstop>noBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

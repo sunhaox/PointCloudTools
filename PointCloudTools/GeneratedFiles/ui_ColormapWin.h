@@ -129,6 +129,15 @@ public:
         radioButton_4 = new QRadioButton(ColormapWin);
         radioButton_4->setObjectName(QStringLiteral("radioButton_4"));
         radioButton_4->setGeometry(QRect(280, 110, 89, 16));
+        QWidget::setTabOrder(minLineedit, maxLineedit);
+        QWidget::setTabOrder(maxLineedit, radioButton_0);
+        QWidget::setTabOrder(radioButton_0, radioButton_1);
+        QWidget::setTabOrder(radioButton_1, radioButton_11);
+        QWidget::setTabOrder(radioButton_11, radioButton_9);
+        QWidget::setTabOrder(radioButton_9, radioButton_2);
+        QWidget::setTabOrder(radioButton_2, radioButton_4);
+        QWidget::setTabOrder(radioButton_4, yesBtn);
+        QWidget::setTabOrder(yesBtn, noBtn);
 
         retranslateUi(ColormapWin);
 

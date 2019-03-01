@@ -148,7 +148,7 @@ public:
     {
         if (PointCloudToolsClass->objectName().isEmpty())
             PointCloudToolsClass->setObjectName(QStringLiteral("PointCloudToolsClass"));
-        PointCloudToolsClass->resize(1295, 792);
+        PointCloudToolsClass->resize(1295, 802);
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy.setHorizontalStretch(85);
         sizePolicy.setVerticalStretch(0);
@@ -529,7 +529,7 @@ public:
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), propertyDock);
         consoleDock = new QDockWidget(PointCloudToolsClass);
         consoleDock->setObjectName(QStringLiteral("consoleDock"));
-        consoleDock->setMinimumSize(QSize(200, 140));
+        consoleDock->setMinimumSize(QSize(200, 100));
         consoleDock->setMaximumSize(QSize(524287, 220));
         dockWidgetContents_7 = new QWidget();
         dockWidgetContents_7->setObjectName(QStringLiteral("dockWidgetContents_7"));
@@ -572,7 +572,7 @@ public:
         RGBDock = new QDockWidget(PointCloudToolsClass);
         RGBDock->setObjectName(QStringLiteral("RGBDock"));
         RGBDock->setMinimumSize(QSize(250, 220));
-        RGBDock->setMaximumSize(QSize(250, 190));
+        RGBDock->setMaximumSize(QSize(250, 220));
         RGBDock->setFont(font1);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));

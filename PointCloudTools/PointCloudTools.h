@@ -61,6 +61,9 @@ private:
 	vector<MyCloud> mycloud_vec;
 	vector<MyPicture> mypicture_vec;
 
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
+	PointCloudT::Ptr clicked_points;
+
 	bool enable_console = true;		//console可用状态
 	bool save_as_binary = false;	//二进制保存
 
@@ -100,9 +103,12 @@ private:
 	void help();
 
 	/***** Methods ******/
-	void initial();			//初始化
+	void initial();				//初始化
+	void setConsoleTable();		//设置控制台窗口
 	void consoleLog(QString operation, QString object, QString details, QString note);		//控制台显示操作
 	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//伪彩色转换
+	void pp_callback(const pcl::visualization::PointPickingEvent& event, void *args);		//点击相应事件
+	void showPointcloudAdd();																//添加点云到viewer并显示
 	
 
 public slots:
