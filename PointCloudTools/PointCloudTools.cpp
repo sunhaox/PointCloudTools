@@ -93,6 +93,7 @@ void PointCloudTools::open()
 			mypicture.filename = subname;
 			mypicture.filetype = filetype;
 			mypicture.depthMat = img.clone();
+			mypicture_vec.push_back(mypicture);
 
 			//检查图像深度、通道
 			if (img.type() != CV_16U)
@@ -114,11 +115,15 @@ void PointCloudTools::open()
 				consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), "Image type:" + type_str, "Should open 16bits depth image.");
 			}
 
+			//深度图像显示
 			cv::Mat zip;
 			img.convertTo(zip, CV_8U, 1.0 / 256, 0);
 			cv::resize(img, img, cv::Size(320, 240));
 			QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 			ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
+			//伪彩色图像清空
+			ui.imageColor->clear();
+
 			status = 0;
 
 			//更新资源管理树
@@ -521,8 +526,7 @@ void PointCloudTools::popMenu(const QPoint&)
 	}
 	else
 	{
-		menu.removeAction(&hideItemAction);
-		menu.removeAction(&changeColorAction);
+		menu.actions()[0]->setVisible(false);
 	}
 		
 
@@ -537,7 +541,50 @@ void PointCloudTools::hideItem()
 
 void PointCloudTools::showItem()
 {
+	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+	for (int i = 0; i != itemList.size(); i++)
+	{
+		QTreeWidgetItem* curItem = itemList[i];
+		QString name = curItem->text(0);
+		if (getFileType(name.toStdString()) == "png")
+		{
+			// 选择图片
+			for (auto it = mypicture_vec.begin(); it != mypicture_vec.end(); it++)
+			{
+				if (QString::fromLocal8Bit(it->filename.c_str()) == name)
+				{
+					//深度图显示
+					mypicture = *it;
+					cv::Mat zip;
+					it->depthMat.convertTo(zip, CV_8U, 1.0 / 256.0);
+					cv::resize(zip, zip, cv::Size(320, 240));
+					QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
+					ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
 
+					//伪彩色图显示
+					if (!it->colorMat.empty())
+					{
+						//已经转换过，直接显示
+						cv::cvtColor(mypicture.colorMat, zip, CV_BGR2RGB);
+						qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_RGB888);
+						ui.imageColor->setPixmap(QPixmap::fromImage(qimg));
+					}
+					else
+					{
+						//没有转换过，留白
+						ui.imageColor->clear();
+					}
+
+					consoleLog("Show", QString::fromLocal8Bit(mypicture.filename.c_str()), QString::fromLocal8Bit(mypicture.fullname.c_str()), "");
+					break;
+				}
+			}
+		}
+		else
+		{
+			//选择点云
+		}
+	}
 }
 
 void PointCloudTools::deleteItem()
