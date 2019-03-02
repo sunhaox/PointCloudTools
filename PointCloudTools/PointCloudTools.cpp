@@ -462,12 +462,13 @@ void PointCloudTools::convert()
 
 void PointCloudTools::pSliderChanged(int value)
 {
-
+	int p = value;
+	ui.sizeLCD->display(p);
 }
 
 void PointCloudTools::pSliderReleased()
 {
-
+	
 }
 
 void PointCloudTools::colorBtnPressed()
@@ -539,6 +540,30 @@ void PointCloudTools::popMenu(const QPoint&)
 
 void PointCloudTools::hideItem()
 {
+	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+	for (int i = 0; i != itemList.size(); i++)
+	{
+		//遍历选择的元素
+		QTreeWidgetItem* curItem = itemList[i];
+		QString name = curItem->text(0);
+		if (getFileType(name.toStdString()) == "pcd" || getFileType(name.toStdString()) == "ply")
+		{
+			//只有点云文件有隐藏选项
+			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+			{
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+				{
+					//匹配到点云
+					(*it)->visible = false;
+					consoleLog("Hide PointCloud", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+
+					break;
+				}
+			}
+		}
+	}
+
+	showPointcloudAdd();
 
 }
 
@@ -578,7 +603,7 @@ void PointCloudTools::showItem()
 						ui.imageColor->clear();
 					}
 
-					consoleLog("Show", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mypicture->fullname.c_str()), "");
+					consoleLog("Show Picture", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mypicture->fullname.c_str()), "");
 					break;
 				}
 			}
@@ -586,12 +611,77 @@ void PointCloudTools::showItem()
 		else
 		{
 			//选择点云
+			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+			{
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+				{
+					//匹配到点云
+					(*it)->visible = true;
+
+					consoleLog("Show PointCloud", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+
+					break;
+				}
+			}
 		}
 	}
+
+	showPointcloudAdd();
 }
 
 void PointCloudTools::deleteItem()
 {
+	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+	int selected_item_count = ui.dataTree->selectedItems().size();
+	for (int i = 0; i != selected_item_count; i++)
+	{
+		QTreeWidgetItem* curItem = itemList[i];
+		QString name = curItem->text(0);
+
+		if (getFileType(name.toStdString()) == "png")
+		{
+			// 选择图片
+			for (auto it = mypicture_vec.begin(); it != mypicture_vec.end(); it++)
+			{
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+				{
+					consoleLog("Delete", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+
+					//判断是否正在使用
+					if (mypicture->filename == (*it)->filename)
+					{
+						//清空显示区域
+						ui.imageColor->clear();
+						ui.imageDepth->clear();
+						mypicture = new MyPicture();
+					}
+
+					//内存中清空
+					mypicture_vec.erase(it);
+
+					break;
+				}
+			}
+		}
+		else
+		{
+			//选择点云
+			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+			{
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+				{
+					//匹配到点云
+					(*it)->visible = true;
+					break;
+				}
+			}
+		}
+
+		//更新dataTree
+		delete curItem;
+	}
+
+	showPointcloudAdd();
 
 }
 
@@ -757,10 +847,14 @@ void PointCloudTools::pp_callback(const pcl::visualization::PointPickingEvent& e
 //添加点云到viewer,并显示点云
 void PointCloudTools::showPointcloudAdd()
 {
+	viewer->removeAllPointClouds();
 	for (int i = 0; i != mycloud_vec.size(); i++)
 	{
-		viewer->addPointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
-		viewer->updatePointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
+		if (mycloud_vec[i]->visible)
+		{
+			viewer->addPointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
+			viewer->updatePointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
+		}
 	}
 	viewer->resetCamera();
 	ui.screen->update();
