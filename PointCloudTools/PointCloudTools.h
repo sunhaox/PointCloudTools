@@ -56,10 +56,10 @@ public:
 private:
 	Ui::PointCloudToolsClass ui;
 
-	MyCloud mycloud;
-	MyPicture mypicture;
-	vector<MyCloud> mycloud_vec;
-	vector<MyPicture> mypicture_vec;
+	MyCloud* mycloud;
+	MyPicture* mypicture;
+	vector<MyCloud*> mycloud_vec;
+	vector<MyPicture*> mypicture_vec;
 
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
 	PointCloudT::Ptr clicked_points;
@@ -105,6 +105,7 @@ private:
 	/***** Methods ******/
 	void initial();				//初始化
 	void setConsoleTable();		//设置控制台窗口
+	void setConvertParameters();	//从config.ini读取内参、畸变参数
 	void consoleLog(QString operation, QString object, QString details, QString note);		//控制台显示操作
 	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//伪彩色转换
 	void pp_callback(const pcl::visualization::PointPickingEvent& event, void *args);		//点击相应事件

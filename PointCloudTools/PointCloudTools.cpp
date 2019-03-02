@@ -69,7 +69,7 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 
 void PointCloudTools::open()
 {
-	QStringList filenames = QFileDialog::getOpenFileNames(this, tr("Open image file"), QString::fromUtf8(mypicture.fullname.c_str()), tr("Depth Image(*.png);;PointCloud File(*.pcd *.ply);;All file(*.*)"));
+	QStringList filenames = QFileDialog::getOpenFileNames(this, tr("Open image file"), QString::fromUtf8(mypicture->fullname.c_str()), tr("Depth Image(*.png);;PointCloud File(*.pcd *.ply);;All file(*.*)"));
 	if (filenames.isEmpty())
 		return;
 
@@ -87,12 +87,14 @@ void PointCloudTools::open()
 		int status = -1;
 		if (filename.endsWith(".png", Qt::CaseInsensitive) || filename.endsWith(".bmp",Qt::CaseInsensitive))
 		{
+			mypicture = new MyPicture();
+
 			// 图片打开
 			cv::Mat img = cv::imread(file_name, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH);
-			mypicture.fullname = file_name;
-			mypicture.filename = subname;
-			mypicture.filetype = filetype;
-			mypicture.depthMat = img.clone();
+			mypicture->fullname = file_name;
+			mypicture->filename = subname;
+			mypicture->filetype = filetype;
+			mypicture->depthMat = img.clone();
 			mypicture_vec.push_back(mypicture);
 
 			//检查图像深度、通道
@@ -291,7 +293,7 @@ void PointCloudTools::colormapBtnPressed()
 
 void PointCloudTools::convertBtnPressed()
 {
-	if (mypicture.depthMat.empty())
+	if (mypicture->depthMat.empty())
 		return;
 
 	timeStart();
@@ -326,7 +328,7 @@ void PointCloudTools::convertBtnPressed()
 	distCoeffs.at<double>(3, 0) = p2;
 	distCoeffs.at<double>(4, 0) = k3;
 
-	cv::Size imageSize = mypicture.depthMat.size();
+	cv::Size imageSize = mypicture->depthMat.size();
 	cv::Mat map1, map2;
 
 	//参数1：相机内参矩阵
@@ -342,7 +344,7 @@ void PointCloudTools::convertBtnPressed()
 	//参数3、4：X\Y坐标重映射
 	//参数5：图像的插值方式
 	//参数6：边界填充方式
-	remap(mypicture.depthMat, img, map1, map2, cv::INTER_LINEAR);																	//畸变矫正
+	remap(mypicture->depthMat, img, map1, map2, cv::INTER_LINEAR);																	//畸变矫正
 
 	//点云变换
 	int imgWidth = img.size().width;
@@ -372,14 +374,14 @@ void PointCloudTools::convertBtnPressed()
 		}
 	}
 
-	if (mypicture.isConvert)
+	if (mypicture->isConvert)
 	{
 		for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 		{
-			if (it->fullname == mypicture.fullname + ".pcd")
+			if ((*it)->fullname == mypicture->fullname + ".pcd")
 			{
-				it->cloud = pointcloud;
-				it->visible = true;
+				(*it)->cloud = pointcloud;
+				(*it)->visible = true;
 				mycloud = *it;
 				break;
 			}
@@ -387,22 +389,23 @@ void PointCloudTools::convertBtnPressed()
 	}
 	else
 	{
-		mypicture.isConvert = true;
-		mycloud.cloud = pointcloud;
-		mycloud.filename = mypicture.filename + ".pcd";
-		mycloud.fullname = mypicture.fullname + ".pcd";
-		mycloud.filetype = "pcd";
-		mycloud.visible = true;
+		mycloud = new MyCloud();
+		mypicture->isConvert = true;
+		mycloud->cloud = pointcloud;
+		mycloud->filename = mypicture->filename + ".pcd";
+		mycloud->fullname = mypicture->fullname + ".pcd";
+		mycloud->filetype = "pcd";
+		mycloud->visible = true;
 		mycloud_vec.push_back(mycloud);
 
 		//更新资源树
-		QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud.filename.c_str()));
+		QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 		cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 		ui.dataTree->addTopLevelItem(cloudName);
 	}
 	//计时结束
 	QString time_cost = timeOff();
-	consoleLog("Convert", QString::fromLocal8Bit(mypicture.filename.c_str()), QString::fromLocal8Bit(mycloud.filename.c_str()), "Time cost: " + time_cost + " s, Points: " + QString::number(mycloud.cloud->points.size()));
+	consoleLog("Convert", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mycloud->filename.c_str()), "Time cost: " + time_cost + " s, Points: " + QString::number(mycloud->cloud->points.size()));
 	
 
 	showPointcloudAdd();		//更新点云窗口
@@ -410,7 +413,7 @@ void PointCloudTools::convertBtnPressed()
 
 void PointCloudTools::colormap(ColormapClass cc)
 {
-	if (mypicture.depthMat.empty())
+	if (mypicture->depthMat.empty())
 		return;
 
 	int max = cc.max;
@@ -426,9 +429,9 @@ void PointCloudTools::colormap(ColormapClass cc)
 
 	float scal = 255.0 / (max - min);
 	cv::Mat colorMat;
-	mypicture.depthMat.convertTo(colorMat, CV_8U, scal, -min*scal);		//转8位灰度
+	mypicture->depthMat.convertTo(colorMat, CV_8U, scal, -min*scal);		//转8位灰度
 	cv::applyColorMap(colorMat, colorMat, type);						//转彩色图
-	mypicture.colorMat = colorMat.clone();
+	mypicture->colorMat = colorMat.clone();
 
 	cv::cvtColor(colorMat, colorMat, CV_BGR2RGB);						//Opencv默认BGR存储，Qt需要RGB
 	QImage qimg = QImage((const unsigned char*)(colorMat.data), colorMat.cols, colorMat.rows, QImage::Format_RGB888);
@@ -449,7 +452,7 @@ void PointCloudTools::colormap(ColormapClass cc)
 		type_str = "";
 		break;
 	}
-	consoleLog("Colormap", QString::fromLocal8Bit(mypicture.filename.c_str()), "Max: " + QString::number(max) + " Min: " + QString::number(min) + " Type:" + type_str, "Time cost: " + time_cost + " s");
+	consoleLog("Colormap", QString::fromLocal8Bit(mypicture->filename.c_str()), "Max: " + QString::number(max) + " Min: " + QString::number(min) + " Type:" + type_str, "Time cost: " + time_cost + " s");
 }
 
 void PointCloudTools::convert()
@@ -510,9 +513,9 @@ void PointCloudTools::popMenu(const QPoint&)
 	{
 		for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 		{
-			if (it->filename == name.toStdString())
+			if ((*it)->filename == name.toStdString())
 			{
-				if (it->visible == true){
+				if ((*it)->visible == true){
 					menu.actions()[1]->setVisible(false);
 					menu.actions()[0]->setVisible(true);
 				}
@@ -551,21 +554,21 @@ void PointCloudTools::showItem()
 			// 选择图片
 			for (auto it = mypicture_vec.begin(); it != mypicture_vec.end(); it++)
 			{
-				if (QString::fromLocal8Bit(it->filename.c_str()) == name)
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
 					//深度图显示
 					mypicture = *it;
 					cv::Mat zip;
-					it->depthMat.convertTo(zip, CV_8U, 1.0 / 256.0);
+					(*it)->depthMat.convertTo(zip, CV_8U, 1.0 / 256.0);
 					cv::resize(zip, zip, cv::Size(320, 240));
 					QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 					ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
 
 					//伪彩色图显示
-					if (!it->colorMat.empty())
+					if (!(*it)->colorMat.empty())
 					{
 						//已经转换过，直接显示
-						cv::cvtColor(mypicture.colorMat, zip, CV_BGR2RGB);
+						cv::cvtColor(mypicture->colorMat, zip, CV_BGR2RGB);
 						qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_RGB888);
 						ui.imageColor->setPixmap(QPixmap::fromImage(qimg));
 					}
@@ -575,7 +578,7 @@ void PointCloudTools::showItem()
 						ui.imageColor->clear();
 					}
 
-					consoleLog("Show", QString::fromLocal8Bit(mypicture.filename.c_str()), QString::fromLocal8Bit(mypicture.fullname.c_str()), "");
+					consoleLog("Show", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mypicture->fullname.c_str()), "");
 					break;
 				}
 			}
@@ -618,9 +621,12 @@ void PointCloudTools::initial()
 	setWindowIcon(QIcon(tr(":Resources/images/logo.png")));
 	setWindowTitle(tr("PointCloud Tools"));
 
+	mypicture = new MyPicture();
+
 	//点云初始化
-	mycloud.cloud.reset(new PointCloudT);
-	mycloud.cloud->resize(1);
+	mycloud = new MyCloud();
+	mycloud->cloud.reset(new PointCloudT);
+	mycloud->cloud->resize(1);
 	viewer.reset(new pcl::visualization::PCLVisualizer("viewer", false));
 
 	//点云点击事件回调设置
@@ -643,6 +649,9 @@ void PointCloudTools::initial()
 	QString qss = windows_qss;
 	qApp->setStyleSheet(qss);
 
+	//读取config.ini，配置内参和畸变系数
+	setConvertParameters();
+
 	// 输出窗口
 	consoleLog("Software start", "PointCloud Tools", "Welcome to use PointCloud Tools", "Haden");
 
@@ -663,6 +672,42 @@ void PointCloudTools::setConsoleTable(){
 
 	ui.consoleTable->setContextMenuPolicy(Qt::CustomContextMenu);
 
+}
+
+void PointCloudTools::setConvertParameters()
+{
+	QFile file("config.ini");
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		int count = 0;
+		while (!file.atEnd())
+		{
+			QByteArray line = file.readLine();
+			if (line[0] == '\n') 
+				break;
+
+			if (line[0] != '#')
+			{
+				QString str(line);
+				switch (count++)
+				{
+				case 0: ui.fxLineedit->setText(str); break;
+				case 1: ui.fyLineedit->setText(str); break;
+				case 2: ui.cxLineedit->setText(str); break;
+				case 3: ui.cyLineedit->setText(str); break;
+				case 4: ui.aLineedit->setText(str);  break;
+				case 5: ui.k1Lineedit->setText(str); break;
+				case 6: ui.k2Lineedit->setText(str); break;
+				case 7: ui.p1Lineedit->setText(str); break;
+				case 8: ui.p2Lineedit->setText(str); break;
+				case 9: ui.k3Lineedit->setText(str); break;
+				default:
+					break;
+				}
+			}
+		}
+		file.close();
+	}
 }
 
 void PointCloudTools::consoleLog(QString operation, QString object, QString details, QString note)
@@ -714,8 +759,8 @@ void PointCloudTools::showPointcloudAdd()
 {
 	for (int i = 0; i != mycloud_vec.size(); i++)
 	{
-		viewer->addPointCloud(mycloud_vec[i].cloud, "cloud" + QString::number(i).toStdString());
-		viewer->updatePointCloud(mycloud_vec[i].cloud, "cloud" + QString::number(i).toStdString());
+		viewer->addPointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
+		viewer->updatePointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
 	}
 	viewer->resetCamera();
 	ui.screen->update();
