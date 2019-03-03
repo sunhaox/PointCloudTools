@@ -545,6 +545,8 @@ void PointCloudTools::hideItem()
 	{
 		//遍历选择的元素
 		QTreeWidgetItem* curItem = itemList[i];
+		QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
+		curItem->setTextColor(0, item_color);
 		QString name = curItem->text(0);
 		if (getFileType(name.toStdString()) == "pcd" || getFileType(name.toStdString()) == "ply")
 		{
@@ -573,6 +575,7 @@ void PointCloudTools::showItem()
 	for (int i = 0; i != itemList.size(); i++)
 	{
 		QTreeWidgetItem* curItem = itemList[i];
+		curItem->setTextColor(0, QColor(0, 0, 0, 255));		//设置icon半透明
 		QString name = curItem->text(0);
 		if (getFileType(name.toStdString()) == "png")
 		{
@@ -645,7 +648,7 @@ void PointCloudTools::deleteItem()
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					consoleLog("Delete", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					consoleLog("Delete picture", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 
 					//判断是否正在使用
 					if (mypicture->filename == (*it)->filename)
@@ -653,7 +656,7 @@ void PointCloudTools::deleteItem()
 						//清空显示区域
 						ui.imageColor->clear();
 						ui.imageDepth->clear();
-						mypicture = new MyPicture();
+						mypicture = NULL;
 					}
 
 					//内存中清空
@@ -671,7 +674,14 @@ void PointCloudTools::deleteItem()
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
 					//匹配到点云
-					(*it)->visible = true;
+
+					consoleLog("Delete picture", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					
+					mycloud = NULL;
+
+					//内存清空
+					mycloud_vec.erase(it);
+
 					break;
 				}
 			}
