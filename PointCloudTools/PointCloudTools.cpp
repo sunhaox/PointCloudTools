@@ -200,12 +200,66 @@ void PointCloudTools::exit()
 
 void PointCloudTools::pointcolorChanged()
 {
+	QColor color = QColorDialog::getColor(Qt::white, this, "Select color for point cloud");
 
+	if (color.isValid()) //判断所选的颜色是否有效
+	{
+		//QAction* action = dynamic_cast<QAction*>(sender());
+		//if (action != ui.pointcolorAction) //改变颜色的信号来自于 dataTree
+		QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+		int selected_item_count = ui.dataTree->selectedItems().size();
+		if (selected_item_count == 0){
+			//改变所有点颜色
+			for (int i = 0; i != mycloud_vec.size(); i++){
+				for (int j = 0; j != mycloud_vec[i]->cloud->points.size(); j++){
+					mycloud_vec[i]->cloud->points[j].r = color.red();
+					mycloud_vec[i]->cloud->points[j].g = color.green();
+					mycloud_vec[i]->cloud->points[j].b = color.blue();
+				}
+			}
+			// 输出窗口
+			consoleLog("Change cloud color", "All point clouds", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+		}
+		else{
+			for (int i = 0; i != selected_item_count; i++){
+				QString name = itemList[i]->text(0);
+				//遍历mycloud_vec
+				for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+				{
+					//找到同名点云数据
+					if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+					{
+						for (int j = 0; j != (*it)->cloud->size(); j++)
+						{
+							(*it)->cloud->points[j].r = color.red();
+							(*it)->cloud->points[j].g = color.green();
+							(*it)->cloud->points[j].b = color.blue();
+						}
+
+						break;
+					}
+				}
+			}
+			// 输出窗口
+			consoleLog("Change cloud color", "Point clouds selected", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+		}
+
+		showPointcloudAdd();
+	}
 }
 
 void PointCloudTools::bgcolorChanged()
 {
-
+	QColor color = QColorDialog::getColor(Qt::white, this,
+		"Select color for point cloud");
+	if (color.isValid())
+	{
+		viewer->setBackgroundColor(color.red() / 255.0,
+			color.green() / 255.0, color.blue() / 255.0);
+		// 输出窗口
+		consoleLog("Change bg color", "Background", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+		showPointcloudAdd();
+	}
 }
 
 void PointCloudTools::mainview()
@@ -475,7 +529,7 @@ void PointCloudTools::colormap(ColormapClass cc)
 		type_str = "";
 		break;
 	}
-	consoleLog("Colormap", QString::fromLocal8Bit(mypicture->filename.c_str()), "Max: " + QString::number(max) + " Min: " + QString::number(min) + " Type:" + type_str, "Time cost: " + time_cost + " s");
+	consoleLog("Colormap", QString::fromLocal8Bit(mypicture->filename.c_str()), "Min: " + QString::number(min) + " Max: " + QString::number(max) + " Type:" + type_str, "Time cost: " + time_cost + " s");
 }
 
 void PointCloudTools::convert()
@@ -606,7 +660,7 @@ void PointCloudTools::pColormap()
 		}
 
 		// 输出窗口
-		consoleLog("Colormap", "Point clouds selected", "", "");
+		consoleLog("Colormap", "Point clouds selected", "Min:" + QString::number(minNum) + " Max:" + QString::number(maxNum), "");
 	}
 
 	showPointcloudAdd();
