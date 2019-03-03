@@ -136,30 +136,70 @@ void PointCloudTools::open()
 			QTreeWidgetItem *picName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(subname.c_str()));
 			picName->setIcon(0, QIcon(":/Resources/images/pic.png"));
 			ui.dataTree->addTopLevelItem(picName);
+
+			//结果显示
+			QString time_cost = timeOff();
+			consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "Time cost: " + time_cost + " s");
 		}
 		else
 		{
 			//TODO 点云文件读取
 			//TODO 点云名字重复处理方法
+
+			mycloud = new MyCloud();
+			mycloud->fullname = file_name;
+			mycloud->filename = subname;
+			mycloud->filetype = filetype;
+			mycloud->cloud.reset(new PointCloudT);
+
 			//点云打开
 			if (filename.endsWith(".pcd", Qt::CaseInsensitive))
 			{
-
+				status = pcl::io::loadPCDFile(file_name, *(mycloud->cloud));
+				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
+				{
+					setCloudColor(255, 255, 255);
+				}
 			}
 			else if (filename.endsWith(".ply", Qt::CaseInsensitive))
 			{
-
+				status = pcl::io::loadPLYFile(file_name, *(mycloud->cloud));
+				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
+				{
+					setCloudColor(255, 255, 255);
+				}
 			}
 			else
 			{
-
+				//文件格式不能处理
+				QMessageBox::information(this, tr("File format error"), tr("Can not open files excpet .png .pcd .ply"));
+				return;
 			}
+
+			if (status != 0)
+			{
+				QMessageBox::critical(this, tr("Reading file error"), tr("We can not open the file"));
+				return;
+			}
+			setA(255);
+
+			mycloud_vec.push_back(mycloud);
+
+			//更新资源管理树
+			QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(subname.c_str()));
+			cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+			ui.dataTree->addTopLevelItem(cloudName);
+
+			//结果输出
+			QString time_cost = timeOff();
+			consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "Time cost: " + time_cost + " s; Load points:" + QString::number(mycloud->cloud->size()));
 		}
 
-		QString time_cost = timeOff();
-		consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "Time cost: " + time_cost + " s");
+		
 
 	}
+
+	showPointcloudAdd();
 
 	ui.statusBar->showMessage("");
 	
@@ -302,17 +342,118 @@ void PointCloudTools::rgbDock()
 
 void PointCloudTools::cube()
 {
+	clear();
+	
+	mycloud = new MyCloud();
+	mycloud->filename = "cube.pcd";
+	mycloud->filetype = "pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	//点云数据
+	mycloud->cloud.reset(new PointCloudT);
+	mycloud->cloud->width = 50000;			//点云宽
+	mycloud->cloud->height = 1;				//点云高，1为无组织点云
+	mycloud->cloud->is_dense = false;
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//重置点云大小
+	for (size_t i = 0; i != mycloud->cloud->size(); i++)
+	{
+		mycloud->cloud->points[i].x = 1024 * rand() / (RAND_MAX + 1.0f);
+		mycloud->cloud->points[i].y = 1024 * rand() / (RAND_MAX + 1.0f);
+		mycloud->cloud->points[i].z = 1024 * rand() / (RAND_MAX + 1.0f);
+		mycloud->cloud->points[i].r = 255;
+		mycloud->cloud->points[i].g = 255;
+		mycloud->cloud->points[i].b = 255;
+	}
 
+	mycloud_vec.push_back(mycloud);
+
+	//设置资源管理
+	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
+	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+	ui.dataTree->addTopLevelItem(cloudName);
+
+	//输出窗口
+	consoleLog("Generate cube",QString::fromLocal8Bit(mycloud->filename.c_str()), "cube", "");
+
+	showPointcloudAdd();
 }
 
 void PointCloudTools::createSphere()
 {
+	clear();
 
+	mycloud = new MyCloud();
+	mycloud->filename = "sphere.pcd";
+	mycloud->filetype = "pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	//点云数据
+	mycloud->cloud.reset(new PointCloudT);
+	mycloud->cloud->width = 50000;			//点云宽
+	mycloud->cloud->height = 1;				//点云高，1为无组织点云
+	mycloud->cloud->is_dense = false;
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//重置点云大小
+	for (size_t i = 0; i != mycloud->cloud->size(); i++)
+	{
+		double sphere_r = 1024 * rand() / (RAND_MAX + 1.0f);		//半径
+		double sphere_a = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//旋转角度
+		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//上下角度
+		mycloud->cloud->points[i].x = sphere_r * sin(sphere_a) * sin(sphere_t);
+		mycloud->cloud->points[i].y = sphere_r * sin(sphere_a) * cos(sphere_t);
+		mycloud->cloud->points[i].z = sphere_r * cos(sphere_a);
+		mycloud->cloud->points[i].r = 255;
+		mycloud->cloud->points[i].g = 255;
+		mycloud->cloud->points[i].b = 255;
+	}
+
+	mycloud_vec.push_back(mycloud);
+
+	//设置资源管理
+	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
+	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+	ui.dataTree->addTopLevelItem(cloudName);
+
+	//输出窗口
+	consoleLog("Generate sphere", QString::fromLocal8Bit(mycloud->filename.c_str()), "sphere", "");
+
+	showPointcloudAdd();
 }
 
 void PointCloudTools::createCylinder()
 {
+	clear();
 
+	mycloud = new MyCloud();
+	mycloud->filename = "cylinder.pcd";
+	mycloud->filetype = "pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	//点云数据
+	mycloud->cloud.reset(new PointCloudT);
+	mycloud->cloud->width = 50000;			//点云宽
+	mycloud->cloud->height = 1;				//点云高，1为无组织点云
+	mycloud->cloud->is_dense = false;
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//重置点云大小
+	for (size_t i = 0; i != mycloud->cloud->size(); i++)
+	{
+		double sphere_r = 512 * rand() / (RAND_MAX + 1.0f);		//半径
+		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//旋转角度
+		mycloud->cloud->points[i].x = sphere_r * sin(sphere_t);
+		mycloud->cloud->points[i].y = sphere_r *  cos(sphere_t);
+		mycloud->cloud->points[i].z = 1024 * rand() / (RAND_MAX + 1.0f);
+		mycloud->cloud->points[i].r = 255;
+		mycloud->cloud->points[i].g = 255;
+		mycloud->cloud->points[i].b = 255;
+	}
+
+	mycloud_vec.push_back(mycloud);
+
+	//设置资源管理
+	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
+	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+	ui.dataTree->addTopLevelItem(cloudName);
+
+	//输出窗口
+	consoleLog("Generate cylinder", QString::fromLocal8Bit(mycloud->filename.c_str()), "cylinder", "");
+
+	showPointcloudAdd();
 }
 
 int PointCloudTools::convertSurface()
@@ -1178,4 +1319,24 @@ void PointCloudTools::showPointcloudAdd()
 	}
 	viewer->resetCamera();
 	ui.screen->update();
+}
+
+void PointCloudTools::setCloudColor(unsigned int r, unsigned int g, unsigned int b)
+{
+	// Set the new color
+	for (size_t i = 0; i < mycloud->cloud->size(); i++)
+	{
+		mycloud->cloud->points[i].r = r;
+		mycloud->cloud->points[i].g = g;
+		mycloud->cloud->points[i].b = b;
+		mycloud->cloud->points[i].a = 255;
+	}
+}
+
+void PointCloudTools::setA(unsigned int a)
+{
+	for (size_t i = 0; i < mycloud->cloud->size(); i++)
+	{
+		mycloud->cloud->points[i].a = a;
+	}
 }

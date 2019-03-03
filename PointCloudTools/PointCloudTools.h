@@ -110,7 +110,8 @@ private:
 	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//伪彩色转换
 	void pp_callback(const pcl::visualization::PointPickingEvent& event, void *args);		//点击相应事件
 	void showPointcloudAdd();																//添加点云到viewer并显示
-	
+	void setCloudColor(unsigned int r, unsigned int g, unsigned int b);						//设置所有点云颜色
+	void setA(unsigned int a);																//设置所有点透明度
 
 public slots:
 	/***** Slots of image widget *****/

@@ -69,7 +69,7 @@ public:
     QAction *filterAction;
     QAction *voxelAction;
     QWidget *centralWidget;
-    QHBoxLayout *horizontalLayout_5;
+    QHBoxLayout *horizontalLayout_2;
     QVTKWidget *screen;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -126,7 +126,7 @@ public:
     QTableWidget *consoleTable;
     QDockWidget *RGBDock;
     QWidget *dockWidgetContents;
-    QWidget *layoutWidget;
+    QVBoxLayout *verticalLayout_4;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QLabel *label_14;
@@ -287,15 +287,15 @@ public:
         sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
         centralWidget->setSizePolicy(sizePolicy1);
-        horizontalLayout_5 = new QHBoxLayout(centralWidget);
-        horizontalLayout_5->setSpacing(6);
-        horizontalLayout_5->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        horizontalLayout_2 = new QHBoxLayout(centralWidget);
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         screen = new QVTKWidget(centralWidget);
         screen->setObjectName(QStringLiteral("screen"));
         screen->setMinimumSize(QSize(600, 400));
 
-        horizontalLayout_5->addWidget(screen);
+        horizontalLayout_2->addWidget(screen);
 
         PointCloudToolsClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PointCloudToolsClass);
@@ -575,24 +575,23 @@ public:
         RGBDock->setFont(font1);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
-        layoutWidget = new QWidget(dockWidgetContents);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 0, 231, 141));
-        verticalLayout = new QVBoxLayout(layoutWidget);
+        verticalLayout_4 = new QVBoxLayout(dockWidgetContents);
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
-        verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        verticalLayout->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, -1, -1);
-        label_14 = new QLabel(layoutWidget);
+        label_14 = new QLabel(dockWidgetContents);
         label_14->setObjectName(QStringLiteral("label_14"));
 
         horizontalLayout->addWidget(label_14);
 
-        sizeLCD = new QLCDNumber(layoutWidget);
+        sizeLCD = new QLCDNumber(dockWidgetContents);
         sizeLCD->setObjectName(QStringLiteral("sizeLCD"));
         sizeLCD->setProperty("intValue", QVariant(1));
 
@@ -601,7 +600,7 @@ public:
 
         verticalLayout->addLayout(horizontalLayout);
 
-        pSlider = new QSlider(layoutWidget);
+        pSlider = new QSlider(dockWidgetContents);
         pSlider->setObjectName(QStringLiteral("pSlider"));
         pSlider->setMinimum(1);
         pSlider->setMaximum(10);
@@ -614,7 +613,7 @@ public:
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         horizontalLayout_6->setSizeConstraint(QLayout::SetFixedSize);
-        label_5 = new QLabel(layoutWidget);
+        label_5 = new QLabel(dockWidgetContents);
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setMaximumSize(QSize(16777215, 50));
         label_5->setFont(font1);
@@ -622,17 +621,17 @@ public:
 
         horizontalLayout_6->addWidget(label_5);
 
-        colormap_x = new QRadioButton(layoutWidget);
+        colormap_x = new QRadioButton(dockWidgetContents);
         colormap_x->setObjectName(QStringLiteral("colormap_x"));
 
         horizontalLayout_6->addWidget(colormap_x);
 
-        colormap_y = new QRadioButton(layoutWidget);
+        colormap_y = new QRadioButton(dockWidgetContents);
         colormap_y->setObjectName(QStringLiteral("colormap_y"));
 
         horizontalLayout_6->addWidget(colormap_y);
 
-        colormap_z = new QRadioButton(layoutWidget);
+        colormap_z = new QRadioButton(dockWidgetContents);
         colormap_z->setObjectName(QStringLiteral("colormap_z"));
         colormap_z->setChecked(true);
 
@@ -644,12 +643,12 @@ public:
         horizontalLayout_7 = new QHBoxLayout();
         horizontalLayout_7->setSpacing(6);
         horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
-        colorMapLeft = new QLineEdit(layoutWidget);
+        colorMapLeft = new QLineEdit(dockWidgetContents);
         colorMapLeft->setObjectName(QStringLiteral("colorMapLeft"));
 
         horizontalLayout_7->addWidget(colorMapLeft);
 
-        colorMapRight = new QLineEdit(layoutWidget);
+        colorMapRight = new QLineEdit(dockWidgetContents);
         colorMapRight->setObjectName(QStringLiteral("colorMapRight"));
 
         horizontalLayout_7->addWidget(colorMapRight);
@@ -657,7 +656,7 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_7);
 
-        colorBtn = new QPushButton(layoutWidget);
+        colorBtn = new QPushButton(dockWidgetContents);
         colorBtn->setObjectName(QStringLiteral("colorBtn"));
         QFont font3;
         font3.setFamily(QStringLiteral("Times New Roman"));
@@ -667,10 +666,15 @@ public:
 
         verticalLayout->addWidget(colorBtn);
 
+
+        verticalLayout_4->addLayout(verticalLayout);
+
         cooCbx = new QCheckBox(dockWidgetContents);
         cooCbx->setObjectName(QStringLiteral("cooCbx"));
-        cooCbx->setGeometry(QRect(10, 140, 211, 23));
         cooCbx->setFont(font1);
+
+        verticalLayout_4->addWidget(cooCbx);
+
         RGBDock->setWidget(dockWidgetContents);
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), RGBDock);
 #ifndef QT_NO_SHORTCUT
