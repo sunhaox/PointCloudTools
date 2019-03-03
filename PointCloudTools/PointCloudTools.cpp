@@ -45,16 +45,18 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 
 	/***** Slots connection of RGB widget *****/
 	// Random color (connect)
-	connect(ui.colorBtn, SIGNAL(clicked()), this, SLOT(colorBtnPressed()));
+	connect(ui.colorBtn, SIGNAL(clicked()), this, SLOT(pColormap()));
 	// Change size of cloud (connect)
 	connect(ui.pSlider, SIGNAL(valueChanged(int)), this, SLOT(pSliderChanged(int)));
-	connect(ui.pSlider, SIGNAL(sliderReleased()), this, SLOT(psliderReleased()));
+	connect(ui.pSlider, SIGNAL(sliderReleased()), this, SLOT(pSliderReleased()));
 	// Change colormap properties (connect)
-	connect(ui.colorMapRight, SIGNAL(editingFinished()), this, SLOT(colormap()));
-	connect(ui.colorMapLeft, SIGNAL(editingFinished()), this, SLOT(colormap()));
-	connect(ui.colormap_x, SIGNAL(clicked()), this, SLOT(colormap()));
-	connect(ui.colormap_y, SIGNAL(clicked()), this, SLOT(colormap()));
-	connect(ui.colormap_z, SIGNAL(clicked()), this, SLOT(colormap()));
+	connect(ui.colorMapRight, SIGNAL(editingFinished()), this, SLOT(pColormap()));
+	connect(ui.colorMapLeft, SIGNAL(editingFinished()), this, SLOT(pColormap()));
+	connect(ui.colormap_x, SIGNAL(clicked()), this, SLOT(pColormap()));
+	connect(ui.colormap_y, SIGNAL(clicked()), this, SLOT(pColormap()));
+	connect(ui.colormap_z, SIGNAL(clicked()), this, SLOT(pColormap()));
+	// Checkbox for coordinate and background color (connect)
+	connect(ui.cooCbx, SIGNAL(stateChanged(int)), this, SLOT(cooCbxChecked(int)));
 
 	/***** Slots connection of dataTree(QTreeWidget) widget *****/
 	// Item in dataTree is left-clicked (connect)
@@ -125,6 +127,8 @@ void PointCloudTools::open()
 			ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
 			//伪彩色图像清空
 			ui.imageColor->clear();
+			//更新标题
+			ui.imageDock->setWindowTitle(QString::fromLocal8Bit(mypicture->filename.c_str()));
 
 			status = 0;
 
@@ -135,6 +139,8 @@ void PointCloudTools::open()
 		}
 		else
 		{
+			//TODO 点云文件读取
+			//TODO 点云名字重复处理方法
 			//点云打开
 			if (filename.endsWith(".pcd", Qt::CaseInsensitive))
 			{
@@ -161,7 +167,20 @@ void PointCloudTools::open()
 
 void PointCloudTools::clear()
 {
+	mycloud_vec.clear();			//点云容器中移除所有点
+	mypicture_vec.clear();			//从图像容器中移除所有内容
+	viewer->removeAllPointClouds();	//从viewer中移除所有点云
+	viewer->removeAllShapes();
+	ui.dataTree->clear();
 
+	mypicture = new MyPicture();
+
+	consoleLog("Clear", "All point clouds and picture", "", "");
+
+	//显示更新
+	ui.imageDepth->clear();
+	ui.imageColor->clear();
+	showPointcloudAdd();
 }
 
 void PointCloudTools::save()
@@ -191,17 +210,20 @@ void PointCloudTools::bgcolorChanged()
 
 void PointCloudTools::mainview()
 {
-
+	viewer->setCameraPosition(0, -1, 0, 0.5, 0.5, 0.5, 0, 0, 1);
+	ui.screen->update();
 }
 
 void PointCloudTools::leftview()
 {
-
+	viewer->setCameraPosition(-1, 0, 0, 0, 0, 0, 0, 0, 1);
+	ui.screen->update();
 }
 
 void PointCloudTools::topview()
 {
-
+	viewer->setCameraPosition(0, 0, 1, 0, 0, 0, 0, 1, 0);
+	ui.screen->update();
 }
 
 void PointCloudTools::data()
@@ -378,6 +400,7 @@ void PointCloudTools::convertBtnPressed()
 	{
 		for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 		{
+			//TODO 点云文件重名处理
 			if ((*it)->fullname == mypicture->fullname + ".pcd")
 			{
 				(*it)->cloud = pointcloud;
@@ -468,7 +491,34 @@ void PointCloudTools::pSliderChanged(int value)
 
 void PointCloudTools::pSliderReleased()
 {
-	
+	unsigned int p = ui.pSlider->value();
+	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+	int selected_item_count = ui.dataTree->selectedItems().size();
+	if (selected_item_count == 0)
+	{
+		//没有选择文件，所有显示点大小都改变
+		for (int i = 0; i != mycloud_vec.size(); i++)
+		{
+			viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, p, "cloud" + mycloud_vec[i]->filename);
+		}
+
+		//输出
+		consoleLog("Change cloud size", "All point clouds", "Size: " + QString::number(p), "");
+
+	}
+	else
+	{
+		//遍历选择的点云文件
+		for (int i = 0; i != selected_item_count; i++)
+		{
+			//TODO 根据选择点云名字直接变换点大小
+			viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, p, "cloud" + itemList[i]->text(0).toStdString());
+		}
+		//输出
+		consoleLog("Change cloud size", "Point clouds selected", "Size: " + QString::number(p), "");
+	}
+
+	ui.screen->update();
 }
 
 void PointCloudTools::colorBtnPressed()
@@ -478,7 +528,106 @@ void PointCloudTools::colorBtnPressed()
 
 void PointCloudTools::pColormap()
 {
+	//点云根据距离染色
+	int minNum = ui.colorMapLeft->text().toFloat();
+	int maxNum = ui.colorMapRight->text().toFloat();
+	int axis = 0;		//默认z
+	if (maxNum < minNum)
+	{
+		QMessageBox::warning(this, "Warning", "The colormap properties have problems.");
+		return;
+	}
 
+	if (ui.colormap_x->isChecked())
+		axis = 1;
+	else if (ui.colormap_y->isChecked())
+		axis = 2;
+	else
+		axis = 0;
+
+	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
+	int selected_item_count = ui.dataTree->selectedItems().size();
+
+	uint8_t r = 0;
+	uint8_t g = 0;
+	uint8_t b = 0;
+	float value;
+
+	// 如果未选中任何点云，则对视图窗口中的所有点云进行着色
+	if (selected_item_count == 0){
+		for (int i = 0; i != mycloud_vec.size(); i++){
+			for (int j = 0; j != mycloud_vec[i]->cloud->points.size(); j++){
+				switch (axis)
+				{
+				case 1: value = mycloud_vec[i]->cloud->points[j].x; break;
+				case 2: value = mycloud_vec[i]->cloud->points[j].y; break;
+				default:value = mycloud_vec[i]->cloud->points[j].z;
+					break;
+				}
+				gray2rainbow(value, minNum, maxNum, &r, &g, &b);
+				mycloud_vec[i]->cloud->points[j].r = r;
+				mycloud_vec[i]->cloud->points[j].g = g;
+				mycloud_vec[i]->cloud->points[j].b = b;
+			}
+		}
+
+		// 输出窗口
+		consoleLog("Colormap", "All point clous", "", "");
+
+	}
+	else
+	{
+		for (int i = 0; i != selected_item_count; i++){
+			QString name = itemList[i]->text(0);
+			//遍历mycloud_vec
+			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+			{
+				//找到同名点云数据
+				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
+				{
+					for (int j = 0; j != (*it)->cloud->size(); j++)
+					{
+						switch (axis)
+						{
+						case 1: value = (*it)->cloud->points[j].x; break;
+						case 2: value = (*it)->cloud->points[j].y; break;
+						default: value = (*it)->cloud->points[j].z; break;
+							break;
+						}
+						gray2rainbow(value, minNum, maxNum, &r, &g, &b);
+						(*it)->cloud->points[j].r = r;
+						(*it)->cloud->points[j].g = g;
+						(*it)->cloud->points[j].b = b;
+					}
+
+					break;
+				}
+			}
+		}
+
+		// 输出窗口
+		consoleLog("Colormap", "Point clouds selected", "", "");
+	}
+
+	showPointcloudAdd();
+}
+
+void PointCloudTools::cooCbxChecked(int value)
+{
+	switch (value)
+	{
+	case 0:
+		viewer->removeCoordinateSystem();  //移除坐标系
+		// 输出窗口
+		consoleLog("Remove coordinate system", "Remove", "", "");
+		break;
+	case 2:
+		viewer->addCoordinateSystem();  //添加坐标系
+		// 输出窗口
+		consoleLog("Add coordinate system", "Add", "", "");
+		break;
+	}
+	ui.screen->update();
 }
 
 void PointCloudTools::itemSelected(QTreeWidgetItem*, int)
@@ -592,6 +741,9 @@ void PointCloudTools::showItem()
 					QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 					ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
 
+					//标题修改
+					ui.imageDock->setWindowTitle(QString::fromLocal8Bit(mypicture->filename.c_str()));
+
 					//伪彩色图显示
 					if (!(*it)->colorMat.empty())
 					{
@@ -677,6 +829,15 @@ void PointCloudTools::deleteItem()
 
 					consoleLog("Delete picture", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 					
+					//遍历mypicture_vec，对应的转换标志变false
+					for (int j = 0; j != mypicture_vec.size(); j++)
+					{
+						if (mypicture_vec[j]->filename+".pcd" == (*it)->filename)
+						{
+							mypicture_vec[j]->isConvert = false;
+							break;
+						}
+					}
 					mycloud = NULL;
 
 					//内存清空
@@ -697,22 +858,46 @@ void PointCloudTools::deleteItem()
 
 void PointCloudTools::popMenuInConsole(const QPoint&)
 {
+	QAction clearConsoleAction("Clear console", this);
+	QAction enableConsoleAction("Enable console", this);
+	QAction disableConsoleAction("Disable console", this);
 
+	connect(&clearConsoleAction, &QAction::triggered, this, &PointCloudTools::clearConsole);
+	connect(&enableConsoleAction, &QAction::triggered, this, &PointCloudTools::enableConsole);
+	connect(&disableConsoleAction, &QAction::triggered, this, &PointCloudTools::disableConsole);
+
+	QPoint pos;
+	QMenu menu(ui.dataTree);
+	menu.addAction(&clearConsoleAction);
+	menu.addAction(&enableConsoleAction);
+	menu.addAction(&disableConsoleAction);
+
+	if (enable_console == true){
+		menu.actions()[1]->setVisible(false);
+		menu.actions()[2]->setVisible(true);
+	}
+	else{
+		menu.actions()[1]->setVisible(true);
+		menu.actions()[2]->setVisible(false);
+	}
+
+	menu.exec(QCursor::pos()); //在当前鼠标位置显示
 }
 
 void PointCloudTools::clearConsole()
 {
-
+	ui.consoleTable->clearContents();
+	ui.consoleTable->setRowCount(0);
 }
 
 void PointCloudTools::enableConsole()
 {
-
+	enable_console = true;
 }
 
 void PointCloudTools::disableConsole()
 {
-
+	enable_console = false;
 }
 
 void PointCloudTools::initial()
@@ -831,7 +1016,78 @@ void PointCloudTools::consoleLog(QString operation, QString object, QString deta
 
 void PointCloudTools::gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b)
 {
+	float grayValue;
+	float tempvalue;
 
+	float par = (float)255 / (max - min);
+
+	grayValue = value;
+	if (grayValue < min)        //可能会出现找到的min并不是真正的最小值
+	{
+		*b = 0;
+		*g = 0;
+		*r = 0;
+		return;
+	}
+	else if (grayValue > max)                     //也可能会出现找到的max并不是真正的最大值
+	{
+		*b = 0;
+		*g = 0;
+		*r = 0;
+		return;
+	}
+	else
+	{
+		tempvalue = (float)(grayValue - min);
+	}
+	tempvalue = tempvalue*par;          //为了把深度值规划到(0~255之间)
+	/*
+	* color    R   G   B   gray
+	* red      255 0   0   255
+	* orange   255 127 0   204
+	* yellow   255 255 0   153
+	* green    0   255 0   102
+	* cyan     0   255 255 51
+	* blue     0   0   255 0
+	*/
+
+	tempvalue = 256 - tempvalue;
+
+
+	if (tempvalue <= 51)
+	{
+		*b = 255;
+		*g = (unsigned char)(tempvalue * 5);
+		*r = 0;
+	}
+	else if (tempvalue <= 102)
+	{
+		tempvalue -= 51;
+		*b = 255 - (unsigned char)(tempvalue * 5);
+		*g = 255;
+		*r = 0;
+	}
+	else if (tempvalue <= 153)
+	{
+		tempvalue -= 102;
+		*b = 0;
+		*g = 255;
+		*r = (unsigned char)(tempvalue * 5);
+	}
+	else if (tempvalue <= 204)
+	{
+		tempvalue -= 153;
+		*b = 0;
+		*g = 255 - static_cast<unsigned char>(tempvalue * 128.0 / 51 + 0.5);
+		*r = 255;
+	}
+	else if (tempvalue < 255)
+	{
+		tempvalue -= 204;
+		*b = 0;
+		*g = 127 - static_cast<unsigned char>(tempvalue * 127.0 / 51 + 0.5);
+		*r = 255;
+	}
 }
 
 void PointCloudTools::pp_callback(const pcl::visualization::PointPickingEvent& event, void *args)
@@ -862,8 +1118,8 @@ void PointCloudTools::showPointcloudAdd()
 	{
 		if (mycloud_vec[i]->visible)
 		{
-			viewer->addPointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
-			viewer->updatePointCloud(mycloud_vec[i]->cloud, "cloud" + QString::number(i).toStdString());
+			viewer->addPointCloud(mycloud_vec[i]->cloud, "cloud" + mycloud_vec[i]->filename);
+			viewer->updatePointCloud(mycloud_vec[i]->cloud, "cloud" + mycloud_vec[i]->filename);
 		}
 	}
 	viewer->resetCamera();

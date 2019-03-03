@@ -126,6 +126,7 @@ public slots:
 	void colorBtnPressed();
 	// colorMap slot
 	void pColormap();
+	void cooCbxChecked(int value);
 
 	/***** Slots of dataTree(QTreeWidget) widget *****/
 	// Item in dataTree is left-clicked

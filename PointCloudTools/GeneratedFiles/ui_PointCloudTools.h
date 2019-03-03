@@ -142,7 +142,6 @@ public:
     QLineEdit *colorMapRight;
     QPushButton *colorBtn;
     QCheckBox *cooCbx;
-    QCheckBox *bgcCbx;
 
     void setupUi(QMainWindow *PointCloudToolsClass)
     {
@@ -529,7 +528,7 @@ public:
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), propertyDock);
         consoleDock = new QDockWidget(PointCloudToolsClass);
         consoleDock->setObjectName(QStringLiteral("consoleDock"));
-        consoleDock->setMinimumSize(QSize(200, 100));
+        consoleDock->setMinimumSize(QSize(200, 111));
         consoleDock->setMaximumSize(QSize(524287, 220));
         dockWidgetContents_7 = new QWidget();
         dockWidgetContents_7->setObjectName(QStringLiteral("dockWidgetContents_7"));
@@ -672,10 +671,6 @@ public:
         cooCbx->setObjectName(QStringLiteral("cooCbx"));
         cooCbx->setGeometry(QRect(10, 140, 211, 23));
         cooCbx->setFont(font1);
-        bgcCbx = new QCheckBox(dockWidgetContents);
-        bgcCbx->setObjectName(QStringLiteral("bgcCbx"));
-        bgcCbx->setGeometry(QRect(10, 160, 201, 23));
-        bgcCbx->setFont(font1);
         RGBDock->setWidget(dockWidgetContents);
         PointCloudToolsClass->addDockWidget(static_cast<Qt::DockWidgetArea>(1), RGBDock);
 #ifndef QT_NO_SHORTCUT
@@ -707,8 +702,7 @@ public:
         QWidget::setTabOrder(colorMapLeft, colorMapRight);
         QWidget::setTabOrder(colorMapRight, colorBtn);
         QWidget::setTabOrder(colorBtn, cooCbx);
-        QWidget::setTabOrder(cooCbx, bgcCbx);
-        QWidget::setTabOrder(bgcCbx, consoleTable);
+        QWidget::setTabOrder(cooCbx, consoleTable);
         QWidget::setTabOrder(consoleTable, dataTree);
         QWidget::setTabOrder(dataTree, convertBtn);
 
@@ -898,7 +892,6 @@ public:
         colorMapRight->setText(QApplication::translate("PointCloudToolsClass", "30000", 0));
         colorBtn->setText(QApplication::translate("PointCloudToolsClass", "Color", 0));
         cooCbx->setText(QApplication::translate("PointCloudToolsClass", "Coordinate", 0));
-        bgcCbx->setText(QApplication::translate("PointCloudToolsClass", "Backgronud:Dark/Light", 0));
     } // retranslateUi
 
 };
