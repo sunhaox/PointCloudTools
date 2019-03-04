@@ -872,7 +872,7 @@
     <string>Save</string>
    </property>
    <property name="statusTip">
-    <string>save the file</string>
+    <string>save point cloud file</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -939,6 +939,9 @@
    <property name="text">
     <string>Point cloud color</string>
    </property>
+   <property name="statusTip">
+    <string>Change point cloud color</string>
+   </property>
   </action>
   <action name="bgcolorAction">
    <property name="icon">
@@ -947,6 +950,9 @@
    </property>
    <property name="text">
     <string>Background color</string>
+   </property>
+   <property name="statusTip">
+    <string>Change background color</string>
    </property>
   </action>
   <action name="mainviewAction">
@@ -1028,6 +1034,9 @@
    <property name="text">
     <string>Clear</string>
    </property>
+   <property name="statusTip">
+    <string>Clear all opened files</string>
+   </property>
   </action>
   <action name="sphereAction">
    <property name="icon">
@@ -1035,7 +1044,10 @@
      <normaloff>:/Resources/images/sphere.png</normaloff>:/Resources/images/sphere.png</iconset>
    </property>
    <property name="text">
-    <string>Sphere</string>
+    <string>Generate Sphere</string>
+   </property>
+   <property name="statusTip">
+    <string>generate a sphere point cloud</string>
    </property>
   </action>
   <action name="cylinderAction">
@@ -1044,7 +1056,10 @@
      <normaloff>:/Resources/images/sylinder.png</normaloff>:/Resources/images/sylinder.png</iconset>
    </property>
    <property name="text">
-    <string>Cylinder</string>
+    <string>Generate Cylinder</string>
+   </property>
+   <property name="statusTip">
+    <string>generate a cylinder point cloud</string>
    </property>
   </action>
   <action name="meshsurfaceAction">
@@ -1106,7 +1121,10 @@
     <string>Filter</string>
    </property>
    <property name="toolTip">
-    <string>Filter pointcloud</string>
+    <string>Filter</string>
+   </property>
+   <property name="statusTip">
+    <string>Statistical outlier removal</string>
    </property>
   </action>
   <action name="voxelAction">
@@ -1118,7 +1136,10 @@
     <string>Voxel</string>
    </property>
    <property name="toolTip">
-    <string>VoxelGrid filter</string>
+    <string>VoxelGrid</string>
+   </property>
+   <property name="statusTip">
+    <string>Voxel grid filter</string>
    </property>
   </action>
  </widget>

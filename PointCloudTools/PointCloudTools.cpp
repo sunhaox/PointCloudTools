@@ -94,6 +94,8 @@ void PointCloudTools::open()
 		{
 			mypicture = new MyPicture();
 
+			//TODO 文件名重复
+
 			// 图片打开
 			cv::Mat img = cv::imread(file_name, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH);
 			mypicture->fullname = file_name;
@@ -768,20 +770,42 @@ int PointCloudTools::convertFilter()
 	sor.setStddevMulThresh(1.0);		//设置标准差放大系数
 	sor.filter(*cloud_filtered);
 
-	//检查文件数
-	//TODO 检查重名
+	//检查重名
+	string basename = "filted";
+	string comparename = "";
+	int filenum = 0;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//命名规则：filted - x.pcd
+		if (filenum == 0)
+			comparename = basename + ".pcd";
+		else
+			comparename = basename + " - " + QString::number(filenum).toStdString() + ".pcd";
 
+		if ((*it)->filename == comparename)
+		{
+			it = mycloud_vec.begin();
+			filenum++;
+		}
+	}
 	//全隐藏
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
 		(*it)->visible = false;
 	}
+	//遍历文件树，更新icon
+	QTreeWidgetItemIterator it(ui.dataTree);
+	while (*it) {
+		QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
+		(*it)->setTextColor(0, item_color);
+		++it;
+	}
 	//点云设置
 	mycloud = new MyCloud();
 	mycloud->dirname = QDir::currentPath().toStdString();
-	mycloud->filename = "filter.pcd";
+	mycloud->filename = comparename;
 	mycloud->filetype = "pcd";
-	mycloud->fullname = QDir::currentPath().toStdString() + "filter.pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + comparename;
 	mycloud->cloud.reset(new PointCloudT);
 	pcl::copyPointCloud(*cloud_filtered, *(mycloud->cloud));
 	mycloud_vec.push_back(mycloud);
@@ -934,7 +958,7 @@ void PointCloudTools::convertBtnPressed()
 	{
 		for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 		{
-			//TODO 点云文件重名处理
+			//点云文件重名处理
 			if ((*it)->fullname == mypicture->fullname + ".pcd")
 			{
 				(*it)->cloud = pointcloud;
@@ -1046,7 +1070,7 @@ void PointCloudTools::pSliderReleased()
 		//遍历选择的点云文件
 		for (int i = 0; i != selected_item_count; i++)
 		{
-			//TODO 根据选择点云名字直接变换点大小
+			//根据选择点云名字直接变换点大小
 			viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, p, "cloud" + itemList[i]->text(0).toStdString());
 		}
 		//输出
