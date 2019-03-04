@@ -233,12 +233,13 @@ void PointCloudTools::clear()
 void PointCloudTools::save()
 {
 	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
-	std::string file_name = save_filename.toStdString();
-	std::string subname = getFileName(file_name);
 
 	//文件名为空直接返回
 	if (save_filename.isEmpty())
 		return;
+
+	std::string file_name = save_filename.toStdString();
+	std::string subname = getFileName(file_name);
 
 	//保存操作
 	int status = saveFile(false, save_filename);
@@ -252,12 +253,13 @@ void PointCloudTools::save()
 void PointCloudTools::saveBinary()
 {
 	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
-	std::string file_name = save_filename.toStdString();
-	std::string subname = getFileName(file_name);
 
 	//文件名为空直接返回
 	if (save_filename.isEmpty())
 		return;
+
+	std::string file_name = save_filename.toStdString();
+	std::string subname = getFileName(file_name);
 
 	//保存操作
 	int status = saveFile(true, save_filename);
@@ -296,16 +298,20 @@ int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
 	int k = 0;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		for (int i = 0; i != (*it)->cloud->size(); i++)
+		if ((*it)->visible)
 		{
-			multi_cloud->points[k].x = (*it)->cloud->points[i].x;
-			multi_cloud->points[k].y = (*it)->cloud->points[i].y;
-			multi_cloud->points[k].z = (*it)->cloud->points[i].z;
-			multi_cloud->points[k].r = (*it)->cloud->points[i].r;
-			multi_cloud->points[k].g = (*it)->cloud->points[i].g;
-			multi_cloud->points[k].b = (*it)->cloud->points[i].b;
-			k++;
+			for (int i = 0; i != (*it)->cloud->size(); i++)
+			{
+				multi_cloud->points[k].x = (*it)->cloud->points[i].x;
+				multi_cloud->points[k].y = (*it)->cloud->points[i].y;
+				multi_cloud->points[k].z = (*it)->cloud->points[i].z;
+				multi_cloud->points[k].r = (*it)->cloud->points[i].r;
+				multi_cloud->points[k].g = (*it)->cloud->points[i].g;
+				multi_cloud->points[k].b = (*it)->cloud->points[i].b;
+				k++;
+			}
 		}
+		
 	}
 	//保存
 	int status = -1;
@@ -825,6 +831,89 @@ int PointCloudTools::convertFilter()
 
 int PointCloudTools::convertVoxel()
 {
+	pcl::PointXYZ point;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//遍历所有显示的点
+		if ((*it)->visible)
+		{
+			for (int i = 0; i < (*it)->cloud->size(); i++)
+			{
+				point.x = (*it)->cloud->points[i].x;
+				point.y = (*it)->cloud->points[i].y;
+				point.z = (*it)->cloud->points[i].z;
+				cloud_xyz->push_back(point);
+			}
+		}
+	}
+
+	//检查点云数据
+	if (cloud_xyz->size() == 0)
+	{
+		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		return -1;
+	}
+
+	ui.statusBar->showMessage("Down sampling");
+	//降采样
+	pcl::VoxelGrid<pcl::PointXYZ> sor;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
+	sor.setInputCloud(cloud_xyz);					//TODO 参数选择
+	sor.setLeafSize(1, 1, 1);						//设置过滤器叶大小
+	sor.filter(*cloud_filtered);
+
+	//检查重名
+	string basename = "voxel";
+	string comparename = "";
+	int filenum = 0;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//命名规则：filted - x.pcd
+		if (filenum == 0)
+			comparename = basename + ".pcd";
+		else
+			comparename = basename + " - " + QString::number(filenum).toStdString() + ".pcd";
+
+		if ((*it)->filename == comparename)
+		{
+			it = mycloud_vec.begin();
+			filenum++;
+		}
+	}
+	//全隐藏
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		(*it)->visible = false;
+	}
+	//遍历文件树，更新icon
+	QTreeWidgetItemIterator it(ui.dataTree);
+	while (*it) {
+		QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
+		(*it)->setTextColor(0, item_color);
+		++it;
+	}
+	//点云设置
+	mycloud = new MyCloud();
+	mycloud->dirname = QDir::currentPath().toStdString();
+	mycloud->filename = comparename;
+	mycloud->filetype = "pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + comparename;
+	mycloud->cloud.reset(new PointCloudT);
+	pcl::copyPointCloud(*cloud_filtered, *(mycloud->cloud));
+	mycloud_vec.push_back(mycloud);
+
+	//设置资源管理
+	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
+	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+	ui.dataTree->addTopLevelItem(cloudName);
+
+	showPointcloudAdd();
+
+	//状态输出
+	ui.statusBar->showMessage("");
+	consoleLog("Voxel down shampled", "", "", "");
+
 	return 0;
 }
 

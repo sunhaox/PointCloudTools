@@ -790,7 +790,7 @@ public:
         openAction->setShortcut(QApplication::translate("PointCloudToolsClass", "Ctrl+O", 0));
         saveAction->setText(QApplication::translate("PointCloudToolsClass", "Save", 0));
 #ifndef QT_NO_STATUSTIP
-        saveAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "save the file", 0));
+        saveAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "save point cloud file", 0));
 #endif // QT_NO_STATUSTIP
         saveAction->setShortcut(QApplication::translate("PointCloudToolsClass", "Ctrl+S", 0));
         saveasAction->setText(QApplication::translate("PointCloudToolsClass", "Save as...", 0));
@@ -809,7 +809,13 @@ public:
         exitAction->setText(QApplication::translate("PointCloudToolsClass", "Exit", 0));
         exitAction->setShortcut(QApplication::translate("PointCloudToolsClass", "Ctrl+Q", 0));
         pointcolorAction->setText(QApplication::translate("PointCloudToolsClass", "Point cloud color", 0));
+#ifndef QT_NO_STATUSTIP
+        pointcolorAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "Change point cloud color", 0));
+#endif // QT_NO_STATUSTIP
         bgcolorAction->setText(QApplication::translate("PointCloudToolsClass", "Background color", 0));
+#ifndef QT_NO_STATUSTIP
+        bgcolorAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "Change background color", 0));
+#endif // QT_NO_STATUSTIP
         mainviewAction->setText(QApplication::translate("PointCloudToolsClass", "Main view", 0));
         leftviewAction->setText(QApplication::translate("PointCloudToolsClass", "Left view", 0));
         topviewAction->setText(QApplication::translate("PointCloudToolsClass", "Top view", 0));
@@ -818,8 +824,17 @@ public:
         consoleAction->setText(QApplication::translate("PointCloudToolsClass", "Console", 0));
         RGBAction->setText(QApplication::translate("PointCloudToolsClass", "RGB Manager", 0));
         clearAction->setText(QApplication::translate("PointCloudToolsClass", "Clear", 0));
-        sphereAction->setText(QApplication::translate("PointCloudToolsClass", "Sphere", 0));
-        cylinderAction->setText(QApplication::translate("PointCloudToolsClass", "Cylinder", 0));
+#ifndef QT_NO_STATUSTIP
+        clearAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "Clear all opened files", 0));
+#endif // QT_NO_STATUSTIP
+        sphereAction->setText(QApplication::translate("PointCloudToolsClass", "Generate Sphere", 0));
+#ifndef QT_NO_STATUSTIP
+        sphereAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "generate a sphere point cloud", 0));
+#endif // QT_NO_STATUSTIP
+        cylinderAction->setText(QApplication::translate("PointCloudToolsClass", "Generate Cylinder", 0));
+#ifndef QT_NO_STATUSTIP
+        cylinderAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "generate a cylinder point cloud", 0));
+#endif // QT_NO_STATUSTIP
         meshsurfaceAction->setText(QApplication::translate("PointCloudToolsClass", "Surface", 0));
         wireframeAction->setText(QApplication::translate("PointCloudToolsClass", "Wireframe", 0));
         windowsThemeAction->setText(QApplication::translate("PointCloudToolsClass", "Windows", 0));
@@ -832,12 +847,18 @@ public:
 #endif // QT_NO_STATUSTIP
         filterAction->setText(QApplication::translate("PointCloudToolsClass", "Filter", 0));
 #ifndef QT_NO_TOOLTIP
-        filterAction->setToolTip(QApplication::translate("PointCloudToolsClass", "Filter pointcloud", 0));
+        filterAction->setToolTip(QApplication::translate("PointCloudToolsClass", "Filter", 0));
 #endif // QT_NO_TOOLTIP
+#ifndef QT_NO_STATUSTIP
+        filterAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "Statistical outlier removal", 0));
+#endif // QT_NO_STATUSTIP
         voxelAction->setText(QApplication::translate("PointCloudToolsClass", "Voxel", 0));
 #ifndef QT_NO_TOOLTIP
-        voxelAction->setToolTip(QApplication::translate("PointCloudToolsClass", "VoxelGrid filter", 0));
+        voxelAction->setToolTip(QApplication::translate("PointCloudToolsClass", "VoxelGrid", 0));
 #endif // QT_NO_TOOLTIP
+#ifndef QT_NO_STATUSTIP
+        voxelAction->setStatusTip(QApplication::translate("PointCloudToolsClass", "Voxel grid filter", 0));
+#endif // QT_NO_STATUSTIP
         menuFile->setTitle(QApplication::translate("PointCloudToolsClass", "File", 0));
         menuGenerate->setTitle(QApplication::translate("PointCloudToolsClass", "Generate", 0));
         menuBasic_shapes->setTitle(QApplication::translate("PointCloudToolsClass", "Basic shapes", 0));
