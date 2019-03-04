@@ -16,6 +16,8 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <pcl/features/normal_3d.h>
 #include <pcl/search/kdtree.h>
 #include <pcl/surface/gp3.h>
+#include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/voxel_grid.h>
 
 #include <QtWidgets/QMainWindow>
 #include <vector>
@@ -93,6 +95,8 @@ private:
 	// Process menu slots 
 	int convertSurface();  //法线估计、曲面重建、网格面片显示
 	int convertWireframe(); //法线估计、曲面重建、网格线框显示
+	int convertFilter();	//基于统计滤波
+	int convertVoxel();		//体素降采样
 	// Option menu slots
 	void windowsTheme();
 	void darculaTheme();

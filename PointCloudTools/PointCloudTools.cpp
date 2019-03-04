@@ -30,6 +30,8 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 	// Process (connect)
 	QObject::connect(ui.meshsurfaceAction, &QAction::triggered, this, &PointCloudTools::convertSurface);
 	QObject::connect(ui.wireframeAction, &QAction::triggered, this, &PointCloudTools::convertWireframe);
+	QObject::connect(ui.filterAction, &QAction::triggered, this, &PointCloudTools::convertFilter);
+	QObject::connect(ui.voxelAction, &QAction::triggered, this, &PointCloudTools::convertVoxel);
 	// Option (connect)
 	QObject::connect(ui.windowsThemeAction, &QAction::triggered, this, &PointCloudTools::windowsTheme);
 	QObject::connect(ui.darculaThemeAction, &QAction::triggered, this, &PointCloudTools::darculaTheme);
@@ -572,13 +574,236 @@ void PointCloudTools::createCylinder()
 
 int PointCloudTools::convertSurface()
 {
+	pcl::PointXYZ point;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//遍历所有显示的点
+		if ((*it)->visible)
+		{
+			for (int i = 0; i < (*it)->cloud->size(); i++)
+			{
+				point.x = (*it)->cloud->points[i].x;
+				point.y = (*it)->cloud->points[i].y;
+				point.z = (*it)->cloud->points[i].z;
+				cloud_xyz->push_back(point);
+			}
+		}
+	}
+	//检查点云数据
+	if (cloud_xyz->size() == 0)
+	{
+		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		return -1;
+	}
+
+	//法向估计
+	ui.statusBar->showMessage("Convert surface: Normal estimation.");
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//构建法线估计对象n
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//构建法向数据指针
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//创建kdtree用于法向计算
+	tree->setInputCloud(cloud_xyz);			//为kdtree输入点云
+	n.setInputCloud(cloud_xyz);				//法向估计输入点云
+	n.setSearchMethod(tree);				//设置法向估计搜索方法	
+	n.setKSearch(20);						//设置k邻近搜索点数			//TODO 改可变参数
+	n.compute(*normals);					//法向估计
+
+	QMessageBox::information(this, "information", "Normal estimation finished");
+
+	//点云数据与法向数据拼接
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);		//创建同时包含点和法线的数据结构的指针
+	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);										//将已获得的点数据和法向数据拼接
+	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);			//创建另一个kdtree用于重建
+	tree2->setInputCloud(cloud_with_normals);																//为kdtree输入点云数据，该点云数据类型为点和法向
+
+	//曲面重构
+	ui.statusBar->showMessage("Convert surface: Greedy projection triangulation");
+	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;		//创建贪婪三角形投影重建对象
+	pcl::PolygonMesh triangles;										//创建多边形网格对象，用来存储重建结果
+	//设置参数
+	//TODO 参数化
+	gp3.setSearchRadius(25);				//设置连接点之间最大距离，用于确定k近邻的球半径	
+	gp3.setMu(2.5);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
+	gp3.setMaximumNearestNeighbors(100);	//设置搜索的最近邻点的最大数量
+	gp3.setMaximumSurfaceAngle(M_PI / 2);	//45度 最大平面角
+	gp3.setMinimumAngle(M_PI / 18);			//10度 每个三角的最大角度？
+	gp3.setMaximumAngle(2 * M_PI / 3);		//120度
+	gp3.setNormalConsistency(false);		//若法向量一致，设为true
+	//设置点云数据和搜索方式
+	gp3.setInputCloud(cloud_with_normals);
+	gp3.setSearchMethod(tree2);
+	// 开始重建
+	gp3.reconstruct(triangles);
+	QMessageBox::information(this, "informaiton", "Reconstruction finished");
+
+	//重建完成，显示
+	ui.statusBar->showMessage("");
+	viewer->addPolygonMesh(triangles, "my"); //设置要显示的网格对象
+	//设置网格模型显示模式
+	viewer->setRepresentationToSurfaceForAllActors();		//网格模型以面片形式显示		//TODO 参数选择
+	//viewer->setRepresentationToPointsForAllActors();		//网格模型以点形式显示
+	//viewer->setRepresentationToWireframeForAllActors();	//网格模型以线框图模式显示
+
+	// 输出窗口
+	consoleLog("Convert surface", "", "", "");
+
+	viewer->removeAllShapes();
+
+
 	return 0;
 }
 
 int PointCloudTools::convertWireframe()
 {
+	pcl::PointXYZ point;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//遍历所有显示的点
+		if ((*it)->visible)
+		{
+			for (int i = 0; i < (*it)->cloud->size(); i++)
+			{
+				point.x = (*it)->cloud->points[i].x;
+				point.y = (*it)->cloud->points[i].y;
+				point.z = (*it)->cloud->points[i].z;
+				cloud_xyz->push_back(point);
+			}
+		}
+	}
+
+	//检查点云数据
+	if (cloud_xyz->size() == 0)
+	{
+		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		return -1;
+	}
+
+	//法向估计
+	ui.statusBar->showMessage("Convert wireframe: Normal estimation.");
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//创建法线估计对象 n
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//创建法向数据指针 normals
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//创建 kdtree 用于法向计算时近邻搜索
+	tree->setInputCloud(cloud_xyz); //为 kdtree 输入点云
+	n.setInputCloud(cloud_xyz); //为法向估计对象输入点云
+	n.setSearchMethod(tree);  //设置法向估计时所采取的搜索方式为kdtree
+	n.setKSearch(20); //设置法向估计时，k近邻搜索的点数
+	n.compute(*normals); //进行法向估计
+
+	QMessageBox::information(this, "information", "Normal estimation finished");
+
+	// 点云数据与法向数据拼接 
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);	//创建同时包含点和法线的数据结构的指针
+	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);									//将已获得的点数据和法向数据拼接
+	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);		//创建另一个kdtree用于重建
+	tree2->setInputCloud(cloud_with_normals);				//为kdtree输入点云数据，该点云数据类型为点和法向
+
+
+
+	// 曲面重建模块
+	ui.statusBar->showMessage("Convert wireframe: Greedy projection triangulation.");
+	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;	//创建贪婪三角形投影重建对象
+	pcl::PolygonMesh triangles;									//创建多边形网格对象，用来存储重建结果
+	//设置参数
+	gp3.setSearchRadius(25);				//设置连接点之间最大距离，用于确定k近邻的球半径
+	gp3.setMu(2.5);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
+	gp3.setMaximumNearestNeighbors(100);	//设置搜索的最近邻点的最大数量
+	gp3.setMaximumSurfaceAngle(M_PI / 2);	//45度 最大平面角
+	gp3.setMinimumAngle(M_PI / 18);			//10度 每个三角的最大角度？
+	gp3.setMaximumAngle(2 * M_PI / 3);		//120度
+	gp3.setNormalConsistency(false);		//若法向量一致，设为true
+	gp3.setInputCloud(cloud_with_normals);	//设置点云数据
+	gp3.setSearchMethod(tree2);				//设置点云搜索方式
+	gp3.reconstruct(triangles);				// 开始重建
+	QMessageBox::information(this, "informaiton", "Reconstruction finished");
+
+	//构建完成显示
+	ui.statusBar->showMessage("");
+	viewer->addPolygonMesh(triangles, "my"); //设置要显示的网格对象
+	//设置网格模型显示模式
+	//viewer->setRepresentationToSurfaceForAllActors(); //网格模型以面片形式显示
+	//viewer->setRepresentationToPointsForAllActors();	//网格模型以点形式显示
+	viewer->setRepresentationToWireframeForAllActors(); //网格模型以线框图模式显示
+
+	// 输出窗口
+	consoleLog("Convert surface", "", "", "");
+
+	viewer->removeAllShapes();
+
 	return 0;
 }
+
+int PointCloudTools::convertFilter()
+{
+	pcl::PointXYZ point;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		//遍历所有显示的点
+		if ((*it)->visible)
+		{
+			for (int i = 0; i < (*it)->cloud->size(); i++)
+			{
+				point.x = (*it)->cloud->points[i].x;
+				point.y = (*it)->cloud->points[i].y;
+				point.z = (*it)->cloud->points[i].z;
+				cloud_xyz->push_back(point);
+			}
+		}
+	}
+
+	//检查点云数据
+	if (cloud_xyz->size() == 0)
+	{
+		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		return -1;
+	}
+
+	ui.statusBar->showMessage("Filting");
+	//滤波
+	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
+	sor.setInputCloud(cloud_xyz);
+	sor.setMeanK(50);					//设置邻居数				//TODO 参数选择
+	sor.setStddevMulThresh(1.0);		//设置标准差放大系数
+	sor.filter(*cloud_filtered);
+
+	//检查文件数
+	//TODO 检查重名
+
+	//全隐藏
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		(*it)->visible = false;
+	}
+	//点云设置
+	mycloud = new MyCloud();
+	mycloud->dirname = QDir::currentPath().toStdString();
+	mycloud->filename = "filter.pcd";
+	mycloud->filetype = "pcd";
+	mycloud->fullname = QDir::currentPath().toStdString() + "filter.pcd";
+	mycloud->cloud.reset(new PointCloudT);
+	pcl::copyPointCloud(*cloud_filtered, *(mycloud->cloud));
+	mycloud_vec.push_back(mycloud);
+
+	//设置资源管理
+	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
+	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
+	ui.dataTree->addTopLevelItem(cloudName);
+
+	showPointcloudAdd();
+
+	//状态输出
+	ui.statusBar->showMessage("");
+	consoleLog("Filter", "", "", "");
+	return 0;
+}
+
+int PointCloudTools::convertVoxel()
+{
+	return 0;
+}
+
 
 void PointCloudTools::windowsTheme()
 {
