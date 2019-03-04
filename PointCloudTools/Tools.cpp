@@ -33,6 +33,15 @@ std::string getFileType(std::string file_name)
 	return subname;
 }
 
+//提取路径中文件夹路径
+std::string getFileDir(std::string file_name)
+{
+	std::string subname = getFileName(file_name);
+	std::string dirname = file_name.substr(0, file_name.size() - subname.size());
+
+	return dirname;
+}
+
 //计时开始
 void timeStart()
 {

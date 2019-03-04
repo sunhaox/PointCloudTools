@@ -82,9 +82,10 @@ void PointCloudTools::open()
 		std::string file_name = string(filename.toLocal8Bit());
 		std::string subname = getFileName(file_name);
 		std::string filetype = getFileType(file_name);
+		std::string dirname = getFileDir(file_name);
 
 		//更新状态栏
-		ui.statusBar->showMessage(QString::fromUtf8(subname.c_str()) + " : " + QString::number(i) + "/" + QString::number(filenames.size()) + " image open");
+		ui.statusBar->showMessage(QString::fromUtf8(subname.c_str()) + " : " + QString::number(i) + "/" + QString::number(filenames.size()) + " image or pointcloud open");
 
 		int status = -1;
 		if (filename.endsWith(".png", Qt::CaseInsensitive) || filename.endsWith(".bmp",Qt::CaseInsensitive))
@@ -96,6 +97,7 @@ void PointCloudTools::open()
 			mypicture->fullname = file_name;
 			mypicture->filename = subname;
 			mypicture->filetype = filetype;
+			mypicture->dirname = dirname;
 			mypicture->depthMat = img.clone();
 			mypicture_vec.push_back(mypicture);
 
@@ -121,7 +123,7 @@ void PointCloudTools::open()
 
 			//深度图像显示
 			cv::Mat zip;
-			img.convertTo(zip, CV_8U, 1.0 / 256, 0);
+			img.convertTo(zip, CV_8U, -1.0 / 256, 0);
 			cv::resize(img, img, cv::Size(320, 240));
 			QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 			ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
@@ -150,6 +152,7 @@ void PointCloudTools::open()
 			mycloud->fullname = file_name;
 			mycloud->filename = subname;
 			mycloud->filetype = filetype;
+			mycloud->dirname = dirname;
 			mycloud->cloud.reset(new PointCloudT);
 
 			//点云打开
@@ -225,12 +228,120 @@ void PointCloudTools::clear()
 
 void PointCloudTools::save()
 {
+	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
+	std::string file_name = save_filename.toStdString();
+	std::string subname = getFileName(file_name);
 
+	//文件名为空直接返回
+	if (save_filename.isEmpty())
+		return;
+
+	//保存操作
+	int status = saveFile(false, save_filename);
+	if (status != 0)
+		return;
+
+	//输出窗口
+	consoleLog("Save", QString::fromLocal8Bit(subname.c_str()), save_filename, "PointCloud save");
 }
 
 void PointCloudTools::saveBinary()
 {
+	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
+	std::string file_name = save_filename.toStdString();
+	std::string subname = getFileName(file_name);
 
+	//文件名为空直接返回
+	if (save_filename.isEmpty())
+		return;
+
+	//保存操作
+	int status = saveFile(true, save_filename);
+	if (status != 0)
+		return;
+
+	//输出窗口
+	consoleLog("Save Binary", QString::fromLocal8Bit(subname.c_str()), save_filename, "PointCloud save");
+}
+
+int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
+{
+	std::string file_name = save_filename.toStdString();
+	std::string subname = getFileName(file_name);
+
+	PointCloudT::Ptr multi_cloud;
+	multi_cloud.reset(new PointCloudT);
+	multi_cloud->height = 1;
+	int sum = 0;
+	for (auto c : mycloud_vec)
+	{
+		//显示的点云放入缓冲区
+		if (c->visible)
+			sum += c->cloud->points.size();
+	}
+
+	//检查是否为空
+	if (sum == 0)
+	{
+		QMessageBox::information(this, "Save Error", "No point cloud data.", QMessageBox::Yes);
+		return -1;
+	}
+
+	multi_cloud->width = sum;
+	multi_cloud->resize(multi_cloud->height * multi_cloud->width);
+	int k = 0;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		for (int i = 0; i != (*it)->cloud->size(); i++)
+		{
+			multi_cloud->points[k].x = (*it)->cloud->points[i].x;
+			multi_cloud->points[k].y = (*it)->cloud->points[i].y;
+			multi_cloud->points[k].z = (*it)->cloud->points[i].z;
+			multi_cloud->points[k].r = (*it)->cloud->points[i].r;
+			multi_cloud->points[k].g = (*it)->cloud->points[i].g;
+			multi_cloud->points[k].b = (*it)->cloud->points[i].b;
+			k++;
+		}
+	}
+	//保存
+	int status = -1;
+	if (save_filename.endsWith(".pcd", Qt::CaseInsensitive))
+	{
+		if (save_as_binary)
+		{
+			status = pcl::io::savePCDFileBinary(save_filename.toStdString(), *multi_cloud);
+		}
+		else
+		{
+			status = pcl::io::savePCDFile(save_filename.toStdString(), *multi_cloud);
+		}
+	}
+	else if (save_filename.endsWith(".ply", Qt::CaseInsensitive))
+	{
+		if (save_as_binary)
+		{
+			status = pcl::io::savePLYFileBinary(save_filename.toStdString(), *multi_cloud);
+		}
+		else
+		{
+			status = pcl::io::savePLYFile(save_filename.toStdString(), *multi_cloud);
+		}
+	}
+	else
+	{
+		//无法保存除.ply .pcd外文件
+		QMessageBox::information(this, tr("File format error"), tr("Can not save file except .ply .pcd"),QMessageBox::Yes);
+		return -1;
+	}
+
+	//提示：后缀没问题，但是无法保存
+	if (status != 0)
+	{
+		QMessageBox::critical(this, tr("Saving file error"), tr("We can not save the file"));
+		return -1;
+	}
+
+	return 0;
 }
 
 void PointCloudTools::exit()
@@ -348,6 +459,7 @@ void PointCloudTools::cube()
 	mycloud->filename = "cube.pcd";
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	mycloud->dirname = QDir::currentPath().toStdString();
 	//点云数据
 	mycloud->cloud.reset(new PointCloudT);
 	mycloud->cloud->width = 50000;			//点云宽
@@ -385,6 +497,7 @@ void PointCloudTools::createSphere()
 	mycloud->filename = "sphere.pcd";
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	mycloud->dirname = QDir::currentPath().toStdString();
 	//点云数据
 	mycloud->cloud.reset(new PointCloudT);
 	mycloud->cloud->width = 50000;			//点云宽
@@ -425,6 +538,7 @@ void PointCloudTools::createCylinder()
 	mycloud->filename = "cylinder.pcd";
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
+	mycloud->dirname = QDir::currentPath().toStdString();
 	//点云数据
 	mycloud->cloud.reset(new PointCloudT);
 	mycloud->cloud->width = 50000;			//点云宽
@@ -613,6 +727,7 @@ void PointCloudTools::convertBtnPressed()
 		mycloud->filename = mypicture->filename + ".pcd";
 		mycloud->fullname = mypicture->fullname + ".pcd";
 		mycloud->filetype = "pcd";
+		mycloud->dirname = mypicture->dirname;
 		mycloud->visible = true;
 		mycloud_vec.push_back(mycloud);
 

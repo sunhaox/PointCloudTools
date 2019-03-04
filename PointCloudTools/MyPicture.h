@@ -17,6 +17,7 @@ public:
 	cv::Mat colorMat;
 	string fullname;		//完整路径
 	string filename;		//文件名
+	string dirname;			//文件夹路径
 	string filetype;		//文件类型
 	bool isConvert = false;	//是否转点云
 };

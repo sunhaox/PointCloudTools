@@ -705,6 +705,15 @@
          </item>
          <item>
           <widget class="QLCDNumber" name="sizeLCD">
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">gridline-color: rgb(255, 0, 255);</string>
+           </property>
+           <property name="segmentStyle">
+            <enum>QLCDNumber::Flat</enum>
+           </property>
            <property name="intValue" stdset="0">
             <number>1</number>
            </property>

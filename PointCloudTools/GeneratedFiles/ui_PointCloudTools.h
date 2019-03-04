@@ -593,6 +593,9 @@ public:
 
         sizeLCD = new QLCDNumber(dockWidgetContents);
         sizeLCD->setObjectName(QStringLiteral("sizeLCD"));
+        sizeLCD->setAutoFillBackground(false);
+        sizeLCD->setStyleSheet(QStringLiteral("gridline-color: rgb(255, 0, 255);"));
+        sizeLCD->setSegmentStyle(QLCDNumber::Flat);
         sizeLCD->setProperty("intValue", QVariant(1));
 
         horizontalLayout->addWidget(sizeLCD);

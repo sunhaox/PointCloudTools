@@ -112,6 +112,7 @@ private:
 	void showPointcloudAdd();																//添加点云到viewer并显示
 	void setCloudColor(unsigned int r, unsigned int g, unsigned int b);						//设置所有点云颜色
 	void setA(unsigned int a);																//设置所有点透明度
+	int saveFile(bool save_as_binary, QString save_filename);
 
 public slots:
 	/***** Slots of image widget *****/
