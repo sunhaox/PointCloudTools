@@ -46,6 +46,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include "MyCloud.h"
 #include "MyPicture.h"
 #include "ColormapWin.h"
+#include "ReconstructionWin.h"
 #include "ui_PointCloudTools.h"
 
 class PointCloudTools : public QMainWindow
@@ -92,11 +93,7 @@ private:
 	void cube();
 	void createSphere();
 	void createCylinder();
-	// Process menu slots 
-	int convertSurface();  //法线估计、曲面重建、网格面片显示
-	int convertWireframe(); //法线估计、曲面重建、网格线框显示
-	int convertFilter();	//基于统计滤波
-	int convertVoxel();		//体素降采样
+
 	// Option menu slots
 	void windowsTheme();
 	void darculaTheme();
@@ -122,8 +119,17 @@ public slots:
 	/***** Slots of image widget *****/
 	void colormapBtnPressed();
 	void convertBtnPressed();
+	void surfaceBtnPressed();
+	void filterBtnPressed();
+	void voxelBtnPressed();
+	void wireframeBtnPressed();
+	// Process menu slots 
 	void colormap(ColormapClass cc);
-	void convert();
+	void convert();	
+	void convertSurface(ReconstructionClass rc);	//法线估计、曲面重建、网格面片显示
+	void convertWireframe(ReconstructionClass rc); //法线估计、曲面重建、网格线框显示
+	void convertFilter();	//基于统计滤波
+	void convertVoxel();		//体素降采样
 
 	/***** Slots of RGB widget *****/
 	// Change color or size of cloud when slider is released or colorBtn is pressed

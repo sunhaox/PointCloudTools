@@ -23,6 +23,13 @@ public:
 	ReconstructionWin(QWidget *parent = Q_NULLPTR);
 	~ReconstructionWin();
 
+signals:
+	void infoSend(ReconstructionClass);
+
+public slots:
+	void yesBtnPressed();
+	void noBtnPressed();
+
 private:
 	Ui::ReconstructionWin ui;
 };

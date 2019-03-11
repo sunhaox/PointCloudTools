@@ -28,10 +28,10 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 	QObject::connect(ui.sphereAction, &QAction::triggered, this, &PointCloudTools::createSphere);
 	QObject::connect(ui.cylinderAction, &QAction::triggered, this, &PointCloudTools::createCylinder);
 	// Process (connect)
-	QObject::connect(ui.meshsurfaceAction, &QAction::triggered, this, &PointCloudTools::convertSurface);
-	QObject::connect(ui.wireframeAction, &QAction::triggered, this, &PointCloudTools::convertWireframe);
-	QObject::connect(ui.filterAction, &QAction::triggered, this, &PointCloudTools::convertFilter);
-	QObject::connect(ui.voxelAction, &QAction::triggered, this, &PointCloudTools::convertVoxel);
+	QObject::connect(ui.meshsurfaceAction, &QAction::triggered, this, &PointCloudTools::surfaceBtnPressed);
+	QObject::connect(ui.wireframeAction, &QAction::triggered, this, &PointCloudTools::wireframeBtnPressed);
+	QObject::connect(ui.filterAction, &QAction::triggered, this, &PointCloudTools::filterBtnPressed);
+	QObject::connect(ui.voxelAction, &QAction::triggered, this, &PointCloudTools::voxelBtnPressed);
 	// Option (connect)
 	QObject::connect(ui.windowsThemeAction, &QAction::triggered, this, &PointCloudTools::windowsTheme);
 	QObject::connect(ui.darculaThemeAction, &QAction::triggered, this, &PointCloudTools::darculaTheme);
@@ -580,7 +580,7 @@ void PointCloudTools::createCylinder()
 	showPointcloudAdd();
 }
 
-int PointCloudTools::convertSurface()
+void PointCloudTools::convertSurface(ReconstructionClass rc)
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -602,8 +602,17 @@ int PointCloudTools::convertSurface()
 	if (cloud_xyz->size() == 0)
 	{
 		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
-		return -1;
+		return ;
 	}
+
+	int k = rc.ksearch;
+	double radius = rc.searchRadius;
+	double mu = rc.mu;
+	int nnn = rc.maxNeighbors;
+	double eps_angle = rc.maxSurfaceAngle;
+	double minmum_angle = rc.minAngle;
+	double maxmum_angle = rc.maxAngle;
+	
 
 	//法向估计
 	ui.statusBar->showMessage("Convert surface: Normal estimation.");
@@ -613,7 +622,7 @@ int PointCloudTools::convertSurface()
 	tree->setInputCloud(cloud_xyz);			//为kdtree输入点云
 	n.setInputCloud(cloud_xyz);				//法向估计输入点云
 	n.setSearchMethod(tree);				//设置法向估计搜索方法	
-	n.setKSearch(20);						//设置k邻近搜索点数			//TODO 改可变参数
+	n.setKSearch(k);						//设置k邻近搜索点数			//TODO 改可变参数
 	n.compute(*normals);					//法向估计
 
 	QMessageBox::information(this, "information", "Normal estimation finished");
@@ -630,12 +639,12 @@ int PointCloudTools::convertSurface()
 	pcl::PolygonMesh triangles;										//创建多边形网格对象，用来存储重建结果
 	//设置参数
 	//TODO 参数化
-	gp3.setSearchRadius(25);				//设置连接点之间最大距离，用于确定k近邻的球半径	
-	gp3.setMu(2.5);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
-	gp3.setMaximumNearestNeighbors(100);	//设置搜索的最近邻点的最大数量
-	gp3.setMaximumSurfaceAngle(M_PI / 2);	//45度 最大平面角
-	gp3.setMinimumAngle(M_PI / 18);			//10度 每个三角的最大角度？
-	gp3.setMaximumAngle(2 * M_PI / 3);		//120度
+	gp3.setSearchRadius(radius);				//设置连接点之间最大距离，用于确定k近邻的球半径	
+	gp3.setMu(mu);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
+	gp3.setMaximumNearestNeighbors(nnn);	//设置搜索的最近邻点的最大数量
+	gp3.setMaximumSurfaceAngle(eps_angle);	//45度 最大平面角
+	gp3.setMinimumAngle(minmum_angle);			//10度 每个三角的最大角度？
+	gp3.setMaximumAngle(maxmum_angle);		//120度
 	gp3.setNormalConsistency(false);		//若法向量一致，设为true
 	//设置点云数据和搜索方式
 	gp3.setInputCloud(cloud_with_normals);
@@ -658,10 +667,10 @@ int PointCloudTools::convertSurface()
 	viewer->removeAllShapes();
 
 
-	return 0;
+	return ;
 }
 
-int PointCloudTools::convertWireframe()
+void PointCloudTools::convertWireframe(ReconstructionClass rc)
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -684,8 +693,16 @@ int PointCloudTools::convertWireframe()
 	if (cloud_xyz->size() == 0)
 	{
 		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
-		return -1;
+		return ;
 	}
+
+	int k = rc.ksearch;
+	double radius = rc.searchRadius;
+	double mu = rc.mu;
+	int nnn = rc.maxNeighbors;
+	double eps_angle = rc.maxSurfaceAngle;
+	double minmum_angle = rc.minAngle;
+	double maxmum_angle = rc.maxAngle;
 
 	//法向估计
 	ui.statusBar->showMessage("Convert wireframe: Normal estimation.");
@@ -695,7 +712,7 @@ int PointCloudTools::convertWireframe()
 	tree->setInputCloud(cloud_xyz); //为 kdtree 输入点云
 	n.setInputCloud(cloud_xyz); //为法向估计对象输入点云
 	n.setSearchMethod(tree);  //设置法向估计时所采取的搜索方式为kdtree
-	n.setKSearch(20); //设置法向估计时，k近邻搜索的点数
+	n.setKSearch(k); //设置法向估计时，k近邻搜索的点数
 	n.compute(*normals); //进行法向估计
 
 	QMessageBox::information(this, "information", "Normal estimation finished");
@@ -713,12 +730,12 @@ int PointCloudTools::convertWireframe()
 	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;	//创建贪婪三角形投影重建对象
 	pcl::PolygonMesh triangles;									//创建多边形网格对象，用来存储重建结果
 	//设置参数
-	gp3.setSearchRadius(25);				//设置连接点之间最大距离，用于确定k近邻的球半径
-	gp3.setMu(2.5);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
-	gp3.setMaximumNearestNeighbors(100);	//设置搜索的最近邻点的最大数量
-	gp3.setMaximumSurfaceAngle(M_PI / 2);	//45度 最大平面角
-	gp3.setMinimumAngle(M_PI / 18);			//10度 每个三角的最大角度？
-	gp3.setMaximumAngle(2 * M_PI / 3);		//120度
+	gp3.setSearchRadius(radius);			//设置连接点之间最大距离，用于确定k近邻的球半径
+	gp3.setMu(mu);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
+	gp3.setMaximumNearestNeighbors(nnn);	//设置搜索的最近邻点的最大数量
+	gp3.setMaximumSurfaceAngle(eps_angle);	//45度 最大平面角
+	gp3.setMinimumAngle(minmum_angle);		//10度 每个三角的最大角度？
+	gp3.setMaximumAngle(maxmum_angle);		//120度
 	gp3.setNormalConsistency(false);		//若法向量一致，设为true
 	gp3.setInputCloud(cloud_with_normals);	//设置点云数据
 	gp3.setSearchMethod(tree2);				//设置点云搜索方式
@@ -738,10 +755,10 @@ int PointCloudTools::convertWireframe()
 
 	viewer->removeAllShapes();
 
-	return 0;
+	return;
 }
 
-int PointCloudTools::convertFilter()
+void PointCloudTools::convertFilter()
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -764,7 +781,7 @@ int PointCloudTools::convertFilter()
 	if (cloud_xyz->size() == 0)
 	{
 		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
-		return -1;
+		return;
 	}
 
 	ui.statusBar->showMessage("Filting");
@@ -826,10 +843,10 @@ int PointCloudTools::convertFilter()
 	//状态输出
 	ui.statusBar->showMessage("");
 	consoleLog("Filter", "", "", "");
-	return 0;
+	return ;
 }
 
-int PointCloudTools::convertVoxel()
+void PointCloudTools::convertVoxel()
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -852,7 +869,7 @@ int PointCloudTools::convertVoxel()
 	if (cloud_xyz->size() == 0)
 	{
 		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
-		return -1;
+		return;
 	}
 
 	ui.statusBar->showMessage("Down sampling");
@@ -914,7 +931,7 @@ int PointCloudTools::convertVoxel()
 	ui.statusBar->showMessage("");
 	consoleLog("Voxel down shampled", "", "", "");
 
-	return 0;
+	return ;
 }
 
 
@@ -1082,6 +1099,72 @@ void PointCloudTools::convertBtnPressed()
 	showPointcloudAdd();		//更新点云窗口
 }
 
+void PointCloudTools::filterBtnPressed()
+{
+
+}
+
+void PointCloudTools::voxelBtnPressed()
+{
+
+}
+
+void PointCloudTools::wireframeBtnPressed()
+{
+	//遍历mycloud_vec，防止没有点云数据
+	bool flag = false;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		if ((*it)->visible)
+		{
+			flag = true;
+			break;
+		}
+	}
+
+	if (!flag)
+	{
+		//没有有效点云，异常提示
+		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		return;
+	}
+
+	
+	ReconstructionWin *win = new ReconstructionWin();
+	connect(win, SIGNAL(infoSend(ReconstructionClass)), this, SLOT(convertWireframe(ReconstructionClass)));
+	win->setModal(true);
+	win->show();
+
+}
+
+void PointCloudTools::surfaceBtnPressed()
+{
+	//遍历mycloud_vec，防止没有点云数据
+	bool flag = false;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		if ((*it)->visible)
+		{
+			flag = true;
+			break;
+		}
+	}
+
+	if (!flag)
+	{
+		//没有有效点云，异常提示
+		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		return;
+	}
+
+	ReconstructionWin *win = new ReconstructionWin();
+	connect(win, SIGNAL(infoSend(ReconstructionClass)), this, SLOT(convertSurface(ReconstructionClass)));
+	win->setModal(true);
+	win->show();
+}
+
+
+
 void PointCloudTools::colormap(ColormapClass cc)
 {
 	if (mypicture->depthMat.empty())
@@ -1171,7 +1254,10 @@ void PointCloudTools::pSliderReleased()
 
 void PointCloudTools::colorBtnPressed()
 {
-	
+	ColormapWin *win = new ColormapWin();
+	connect(win, SIGNAL(infoSend(ColormapClass)), this, SLOT(colormap(ColormapClass)));
+	win->setModal(true);
+	win->show();
 }
 
 void PointCloudTools::pColormap()

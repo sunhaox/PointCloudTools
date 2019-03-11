@@ -39,10 +39,17 @@
           <property name="text">
            <string>K Search</string>
           </property>
+          <property name="buddy">
+           <cstring>normalKEdit</cstring>
+          </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="normalKEdit"/>
+         <widget class="QLineEdit" name="normalKEdit">
+          <property name="text">
+           <string>20</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -56,64 +63,106 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="3">
-       <widget class="QLineEdit" name="greedyMuEdit"/>
+       <widget class="QLineEdit" name="greedyMuEdit">
+        <property name="text">
+         <string>2.5</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
          <string>Search Radius</string>
         </property>
+        <property name="buddy">
+         <cstring>greedySearchRadiusEdit</cstring>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="greedySearchRadiusEdit"/>
+       <widget class="QLineEdit" name="greedySearchRadiusEdit">
+        <property name="text">
+         <string>25</string>
+        </property>
+       </widget>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Mu</string>
         </property>
+        <property name="buddy">
+         <cstring>greedyMuEdit</cstring>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Max Surface Angle</string>
+         <string>Max Surface Angle（rad)</string>
+        </property>
+        <property name="buddy">
+         <cstring>greedyMaxSurAngEdit</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Min Angle</string>
+         <string>Min Angle(rad)</string>
+        </property>
+        <property name="buddy">
+         <cstring>greedyMinAngEdit</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="greedyMaxSurAngEdit"/>
+       <widget class="QLineEdit" name="greedyMaxSurAngEdit">
+        <property name="text">
+         <string>1.5707963</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="3">
-       <widget class="QLineEdit" name="greedyMinAngEdit"/>
+       <widget class="QLineEdit" name="greedyMinAngEdit">
+        <property name="text">
+         <string>0.1745329222222222</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>Max Neighbors</string>
         </property>
+        <property name="buddy">
+         <cstring>greedyMaxNeighborsEdit</cstring>
+        </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="greedyMaxNeighborsEdit"/>
+       <widget class="QLineEdit" name="greedyMaxNeighborsEdit">
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="2">
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Max Angle</string>
+         <string>Max Angle(rad)</string>
+        </property>
+        <property name="buddy">
+         <cstring>greedyMaxAngEdit</cstring>
         </property>
        </widget>
       </item>
       <item row="2" column="3">
-       <widget class="QLineEdit" name="greedyMaxAngEdit"/>
+       <widget class="QLineEdit" name="greedyMaxAngEdit">
+        <property name="text">
+         <string>2.094395066666667</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -128,6 +177,16 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>normalKEdit</tabstop>
+  <tabstop>greedySearchRadiusEdit</tabstop>
+  <tabstop>greedyMaxSurAngEdit</tabstop>
+  <tabstop>greedyMaxNeighborsEdit</tabstop>
+  <tabstop>greedyMuEdit</tabstop>
+  <tabstop>greedyMinAngEdit</tabstop>
+  <tabstop>greedyMaxAngEdit</tabstop>
+  <tabstop>yesBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

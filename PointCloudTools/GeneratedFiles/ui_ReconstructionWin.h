@@ -160,6 +160,22 @@ public:
 
         gridLayout->addWidget(yesBtn, 2, 0, 1, 1);
 
+#ifndef QT_NO_SHORTCUT
+        label->setBuddy(normalKEdit);
+        label_2->setBuddy(greedySearchRadiusEdit);
+        label_3->setBuddy(greedyMuEdit);
+        label_4->setBuddy(greedyMaxSurAngEdit);
+        label_5->setBuddy(greedyMinAngEdit);
+        label_6->setBuddy(greedyMaxNeighborsEdit);
+        label_7->setBuddy(greedyMaxAngEdit);
+#endif // QT_NO_SHORTCUT
+        QWidget::setTabOrder(normalKEdit, greedySearchRadiusEdit);
+        QWidget::setTabOrder(greedySearchRadiusEdit, greedyMaxSurAngEdit);
+        QWidget::setTabOrder(greedyMaxSurAngEdit, greedyMaxNeighborsEdit);
+        QWidget::setTabOrder(greedyMaxNeighborsEdit, greedyMuEdit);
+        QWidget::setTabOrder(greedyMuEdit, greedyMinAngEdit);
+        QWidget::setTabOrder(greedyMinAngEdit, greedyMaxAngEdit);
+        QWidget::setTabOrder(greedyMaxAngEdit, yesBtn);
 
         retranslateUi(ReconstructionWin);
 
@@ -171,13 +187,20 @@ public:
         ReconstructionWin->setWindowTitle(QApplication::translate("ReconstructionWin", "ReconstructionWin", 0));
         groupBox->setTitle(QApplication::translate("ReconstructionWin", "Normal Estimation", 0));
         label->setText(QApplication::translate("ReconstructionWin", "K Search", 0));
+        normalKEdit->setText(QApplication::translate("ReconstructionWin", "20", 0));
         groupBox_2->setTitle(QApplication::translate("ReconstructionWin", "Greedy Projection Triangulation", 0));
+        greedyMuEdit->setText(QApplication::translate("ReconstructionWin", "2.5", 0));
         label_2->setText(QApplication::translate("ReconstructionWin", "Search Radius", 0));
+        greedySearchRadiusEdit->setText(QApplication::translate("ReconstructionWin", "25", 0));
         label_3->setText(QApplication::translate("ReconstructionWin", "Mu", 0));
-        label_4->setText(QApplication::translate("ReconstructionWin", "Max Surface Angle", 0));
-        label_5->setText(QApplication::translate("ReconstructionWin", "Min Angle", 0));
+        label_4->setText(QApplication::translate("ReconstructionWin", "Max Surface Angle\357\274\210rad)", 0));
+        label_5->setText(QApplication::translate("ReconstructionWin", "Min Angle(rad)", 0));
+        greedyMaxSurAngEdit->setText(QApplication::translate("ReconstructionWin", "1.5707963", 0));
+        greedyMinAngEdit->setText(QApplication::translate("ReconstructionWin", "0.1745329222222222", 0));
         label_6->setText(QApplication::translate("ReconstructionWin", "Max Neighbors", 0));
-        label_7->setText(QApplication::translate("ReconstructionWin", "Max Angle", 0));
+        greedyMaxNeighborsEdit->setText(QApplication::translate("ReconstructionWin", "100", 0));
+        label_7->setText(QApplication::translate("ReconstructionWin", "Max Angle(rad)", 0));
+        greedyMaxAngEdit->setText(QApplication::translate("ReconstructionWin", "2.094395066666667", 0));
         yesBtn->setText(QApplication::translate("ReconstructionWin", "Yes", 0));
     } // retranslateUi
 
