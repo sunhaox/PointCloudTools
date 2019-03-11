@@ -125,6 +125,7 @@
     <ClCompile Include="PointCloudTools.cpp" />
     <ClCompile Include="ReconstructionWin.cpp" />
     <ClCompile Include="Tools.cpp" />
+    <ClCompile Include="VoxelGridWin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudTools.h" />
@@ -136,11 +137,16 @@
       <SubType>Designer</SubType>
     </QtUic>
     <QtUic Include="ReconstructionWin.ui" />
+    <QtUic Include="VoxelGridWin.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PointCloudTools.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="VoxelGridWin.h">
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
+    </QtMoc>
     <QtMoc Include="ColormapWin.h">
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>
       <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtWidgets</IncludePath>

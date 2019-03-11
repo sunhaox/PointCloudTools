@@ -846,7 +846,7 @@ void PointCloudTools::convertFilter()
 	return ;
 }
 
-void PointCloudTools::convertVoxel()
+void PointCloudTools::convertVoxel(VoxelGridClass vc)
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -872,12 +872,16 @@ void PointCloudTools::convertVoxel()
 		return;
 	}
 
+	float lx = vc.lx;
+	float ly = vc.ly;
+	float lz = vc.lz;
+
 	ui.statusBar->showMessage("Down sampling");
 	//降采样
 	pcl::VoxelGrid<pcl::PointXYZ> sor;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
-	sor.setInputCloud(cloud_xyz);					//TODO 参数选择
-	sor.setLeafSize(1, 1, 1);						//设置过滤器叶大小
+	sor.setInputCloud(cloud_xyz);						//TODO 参数选择
+	sor.setLeafSize(lx, ly, lz);						//设置过滤器叶大小
 	sor.filter(*cloud_filtered);
 
 	//检查重名
@@ -1106,7 +1110,29 @@ void PointCloudTools::filterBtnPressed()
 
 void PointCloudTools::voxelBtnPressed()
 {
+	//遍历mycloud_vec，防止没有点云数据
+	bool flag = false;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		if ((*it)->visible)
+		{
+			flag = true;
+			break;
+		}
+	}
 
+	if (!flag)
+	{
+		//没有有效点云，异常提示
+		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		return;
+	}
+
+
+	VoxelGridWin *win = new VoxelGridWin();
+	connect(win, SIGNAL(infoSend(VoxelGridClass)), this, SLOT(convertVoxel(VoxelGridClass)));
+	win->setModal(true);
+	win->show();
 }
 
 void PointCloudTools::wireframeBtnPressed()
