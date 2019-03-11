@@ -149,7 +149,7 @@ void PointCloudTools::open()
 		}
 		else
 		{
-			//TODO 点云文件读取
+			
 			//TODO 点云名字重复处理方法
 
 			mycloud = new MyCloud();
@@ -622,7 +622,7 @@ void PointCloudTools::convertSurface(ReconstructionClass rc)
 	tree->setInputCloud(cloud_xyz);			//为kdtree输入点云
 	n.setInputCloud(cloud_xyz);				//法向估计输入点云
 	n.setSearchMethod(tree);				//设置法向估计搜索方法	
-	n.setKSearch(k);						//设置k邻近搜索点数			//TODO 改可变参数
+	n.setKSearch(k);						//设置k邻近搜索点数			
 	n.compute(*normals);					//法向估计
 
 	QMessageBox::information(this, "information", "Normal estimation finished");
@@ -638,7 +638,6 @@ void PointCloudTools::convertSurface(ReconstructionClass rc)
 	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;		//创建贪婪三角形投影重建对象
 	pcl::PolygonMesh triangles;										//创建多边形网格对象，用来存储重建结果
 	//设置参数
-	//TODO 参数化
 	gp3.setSearchRadius(radius);				//设置连接点之间最大距离，用于确定k近邻的球半径	
 	gp3.setMu(mu);							//设置最近邻距离的乘子，以得到每个点的最终搜索半径
 	gp3.setMaximumNearestNeighbors(nnn);	//设置搜索的最近邻点的最大数量
@@ -758,7 +757,7 @@ void PointCloudTools::convertWireframe(ReconstructionClass rc)
 	return;
 }
 
-void PointCloudTools::convertFilter()
+void PointCloudTools::convertFilter(FilterClass fc)
 {
 	pcl::PointXYZ point;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
@@ -784,13 +783,16 @@ void PointCloudTools::convertFilter()
 		return;
 	}
 
+	int nr_k = fc.nr_k;
+	double stddev_multi = fc.stddev_mult;
+
 	ui.statusBar->showMessage("Filting");
 	//滤波
 	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
 	sor.setInputCloud(cloud_xyz);
-	sor.setMeanK(50);					//设置邻居数				//TODO 参数选择
-	sor.setStddevMulThresh(1.0);		//设置标准差放大系数
+	sor.setMeanK(nr_k);							//设置邻居数				
+	sor.setStddevMulThresh(stddev_multi);		//设置标准差放大系数
 	sor.filter(*cloud_filtered);
 
 	//检查重名
@@ -880,7 +882,7 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	//降采样
 	pcl::VoxelGrid<pcl::PointXYZ> sor;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
-	sor.setInputCloud(cloud_xyz);						//TODO 参数选择
+	sor.setInputCloud(cloud_xyz);						
 	sor.setLeafSize(lx, ly, lz);						//设置过滤器叶大小
 	sor.filter(*cloud_filtered);
 
@@ -1105,7 +1107,29 @@ void PointCloudTools::convertBtnPressed()
 
 void PointCloudTools::filterBtnPressed()
 {
+	//遍历mycloud_vec，防止没有点云数据
+	bool flag = false;
+	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
+	{
+		if ((*it)->visible)
+		{
+			flag = true;
+			break;
+		}
+	}
 
+	if (!flag)
+	{
+		//没有有效点云，异常提示
+		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		return;
+	}
+
+
+	FilterWin *win = new FilterWin();
+	connect(win, SIGNAL(infoSend(FilterClass)), this, SLOT(convertFilter(FilterClass)));
+	win->setModal(true);
+	win->show();
 }
 
 void PointCloudTools::voxelBtnPressed()

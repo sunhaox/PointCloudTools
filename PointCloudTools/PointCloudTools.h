@@ -48,6 +48,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include "ColormapWin.h"
 #include "ReconstructionWin.h"
 #include "VoxelGridWin.h"
+#include "FilterWin.h"
 #include "ui_PointCloudTools.h"
 
 class PointCloudTools : public QMainWindow
@@ -129,7 +130,7 @@ public slots:
 	void convert();	
 	void convertSurface(ReconstructionClass rc);	//法线估计、曲面重建、网格面片显示
 	void convertWireframe(ReconstructionClass rc); //法线估计、曲面重建、网格线框显示
-	void convertFilter();	//基于统计滤波
+	void convertFilter(FilterClass fc);	//基于统计滤波
 	void convertVoxel(VoxelGridClass vc);		//体素降采样
 
 	/***** Slots of RGB widget *****/

@@ -56,6 +56,9 @@
     <ClCompile Include="VoxelGridWin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FilterWin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudTools.h">
@@ -71,6 +74,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="VoxelGridWin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="FilterWin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -91,6 +97,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="VoxelGridWin.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="FilterWin.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

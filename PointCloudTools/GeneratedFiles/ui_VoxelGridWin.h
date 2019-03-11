@@ -96,8 +96,11 @@ public:
     {
         VoxelGridWin->setWindowTitle(QApplication::translate("VoxelGridWin", "VoxelGridWin", 0));
         label->setText(QApplication::translate("VoxelGridWin", "Leaf size of X:", 0));
+        xEdit->setText(QApplication::translate("VoxelGridWin", "1.0", 0));
         label_2->setText(QApplication::translate("VoxelGridWin", "Leaf size of Y:", 0));
+        yEdit->setText(QApplication::translate("VoxelGridWin", "1.0", 0));
         label_3->setText(QApplication::translate("VoxelGridWin", "Leaf size of Z:", 0));
+        zEdit->setText(QApplication::translate("VoxelGridWin", "1.0", 0));
         yesBtn->setText(QApplication::translate("VoxelGridWin", "Yes", 0));
     } // retranslateUi
 

@@ -1,60 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VoxelGridWin</class>
- <widget class="QDialog" name="VoxelGridWin">
+ <class>FilterWin</class>
+ <widget class="QDialog" name="FilterWin">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>482</width>
-    <height>98</height>
+    <width>448</width>
+    <height>109</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VoxelGridWin</string>
+   <string>FilterWin</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Leaf size of X:</string>
+        <string>The number of points to use for mean distance estimation</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="xEdit">
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="nr_k">
        <property name="text">
-        <string>1.0</string>
+        <string>50</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Leaf size of Y:</string>
+        <string>The standard deviation multiplier</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="yEdit">
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="stddev_mult">
        <property name="text">
-        <string>1.0</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Leaf size of Z:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="zEdit">
-       <property name="text">
-        <string>1.0</string>
+        <string>1</string>
        </property>
       </widget>
      </item>
