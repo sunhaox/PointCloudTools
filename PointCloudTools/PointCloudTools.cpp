@@ -97,7 +97,16 @@ void PointCloudTools::open()
 			//TODO 文件名重复
 
 			// 图片打开
-			cv::Mat img = cv::imread(file_name, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH);
+			cv::Mat img;
+			try{
+				img = cv::imread(file_name, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH);
+			}
+			catch (exception ex)
+			{
+				consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
+				QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!",QMessageBox::Yes);
+				return;
+			}
 			mypicture->fullname = file_name;
 			mypicture->filename = subname;
 			mypicture->filetype = filetype;
@@ -162,7 +171,17 @@ void PointCloudTools::open()
 			//点云打开
 			if (filename.endsWith(".pcd", Qt::CaseInsensitive))
 			{
-				status = pcl::io::loadPCDFile(file_name, *(mycloud->cloud));
+				//读取文件
+				try{
+					status = pcl::io::loadPCDFile(file_name, *(mycloud->cloud));
+				}
+				catch (exception ex)
+				{
+					consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
+					QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!", QMessageBox::Yes);
+					return;
+				}
+				//设置默认点颜色
 				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
 				{
 					setCloudColor(255, 255, 255);
@@ -170,7 +189,17 @@ void PointCloudTools::open()
 			}
 			else if (filename.endsWith(".ply", Qt::CaseInsensitive))
 			{
-				status = pcl::io::loadPLYFile(file_name, *(mycloud->cloud));
+				//读取文件
+				try{
+					status = pcl::io::loadPLYFile(file_name, *(mycloud->cloud));
+				}
+				catch (exception ex)
+				{
+					consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
+					QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!", QMessageBox::Yes);
+					return;
+				}
+				//设置默认点颜色
 				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
 				{
 					setCloudColor(255, 255, 255);
@@ -821,8 +850,12 @@ void PointCloudTools::convertFilter(FilterClass fc)
 	//遍历文件树，更新icon
 	QTreeWidgetItemIterator it(ui.dataTree);
 	while (*it) {
-		QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
-		(*it)->setTextColor(0, item_color);
+		if ((*it)->text(0).endsWith(".pcd", Qt::CaseInsensitive) || (*it)->text(0).endsWith(".ply", Qt::CaseInsensitive))
+		{
+			QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
+			(*it)->setTextColor(0, item_color);
+		}
+		
 		++it;
 	}
 	//点云设置
@@ -840,6 +873,7 @@ void PointCloudTools::convertFilter(FilterClass fc)
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
 
+	setCloudColor(255, 255, 255);
 	showPointcloudAdd();
 
 	//状态输出
@@ -912,8 +946,12 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	//遍历文件树，更新icon
 	QTreeWidgetItemIterator it(ui.dataTree);
 	while (*it) {
-		QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
-		(*it)->setTextColor(0, item_color);
+		if ((*it)->text(0).endsWith(".pcd", Qt::CaseInsensitive) || (*it)->text(0).endsWith(".ply", Qt::CaseInsensitive))
+		{
+			QColor item_color = QColor(112, 122, 132, 255);		//设置icon图标半透明
+			(*it)->setTextColor(0, item_color);
+		}
+		
 		++it;
 	}
 	//点云设置
@@ -931,6 +969,7 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
 
+	setCloudColor(255, 255, 255);
 	showPointcloudAdd();
 
 	//状态输出
@@ -972,7 +1011,10 @@ void PointCloudTools::about()
 
 void PointCloudTools::help()
 {
+	QDesktopServices::openUrl(QUrl(QLatin1String("https://github.com/HadenSun/PointCloudTools")));
 
+	// 输出窗口
+	consoleLog("Help", "Cloudviewer help", "https://github.com/HadenSun/PointCloudTools", "");
 }
 
 void PointCloudTools::colormapBtnPressed()
@@ -1037,6 +1079,8 @@ void PointCloudTools::convertBtnPressed()
 	//参数5：图像的插值方式
 	//参数6：边界填充方式
 	remap(mypicture->depthMat, img, map1, map2, cv::INTER_LINEAR);																	//畸变矫正
+
+
 
 	//点云变换
 	int imgWidth = img.size().width;
@@ -1464,6 +1508,7 @@ void PointCloudTools::popMenu(const QPoint&)
 	else
 	{
 		menu.actions()[0]->setVisible(false);
+		menu.actions()[3]->setVisible(false);
 	}
 		
 

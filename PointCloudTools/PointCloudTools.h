@@ -40,6 +40,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <QTextEdit>
 #include <QTime>
 #include <QMouseEvent> 
+#include <QDesktopServices> 
 #include <string>
 #include "tools.h"
 #include "AboutWin.h"
