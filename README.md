@@ -11,6 +11,7 @@ OpenCV 2.4.13  64bit
 Qt 5.7.0  64bit  
 
 ##  Summary
+双击PointCloudTools.exe即可运行，TestData文件夹下存放测试文件。  
 界面分为菜单栏、快捷功能栏、图像显示区域、点云显示区域和其他参数辅助窗口。
 
 ![界面](image/1.png "界面")  
@@ -92,3 +93,10 @@ Min下输入伪彩色下限，Max下输入伪彩色上限，超出范围的像�
 文件树窗口选择文件后，右键弹出选择列表，点击“Delete”即可从内存中删除**点云**或**图片**。  
 #### 3.4 点云颜色改变
 文件树窗口选择点云文件后，右键弹出选择列表，点击“Change Color”可以快速更改对应点云颜色。  
+
+### 4. 其他功能  
+#### 4.1 主题颜色改变（未实现）
+#### 4.2 语言选择（未实现）
+
+# Thankes
+特别感谢 [nightn](http://nightn.com/) 即他的 [CloudViewer](https://github.com/nightn/CloudViewer)
