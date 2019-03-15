@@ -1092,14 +1092,14 @@ void PointCloudTools::convertBtnPressed()
 		for (int j = 0; j < imgWidth; j++)
 		{
 			float picDist = sqrt((i - imgHeight / 2.0)*(i - imgHeight / 2.0) + (j - imgWidth / 2.0)*(j - imgWidth / 2.0));	//图像上点到中心的像素点个数
-			float picAngle = atan2(i - imgHeight / 2.0, j - imgWidth / 2.0);												//图像上x,y和中心点角度关系
+			float picAngle = atan2(fx*(i - imgHeight / 2.0), fy*(j - imgWidth / 2.0));												//图像上x,y和中心点角度关系
 			float angle = atan(sqrt((j - imgWidth / 2.0)*(j - imgWidth / 2.0) / fx / fx + (i - imgHeight / 2.0)*(i - imgHeight / 2.0) / fy / fy));
 			float dist = img.at<ushort>(i, j) / a;				//原始图像深度
 
 			pcl::PointXYZRGBA p;
 			p.z = dist*cos(angle);									//坐标变换后的深度
-			p.x = dist*sin(angle)*cos(picAngle);
-			p.y = dist*sin(angle)*sin(picAngle);
+			p.x = -dist*sin(angle)*cos(picAngle);
+			p.y = -dist*sin(angle)*sin(picAngle);
 
 			p.r = 250;
 			p.g = 250;

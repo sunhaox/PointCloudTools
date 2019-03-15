@@ -10,10 +10,18 @@ PCL 1.8.0  64bit
 OpenCV 2.4.13  64bit  
 Qt 5.7.0  64bit  
 
-##  Summary
+## Compiling
+**（仅测试windows）**
+* 复制opencv2.4.13环境文件到工程目录下，debug/release分别命名为：OpenCV2.4_Win64_Debug.props和OpenCV2.4_Win64_Release.props（更高版本应该也支持，但没有测试）
+* 复制pcl1.8.0环境文件到工程目录下，debug/release分别命名为：PCL_1.8.0_x64_debug.props和PCL_1.8.0_x64_release.props（更高版本应该也支持，但没有测试）
+* 用vs打开工程（我们使用VS 2013）
+* 解决方案平台选择x64（如果没有请创建）
+* QT VS TOOLS->Qt Project Settings，设置Qt版本（仅测试了Qt 5.7.0）
+* 编译
+
+## Summary
 双击PointCloudTools.exe即可运行，TestData文件夹下存放测试文件。  
 界面分为菜单栏、快捷功能栏、图像显示区域、点云显示区域和其他参数辅助窗口。
-
 ![界面](image/1.png "界面")  
 ### 1. 图片功能  
 包括图片打开显示、伪彩色显示功能。  
@@ -100,5 +108,5 @@ Min下输入伪彩色下限，Max下输入伪彩色上限，超出范围的像�
 #### 4.1 主题颜色改变（未实现）
 #### 4.2 语言选择（未实现）
 
-# Thankes
+# Thanks
 特别感谢 [nightn](http://nightn.com/) 即他的 [CloudViewer](https://github.com/nightn/CloudViewer)

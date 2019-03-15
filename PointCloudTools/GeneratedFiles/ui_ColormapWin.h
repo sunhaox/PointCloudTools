@@ -150,7 +150,9 @@ public:
         yesBtn->setText(QApplication::translate("ColormapWin", "Yes", 0));
         noBtn->setText(QApplication::translate("ColormapWin", "No", 0));
         label->setText(QApplication::translate("ColormapWin", "Min", 0));
+        minLineedit->setText(QApplication::translate("ColormapWin", "0", 0));
         label_2->setText(QApplication::translate("ColormapWin", "Max", 0));
+        maxLineedit->setText(QApplication::translate("ColormapWin", "3000", 0));
         label_3->setText(QString());
         radioButton_0->setText(QApplication::translate("ColormapWin", "AUTUMN", 0));
         label_4->setText(QString());
