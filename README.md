@@ -109,4 +109,4 @@ Min下输入伪彩色下限，Max下输入伪彩色上限，超出范围的像�
 #### 4.2 语言选择（未实现）
 
 # Thanks
-特别感谢 [nightn](http://nightn.com/) 即他的 [CloudViewer](https://github.com/nightn/CloudViewer)
+特别感谢 [nightn](http://nightn.com/) 及他的 [CloudViewer](https://github.com/nightn/CloudViewer)
