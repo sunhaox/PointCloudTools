@@ -60,7 +60,7 @@ public:
 
     void retranslateUi(QDialog *AboutWin)
     {
-        AboutWin->setWindowTitle(QApplication::translate("AboutWin", "AboutWin", 0));
+        AboutWin->setWindowTitle(QApplication::translate("AboutWin", "About", 0));
         label->setText(QApplication::translate("AboutWin", "Point Cloud Tools", 0));
         label_2->setText(QString());
         label_3->setText(QApplication::translate("AboutWin", "<html><head/><body><p>Version 0.9.1</p><p>Copyright(c) 2019 <span style=\" font-weight:600;\">Haden Sun</span>.</p><p>All rights reserved.</p></body></html>", 0));

@@ -94,7 +94,7 @@ public:
 
     void retranslateUi(QDialog *VoxelGridWin)
     {
-        VoxelGridWin->setWindowTitle(QApplication::translate("VoxelGridWin", "VoxelGridWin", 0));
+        VoxelGridWin->setWindowTitle(QApplication::translate("VoxelGridWin", "VoxelGrid", 0));
         label->setText(QApplication::translate("VoxelGridWin", "Leaf size of X:", 0));
         xEdit->setText(QApplication::translate("VoxelGridWin", "1.0", 0));
         label_2->setText(QApplication::translate("VoxelGridWin", "Leaf size of Y:", 0));

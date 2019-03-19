@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
@@ -18,10 +18,10 @@ public:
 	MyCloud();
 	~MyCloud();
 
-	PointCloudT::Ptr cloud;			//µãÔÆÖ¸Õë
-	string fullname;		//ÍêÕûÂ·¾¶
-	string filename;		//ÎÄ¼şÃû
-	string dirname;			//ËùÔÚÎÄ¼ş¼ĞÂ·¾¶
-	string filetype;		//ÎÄ¼şÀàĞÍ
+	PointCloudT::Ptr cloud;			//ç‚¹äº‘æŒ‡é’ˆ
+	string fullname;		//å®Œæ•´è·¯å¾„
+	string filename;		//æ–‡ä»¶å
+	string dirname;			//æ‰€åœ¨æ–‡ä»¶å¤¹è·¯å¾„
+	string filetype;		//æ–‡ä»¶ç±»å‹
 	bool visible = true;
 };

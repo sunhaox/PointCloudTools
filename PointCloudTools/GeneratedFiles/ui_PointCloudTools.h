@@ -875,9 +875,9 @@ public:
         colormapBtn->setText(QApplication::translate("PointCloudToolsClass", "Colormap", 0));
         imageColor->setText(QApplication::translate("PointCloudToolsClass", "Colormap Image", 0));
         convertBtn->setText(QApplication::translate("PointCloudToolsClass", "Convert", 0));
-        dataDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "PointCloud", 0));
+        dataDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "Files", 0));
         QTreeWidgetItem *___qtreewidgetitem = dataTree->headerItem();
-        ___qtreewidgetitem->setText(0, QApplication::translate("PointCloudToolsClass", "Point Cloud File", 0));
+        ___qtreewidgetitem->setText(0, QApplication::translate("PointCloudToolsClass", "Files", 0));
         propertyDock->setWindowTitle(QApplication::translate("PointCloudToolsClass", "Properties", 0));
         label_2->setText(QApplication::translate("PointCloudToolsClass", "k1", 0));
         fyLineedit->setText(QApplication::translate("PointCloudToolsClass", "1", 0));

@@ -82,7 +82,7 @@ public:
 
     void retranslateUi(QDialog *FilterWin)
     {
-        FilterWin->setWindowTitle(QApplication::translate("FilterWin", "FilterWin", 0));
+        FilterWin->setWindowTitle(QApplication::translate("FilterWin", "Filter", 0));
         label->setText(QApplication::translate("FilterWin", "The number of points to use for mean distance estimation", 0));
         nr_k->setText(QApplication::translate("FilterWin", "50", 0));
         label_2->setText(QApplication::translate("FilterWin", "The standard deviation multiplier", 0));

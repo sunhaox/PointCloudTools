@@ -146,7 +146,7 @@ public:
 
     void retranslateUi(QWidget *ColormapWin)
     {
-        ColormapWin->setWindowTitle(QApplication::translate("ColormapWin", "ColormapWin", 0));
+        ColormapWin->setWindowTitle(QApplication::translate("ColormapWin", "Colormap", 0));
         yesBtn->setText(QApplication::translate("ColormapWin", "Yes", 0));
         noBtn->setText(QApplication::translate("ColormapWin", "No", 0));
         label->setText(QApplication::translate("ColormapWin", "Min", 0));

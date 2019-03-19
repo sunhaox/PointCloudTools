@@ -1,4 +1,4 @@
-#include "ColormapWin.h"
+﻿#include "ColormapWin.h"
 
 ColormapWin::ColormapWin(QWidget *parent)
 	:QDialog(parent)

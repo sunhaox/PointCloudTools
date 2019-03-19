@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <opencv2\opencv.hpp>
@@ -15,9 +15,9 @@ public:
 
 	cv::Mat depthMat;
 	cv::Mat colorMat;
-	string fullname;		//ÍêÕûÂ·¾¶
-	string filename;		//ÎÄ¼şÃû
-	string dirname;			//ÎÄ¼ş¼ĞÂ·¾¶
-	string filetype;		//ÎÄ¼şÀàĞÍ
-	bool isConvert = false;	//ÊÇ·ñ×ªµãÔÆ
+	string fullname;		//å®Œæ•´è·¯å¾„
+	string filename;		//æ–‡ä»¶å
+	string dirname;			//æ–‡ä»¶å¤¹è·¯å¾„
+	string filetype;		//æ–‡ä»¶ç±»å‹
+	bool isConvert = false;	//æ˜¯å¦è½¬ç‚¹äº‘
 };

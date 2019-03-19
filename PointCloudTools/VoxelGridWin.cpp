@@ -1,4 +1,4 @@
-#include "VoxelGridWin.h"
+﻿#include "VoxelGridWin.h"
 
 VoxelGridWin::VoxelGridWin(QWidget *parent)
 	: QDialog(parent)

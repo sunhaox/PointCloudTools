@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>ColormapWin</string>
+   <string>Colormap</string>
   </property>
   <widget class="QPushButton" name="yesBtn">
    <property name="geometry">

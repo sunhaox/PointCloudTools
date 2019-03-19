@@ -184,7 +184,7 @@ public:
 
     void retranslateUi(QDialog *ReconstructionWin)
     {
-        ReconstructionWin->setWindowTitle(QApplication::translate("ReconstructionWin", "ReconstructionWin", 0));
+        ReconstructionWin->setWindowTitle(QApplication::translate("ReconstructionWin", "Reconstruction", 0));
         groupBox->setTitle(QApplication::translate("ReconstructionWin", "Normal Estimation", 0));
         label->setText(QApplication::translate("ReconstructionWin", "K Search", 0));
         normalKEdit->setText(QApplication::translate("ReconstructionWin", "20", 0));

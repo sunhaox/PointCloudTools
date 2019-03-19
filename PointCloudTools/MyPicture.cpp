@@ -1,4 +1,4 @@
-#include "MyPicture.h"
+﻿#include "MyPicture.h"
 
 MyPicture::MyPicture()
 {

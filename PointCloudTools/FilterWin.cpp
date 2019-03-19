@@ -1,4 +1,4 @@
-#include "FilterWin.h"
+﻿#include "FilterWin.h"
 
 FilterWin::FilterWin(QWidget *parent)
 	: QDialog(parent)

@@ -1,4 +1,4 @@
-#include "AboutWin.h"
+﻿#include "AboutWin.h"
 
 AboutWin::AboutWin(QWidget *parent)
 	: QDialog(parent)

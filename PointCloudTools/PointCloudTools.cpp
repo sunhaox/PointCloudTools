@@ -1,4 +1,4 @@
-#include "PointCloudTools.h"
+ï»¿#include "PointCloudTools.h"
 
 PointCloudTools::PointCloudTools(QWidget *parent)
 	: QMainWindow(parent)
@@ -67,13 +67,18 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 	connect(ui.dataTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(popMenu(const QPoint&)));
 
 	connect(ui.consoleTable, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(popMenuInConsole(const QPoint&)));
+
+	/***** Slots of language change *****/
+	connect(ui.chineseAction, SIGNAL(clicked()), this, SLOT(changeChinese()));
+	connect(ui.englishAction, SIGNAL(clicked()), this, SLOT(changeEnglish()));
+
 	// Initialization
 	initial();
 }
 
 void PointCloudTools::open()
 {
-	QStringList filenames = QFileDialog::getOpenFileNames(this, tr("Open image file"), QString::fromUtf8(mypicture->fullname.c_str()), tr("Depth Image(*.png);;PointCloud File(*.pcd *.ply);;All file(*.*)"));
+	QStringList filenames = QFileDialog::getOpenFileNames(this, tr("Open image file"), QString::fromLocal8Bit(mypicture->fullname.c_str()), tr("Depth Image(*.png);;PointCloud File(*.pcd *.ply);;All file(*.*)"));
 	if (filenames.isEmpty())
 		return;
 
@@ -86,25 +91,25 @@ void PointCloudTools::open()
 		std::string filetype = getFileType(file_name);
 		std::string dirname = getFileDir(file_name);
 
-		//¸üĞÂ×´Ì¬À¸
-		ui.statusBar->showMessage(QString::fromUtf8(subname.c_str()) + " : " + QString::number(i) + "/" + QString::number(filenames.size()) + " image or pointcloud open");
+		//æ›´æ–°çŠ¶æ€æ 
+		ui.statusBar->showMessage(QString::fromLocal8Bit(subname.c_str()) + " : " + QString::number(i) + "/" + QString::number(filenames.size()) + tr(" image or pointcloud open"));
 
 		int status = -1;
 		if (filename.endsWith(".png", Qt::CaseInsensitive) || filename.endsWith(".bmp",Qt::CaseInsensitive))
 		{
 			mypicture = new MyPicture();
 
-			//TODO ÎÄ¼şÃûÖØ¸´
+			//TODO æ–‡ä»¶åé‡å¤
 
-			// Í¼Æ¬´ò¿ª
+			// å›¾ç‰‡æ‰“å¼€
 			cv::Mat img;
 			try{
 				img = cv::imread(file_name, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH);
 			}
 			catch (exception ex)
 			{
-				consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
-				QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!",QMessageBox::Yes);
+				consoleLog(tr("Open Error"), QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), tr("File may corrupted!"));
+				QMessageBox::critical(this, tr("Open Error"), tr("Can not open file! File may corrupted!"),QMessageBox::Yes);
 				return;
 			}
 			mypicture->fullname = file_name;
@@ -114,7 +119,7 @@ void PointCloudTools::open()
 			mypicture->depthMat = img.clone();
 			mypicture_vec.push_back(mypicture);
 
-			//¼ì²éÍ¼ÏñÉî¶È¡¢Í¨µÀ
+			//æ£€æŸ¥å›¾åƒæ·±åº¦ã€é€šé“
 			if (img.type() != CV_16U)
 			{
 				int type = img.type();
@@ -131,35 +136,35 @@ void PointCloudTools::open()
 				default: type_str += "Unknow";
 					break;
 				}
-				consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), "Image type:" + type_str, "Should open 16bits depth image.");
+				consoleLog(tr("Open"), QString::fromLocal8Bit(subname.c_str()), tr("Image type:") + type_str, tr("Should open 16bits depth image."));
 			}
 
-			//Éî¶ÈÍ¼ÏñÏÔÊ¾
+			//æ·±åº¦å›¾åƒæ˜¾ç¤º
 			cv::Mat zip;
 			img.convertTo(zip, CV_8U, -1.0 / 256, 0);
 			cv::resize(img, img, cv::Size(320, 240));
 			QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 			ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
-			//Î±²ÊÉ«Í¼ÏñÇå¿Õ
+			//ä¼ªå½©è‰²å›¾åƒæ¸…ç©º
 			ui.imageColor->clear();
-			//¸üĞÂ±êÌâ
+			//æ›´æ–°æ ‡é¢˜
 			ui.imageDock->setWindowTitle(QString::fromLocal8Bit(mypicture->filename.c_str()));
 
 			status = 0;
 
-			//¸üĞÂ×ÊÔ´¹ÜÀíÊ÷
+			//æ›´æ–°èµ„æºç®¡ç†æ ‘
 			QTreeWidgetItem *picName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(subname.c_str()));
 			picName->setIcon(0, QIcon(":/Resources/images/pic.png"));
 			ui.dataTree->addTopLevelItem(picName);
 
-			//½á¹ûÏÔÊ¾
+			//ç»“æœæ˜¾ç¤º
 			QString time_cost = timeOff();
-			consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "Time cost: " + time_cost + " s");
+			consoleLog(tr("Open"), QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), tr("Time cost: ") + time_cost + " s");
 		}
 		else
 		{
 			
-			//TODO µãÔÆÃû×ÖÖØ¸´´¦Àí·½·¨
+			//TODO ç‚¹äº‘åå­—é‡å¤å¤„ç†æ–¹æ³•
 
 			mycloud = new MyCloud();
 			mycloud->fullname = file_name;
@@ -168,20 +173,20 @@ void PointCloudTools::open()
 			mycloud->dirname = dirname;
 			mycloud->cloud.reset(new PointCloudT);
 
-			//µãÔÆ´ò¿ª
+			//ç‚¹äº‘æ‰“å¼€
 			if (filename.endsWith(".pcd", Qt::CaseInsensitive))
 			{
-				//¶ÁÈ¡ÎÄ¼ş
+				//è¯»å–æ–‡ä»¶
 				try{
 					status = pcl::io::loadPCDFile(file_name, *(mycloud->cloud));
 				}
 				catch (exception ex)
 				{
-					consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
-					QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!", QMessageBox::Yes);
+					consoleLog(tr("Open Error"), QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), tr("File may corrupted!"));
+					QMessageBox::critical(this, tr("Open Error"), tr("Can not open file! File may corrupted!"), QMessageBox::Yes);
 					return;
 				}
-				//ÉèÖÃÄ¬ÈÏµãÑÕÉ«
+				//è®¾ç½®é»˜è®¤ç‚¹é¢œè‰²
 				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
 				{
 					setCloudColor(255, 255, 255);
@@ -189,17 +194,17 @@ void PointCloudTools::open()
 			}
 			else if (filename.endsWith(".ply", Qt::CaseInsensitive))
 			{
-				//¶ÁÈ¡ÎÄ¼ş
+				//è¯»å–æ–‡ä»¶
 				try{
 					status = pcl::io::loadPLYFile(file_name, *(mycloud->cloud));
 				}
 				catch (exception ex)
 				{
-					consoleLog("Open Error", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "File may corrupted!");
-					QMessageBox::critical(this, "Open Error", "Can not open file! File may corrupted!", QMessageBox::Yes);
+					consoleLog(tr("Open Error"), QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), tr("File may corrupted!"));
+					QMessageBox::critical(this, tr("Open Error"), tr("Can not open file! File may corrupted!"), QMessageBox::Yes);
 					return;
 				}
-				//ÉèÖÃÄ¬ÈÏµãÑÕÉ«
+				//è®¾ç½®é»˜è®¤ç‚¹é¢œè‰²
 				if (mycloud->cloud->points[0].r == 0 && mycloud->cloud->points[0].g == 0 && mycloud->cloud->points[0].b == 0)
 				{
 					setCloudColor(255, 255, 255);
@@ -207,7 +212,7 @@ void PointCloudTools::open()
 			}
 			else
 			{
-				//ÎÄ¼ş¸ñÊ½²»ÄÜ´¦Àí
+				//æ–‡ä»¶æ ¼å¼ä¸èƒ½å¤„ç†
 				QMessageBox::information(this, tr("File format error"), tr("Can not open files excpet .png .pcd .ply"));
 				return;
 			}
@@ -221,14 +226,14 @@ void PointCloudTools::open()
 
 			mycloud_vec.push_back(mycloud);
 
-			//¸üĞÂ×ÊÔ´¹ÜÀíÊ÷
+			//æ›´æ–°èµ„æºç®¡ç†æ ‘
 			QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(subname.c_str()));
 			cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 			ui.dataTree->addTopLevelItem(cloudName);
 
-			//½á¹ûÊä³ö
+			//ç»“æœè¾“å‡º
 			QString time_cost = timeOff();
-			consoleLog("Open", QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), "Time cost: " + time_cost + " s; Load points:" + QString::number(mycloud->cloud->size()));
+			consoleLog(tr("Open"), QString::fromLocal8Bit(subname.c_str()), QString::fromLocal8Bit(file_name.c_str()), tr("Time cost: ") + time_cost + tr(" s; Load points:") + QString::number(mycloud->cloud->size()));
 		}
 
 		
@@ -243,17 +248,17 @@ void PointCloudTools::open()
 
 void PointCloudTools::clear()
 {
-	mycloud_vec.clear();			//µãÔÆÈİÆ÷ÖĞÒÆ³ıËùÓĞµã
-	mypicture_vec.clear();			//´ÓÍ¼ÏñÈİÆ÷ÖĞÒÆ³ıËùÓĞÄÚÈİ
-	viewer->removeAllPointClouds();	//´ÓviewerÖĞÒÆ³ıËùÓĞµãÔÆ
+	mycloud_vec.clear();			//ç‚¹äº‘å®¹å™¨ä¸­ç§»é™¤æ‰€æœ‰ç‚¹
+	mypicture_vec.clear();			//ä»å›¾åƒå®¹å™¨ä¸­ç§»é™¤æ‰€æœ‰å†…å®¹
+	viewer->removeAllPointClouds();	//ä»viewerä¸­ç§»é™¤æ‰€æœ‰ç‚¹äº‘
 	viewer->removeAllShapes();
 	ui.dataTree->clear();
 
 	mypicture = new MyPicture();
 
-	consoleLog("Clear", "All point clouds and picture", "", "");
+	consoleLog(tr("Clear"), tr("All point clouds and picture"), "", "");
 
-	//ÏÔÊ¾¸üĞÂ
+	//æ˜¾ç¤ºæ›´æ–°
 	ui.imageDepth->clear();
 	ui.imageColor->clear();
 	showPointcloudAdd();
@@ -263,40 +268,40 @@ void PointCloudTools::save()
 {
 	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
 
-	//ÎÄ¼şÃûÎª¿ÕÖ±½Ó·µ»Ø
+	//æ–‡ä»¶åä¸ºç©ºç›´æ¥è¿”å›
 	if (save_filename.isEmpty())
 		return;
 
 	std::string file_name = save_filename.toStdString();
 	std::string subname = getFileName(file_name);
 
-	//±£´æ²Ù×÷
+	//ä¿å­˜æ“ä½œ
 	int status = saveFile(false, save_filename);
 	if (status != 0)
 		return;
 
-	//Êä³ö´°¿Ú
-	consoleLog("Save", QString::fromLocal8Bit(subname.c_str()), save_filename, "PointCloud save");
+	//è¾“å‡ºçª—å£
+	consoleLog(tr("Save"), QString::fromLocal8Bit(subname.c_str()), save_filename, tr("PointCloud save"));
 }
 
 void PointCloudTools::saveBinary()
 {
 	QString save_filename = QFileDialog::getSaveFileName(this, tr("Save point cloud"), QString::fromLocal8Bit(mycloud->dirname.c_str()), tr("Point Cloud data(*.pcd *.ply);;All File(*.*)"));
 
-	//ÎÄ¼şÃûÎª¿ÕÖ±½Ó·µ»Ø
+	//æ–‡ä»¶åä¸ºç©ºç›´æ¥è¿”å›
 	if (save_filename.isEmpty())
 		return;
 
 	std::string file_name = save_filename.toStdString();
 	std::string subname = getFileName(file_name);
 
-	//±£´æ²Ù×÷
+	//ä¿å­˜æ“ä½œ
 	int status = saveFile(true, save_filename);
 	if (status != 0)
 		return;
 
-	//Êä³ö´°¿Ú
-	consoleLog("Save Binary", QString::fromLocal8Bit(subname.c_str()), save_filename, "PointCloud save");
+	//è¾“å‡ºçª—å£
+	consoleLog(tr("Save Binary"), QString::fromLocal8Bit(subname.c_str()), save_filename, tr("PointCloud save"));
 }
 
 int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
@@ -310,15 +315,15 @@ int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
 	int sum = 0;
 	for (auto c : mycloud_vec)
 	{
-		//ÏÔÊ¾µÄµãÔÆ·ÅÈë»º³åÇø
+		//æ˜¾ç¤ºçš„ç‚¹äº‘æ”¾å…¥ç¼“å†²åŒº
 		if (c->visible)
 			sum += c->cloud->points.size();
 	}
 
-	//¼ì²éÊÇ·ñÎª¿Õ
+	//æ£€æŸ¥æ˜¯å¦ä¸ºç©º
 	if (sum == 0)
 	{
-		QMessageBox::information(this, "Save Error", "No point cloud data.", QMessageBox::Yes);
+		QMessageBox::information(this, tr("Save Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return -1;
 	}
 
@@ -342,7 +347,7 @@ int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
 		}
 		
 	}
-	//±£´æ
+	//ä¿å­˜
 	int status = -1;
 	if (save_filename.endsWith(".pcd", Qt::CaseInsensitive))
 	{
@@ -368,12 +373,12 @@ int PointCloudTools::saveFile(bool save_as_binary,QString save_filename)
 	}
 	else
 	{
-		//ÎŞ·¨±£´æ³ı.ply .pcdÍâÎÄ¼ş
+		//æ— æ³•ä¿å­˜é™¤.ply .pcdå¤–æ–‡ä»¶
 		QMessageBox::information(this, tr("File format error"), tr("Can not save file except .ply .pcd"),QMessageBox::Yes);
 		return -1;
 	}
 
-	//ÌáÊ¾£ººó×ºÃ»ÎÊÌâ£¬µ«ÊÇÎŞ·¨±£´æ
+	//æç¤ºï¼šåç¼€æ²¡é—®é¢˜ï¼Œä½†æ˜¯æ— æ³•ä¿å­˜
 	if (status != 0)
 	{
 		QMessageBox::critical(this, tr("Saving file error"), tr("We can not save the file"));
@@ -390,16 +395,16 @@ void PointCloudTools::exit()
 
 void PointCloudTools::pointcolorChanged()
 {
-	QColor color = QColorDialog::getColor(Qt::white, this, "Select color for point cloud");
+	QColor color = QColorDialog::getColor(Qt::white, this, tr("Select color for point cloud"));
 
-	if (color.isValid()) //ÅĞ¶ÏËùÑ¡µÄÑÕÉ«ÊÇ·ñÓĞĞ§
+	if (color.isValid()) //åˆ¤æ–­æ‰€é€‰çš„é¢œè‰²æ˜¯å¦æœ‰æ•ˆ
 	{
 		//QAction* action = dynamic_cast<QAction*>(sender());
-		//if (action != ui.pointcolorAction) //¸Ä±äÑÕÉ«µÄĞÅºÅÀ´×ÔÓÚ dataTree
+		//if (action != ui.pointcolorAction) //æ”¹å˜é¢œè‰²çš„ä¿¡å·æ¥è‡ªäº dataTree
 		QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
 		int selected_item_count = ui.dataTree->selectedItems().size();
 		if (selected_item_count == 0){
-			//¸Ä±äËùÓĞµãÑÕÉ«
+			//æ”¹å˜æ‰€æœ‰ç‚¹é¢œè‰²
 			for (int i = 0; i != mycloud_vec.size(); i++){
 				for (int j = 0; j != mycloud_vec[i]->cloud->points.size(); j++){
 					mycloud_vec[i]->cloud->points[j].r = color.red();
@@ -407,16 +412,16 @@ void PointCloudTools::pointcolorChanged()
 					mycloud_vec[i]->cloud->points[j].b = color.blue();
 				}
 			}
-			// Êä³ö´°¿Ú
-			consoleLog("Change cloud color", "All point clouds", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+			// è¾“å‡ºçª—å£
+			consoleLog(tr("Change cloud color"), tr("All point clouds"), QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
 		}
 		else{
 			for (int i = 0; i != selected_item_count; i++){
 				QString name = itemList[i]->text(0);
-				//±éÀúmycloud_vec
+				//éå†mycloud_vec
 				for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 				{
-					//ÕÒµ½Í¬ÃûµãÔÆÊı¾İ
+					//æ‰¾åˆ°åŒåç‚¹äº‘æ•°æ®
 					if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 					{
 						for (int j = 0; j != (*it)->cloud->size(); j++)
@@ -430,8 +435,8 @@ void PointCloudTools::pointcolorChanged()
 					}
 				}
 			}
-			// Êä³ö´°¿Ú
-			consoleLog("Change cloud color", "Point clouds selected", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+			// è¾“å‡ºçª—å£
+			consoleLog(tr("Change cloud color"), tr("Point clouds selected"), QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
 		}
 
 		showPointcloudAdd();
@@ -441,13 +446,13 @@ void PointCloudTools::pointcolorChanged()
 void PointCloudTools::bgcolorChanged()
 {
 	QColor color = QColorDialog::getColor(Qt::white, this,
-		"Select color for point cloud");
+		tr("Select color for point cloud"));
 	if (color.isValid())
 	{
 		viewer->setBackgroundColor(color.red() / 255.0,
 			color.green() / 255.0, color.blue() / 255.0);
-		// Êä³ö´°¿Ú
-		consoleLog("Change bg color", "Background", QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
+		// è¾“å‡ºçª—å£
+		consoleLog(tr("Change bg color"), tr("Background"), QString::number(color.red()) + " " + QString::number(color.green()) + " " + QString::number(color.blue()), "");
 		showPointcloudAdd();
 	}
 }
@@ -499,12 +504,12 @@ void PointCloudTools::cube()
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
 	mycloud->dirname = QDir::currentPath().toStdString();
-	//µãÔÆÊı¾İ
+	//ç‚¹äº‘æ•°æ®
 	mycloud->cloud.reset(new PointCloudT);
-	mycloud->cloud->width = 50000;			//µãÔÆ¿í
-	mycloud->cloud->height = 1;				//µãÔÆ¸ß£¬1ÎªÎŞ×éÖ¯µãÔÆ
+	mycloud->cloud->width = 50000;			//ç‚¹äº‘å®½
+	mycloud->cloud->height = 1;				//ç‚¹äº‘é«˜ï¼Œ1ä¸ºæ— ç»„ç»‡ç‚¹äº‘
 	mycloud->cloud->is_dense = false;
-	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//ÖØÖÃµãÔÆ´óĞ¡
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//é‡ç½®ç‚¹äº‘å¤§å°
 	for (size_t i = 0; i != mycloud->cloud->size(); i++)
 	{
 		mycloud->cloud->points[i].x = 1024 * rand() / (RAND_MAX + 1.0f);
@@ -517,13 +522,13 @@ void PointCloudTools::cube()
 
 	mycloud_vec.push_back(mycloud);
 
-	//ÉèÖÃ×ÊÔ´¹ÜÀí
+	//è®¾ç½®èµ„æºç®¡ç†
 	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
 
-	//Êä³ö´°¿Ú
-	consoleLog("Generate cube",QString::fromLocal8Bit(mycloud->filename.c_str()), "cube", "");
+	//è¾“å‡ºçª—å£
+	consoleLog(tr("Generate cube"),QString::fromLocal8Bit(mycloud->filename.c_str()), tr("cube"), "");
 
 	showPointcloudAdd();
 }
@@ -537,17 +542,17 @@ void PointCloudTools::createSphere()
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
 	mycloud->dirname = QDir::currentPath().toStdString();
-	//µãÔÆÊı¾İ
+	//ç‚¹äº‘æ•°æ®
 	mycloud->cloud.reset(new PointCloudT);
-	mycloud->cloud->width = 50000;			//µãÔÆ¿í
-	mycloud->cloud->height = 1;				//µãÔÆ¸ß£¬1ÎªÎŞ×éÖ¯µãÔÆ
+	mycloud->cloud->width = 50000;			//ç‚¹äº‘å®½
+	mycloud->cloud->height = 1;				//ç‚¹äº‘é«˜ï¼Œ1ä¸ºæ— ç»„ç»‡ç‚¹äº‘
 	mycloud->cloud->is_dense = false;
-	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//ÖØÖÃµãÔÆ´óĞ¡
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//é‡ç½®ç‚¹äº‘å¤§å°
 	for (size_t i = 0; i != mycloud->cloud->size(); i++)
 	{
-		double sphere_r = 1024 * rand() / (RAND_MAX + 1.0f);		//°ë¾¶
-		double sphere_a = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//Ğı×ª½Ç¶È
-		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//ÉÏÏÂ½Ç¶È
+		double sphere_r = 1024 * rand() / (RAND_MAX + 1.0f);		//åŠå¾„
+		double sphere_a = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//æ—‹è½¬è§’åº¦
+		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//ä¸Šä¸‹è§’åº¦
 		mycloud->cloud->points[i].x = sphere_r * sin(sphere_a) * sin(sphere_t);
 		mycloud->cloud->points[i].y = sphere_r * sin(sphere_a) * cos(sphere_t);
 		mycloud->cloud->points[i].z = sphere_r * cos(sphere_a);
@@ -558,13 +563,13 @@ void PointCloudTools::createSphere()
 
 	mycloud_vec.push_back(mycloud);
 
-	//ÉèÖÃ×ÊÔ´¹ÜÀí
+	//è®¾ç½®èµ„æºç®¡ç†
 	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
 
-	//Êä³ö´°¿Ú
-	consoleLog("Generate sphere", QString::fromLocal8Bit(mycloud->filename.c_str()), "sphere", "");
+	//è¾“å‡ºçª—å£
+	consoleLog(tr("Generate sphere"), QString::fromLocal8Bit(mycloud->filename.c_str()), tr("sphere"), "");
 
 	showPointcloudAdd();
 }
@@ -578,16 +583,16 @@ void PointCloudTools::createCylinder()
 	mycloud->filetype = "pcd";
 	mycloud->fullname = QDir::currentPath().toStdString() + mycloud->filename;
 	mycloud->dirname = QDir::currentPath().toStdString();
-	//µãÔÆÊı¾İ
+	//ç‚¹äº‘æ•°æ®
 	mycloud->cloud.reset(new PointCloudT);
-	mycloud->cloud->width = 50000;			//µãÔÆ¿í
-	mycloud->cloud->height = 1;				//µãÔÆ¸ß£¬1ÎªÎŞ×éÖ¯µãÔÆ
+	mycloud->cloud->width = 50000;			//ç‚¹äº‘å®½
+	mycloud->cloud->height = 1;				//ç‚¹äº‘é«˜ï¼Œ1ä¸ºæ— ç»„ç»‡ç‚¹äº‘
 	mycloud->cloud->is_dense = false;
-	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//ÖØÖÃµãÔÆ´óĞ¡
+	mycloud->cloud->resize(mycloud->cloud->width * mycloud->cloud->height);		//é‡ç½®ç‚¹äº‘å¤§å°
 	for (size_t i = 0; i != mycloud->cloud->size(); i++)
 	{
-		double sphere_r = 512 * rand() / (RAND_MAX + 1.0f);		//°ë¾¶
-		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//Ğı×ª½Ç¶È
+		double sphere_r = 512 * rand() / (RAND_MAX + 1.0f);		//åŠå¾„
+		double sphere_t = 6.2831852 * rand() / (RAND_MAX + 1.0f);	//æ—‹è½¬è§’åº¦
 		mycloud->cloud->points[i].x = sphere_r * sin(sphere_t);
 		mycloud->cloud->points[i].y = sphere_r *  cos(sphere_t);
 		mycloud->cloud->points[i].z = 1024 * rand() / (RAND_MAX + 1.0f);
@@ -598,13 +603,13 @@ void PointCloudTools::createCylinder()
 
 	mycloud_vec.push_back(mycloud);
 
-	//ÉèÖÃ×ÊÔ´¹ÜÀí
+	//è®¾ç½®èµ„æºç®¡ç†
 	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
 
-	//Êä³ö´°¿Ú
-	consoleLog("Generate cylinder", QString::fromLocal8Bit(mycloud->filename.c_str()), "cylinder", "");
+	//è¾“å‡ºçª—å£
+	consoleLog(tr("Generate cylinder"), QString::fromLocal8Bit(mycloud->filename.c_str()), tr("cylinder"), "");
 
 	showPointcloudAdd();
 }
@@ -615,7 +620,7 @@ void PointCloudTools::convertSurface(ReconstructionClass rc)
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//±éÀúËùÓĞÏÔÊ¾µÄµã
+		//éå†æ‰€æœ‰æ˜¾ç¤ºçš„ç‚¹
 		if ((*it)->visible)
 		{
 			for (int i = 0; i < (*it)->cloud->size(); i++)
@@ -627,10 +632,10 @@ void PointCloudTools::convertSurface(ReconstructionClass rc)
 			}
 		}
 	}
-	//¼ì²éµãÔÆÊı¾İ
+	//æ£€æŸ¥ç‚¹äº‘æ•°æ®
 	if (cloud_xyz->size() == 0)
 	{
-		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		QMessageBox::critical(this, tr("Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return ;
 	}
 
@@ -643,54 +648,54 @@ void PointCloudTools::convertSurface(ReconstructionClass rc)
 	double maxmum_angle = rc.maxAngle;
 	
 
-	//·¨Ïò¹À¼Æ
-	ui.statusBar->showMessage("Convert surface: Normal estimation.");
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//¹¹½¨·¨Ïß¹À¼Æ¶ÔÏón
-	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//¹¹½¨·¨ÏòÊı¾İÖ¸Õë
-	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//´´½¨kdtreeÓÃÓÚ·¨Ïò¼ÆËã
-	tree->setInputCloud(cloud_xyz);			//ÎªkdtreeÊäÈëµãÔÆ
-	n.setInputCloud(cloud_xyz);				//·¨Ïò¹À¼ÆÊäÈëµãÔÆ
-	n.setSearchMethod(tree);				//ÉèÖÃ·¨Ïò¹À¼ÆËÑË÷·½·¨	
-	n.setKSearch(k);						//ÉèÖÃkÁÚ½üËÑË÷µãÊı			
-	n.compute(*normals);					//·¨Ïò¹À¼Æ
+	//æ³•å‘ä¼°è®¡
+	ui.statusBar->showMessage(tr("Convert surface: Normal estimation."));
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//æ„å»ºæ³•çº¿ä¼°è®¡å¯¹è±¡n
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//æ„å»ºæ³•å‘æ•°æ®æŒ‡é’ˆ
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//åˆ›å»ºkdtreeç”¨äºæ³•å‘è®¡ç®—
+	tree->setInputCloud(cloud_xyz);			//ä¸ºkdtreeè¾“å…¥ç‚¹äº‘
+	n.setInputCloud(cloud_xyz);				//æ³•å‘ä¼°è®¡è¾“å…¥ç‚¹äº‘
+	n.setSearchMethod(tree);				//è®¾ç½®æ³•å‘ä¼°è®¡æœç´¢æ–¹æ³•	
+	n.setKSearch(k);						//è®¾ç½®ké‚»è¿‘æœç´¢ç‚¹æ•°			
+	n.compute(*normals);					//æ³•å‘ä¼°è®¡
 
-	QMessageBox::information(this, "information", "Normal estimation finished");
+	QMessageBox::information(this, tr("information"), tr("Normal estimation finished"));
 
-	//µãÔÆÊı¾İÓë·¨ÏòÊı¾İÆ´½Ó
-	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);		//´´½¨Í¬Ê±°üº¬µãºÍ·¨ÏßµÄÊı¾İ½á¹¹µÄÖ¸Õë
-	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);										//½«ÒÑ»ñµÃµÄµãÊı¾İºÍ·¨ÏòÊı¾İÆ´½Ó
-	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);			//´´½¨ÁíÒ»¸ökdtreeÓÃÓÚÖØ½¨
-	tree2->setInputCloud(cloud_with_normals);																//ÎªkdtreeÊäÈëµãÔÆÊı¾İ£¬¸ÃµãÔÆÊı¾İÀàĞÍÎªµãºÍ·¨Ïò
+	//ç‚¹äº‘æ•°æ®ä¸æ³•å‘æ•°æ®æ‹¼æ¥
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);		//åˆ›å»ºåŒæ—¶åŒ…å«ç‚¹å’Œæ³•çº¿çš„æ•°æ®ç»“æ„çš„æŒ‡é’ˆ
+	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);										//å°†å·²è·å¾—çš„ç‚¹æ•°æ®å’Œæ³•å‘æ•°æ®æ‹¼æ¥
+	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);			//åˆ›å»ºå¦ä¸€ä¸ªkdtreeç”¨äºé‡å»º
+	tree2->setInputCloud(cloud_with_normals);																//ä¸ºkdtreeè¾“å…¥ç‚¹äº‘æ•°æ®ï¼Œè¯¥ç‚¹äº‘æ•°æ®ç±»å‹ä¸ºç‚¹å’Œæ³•å‘
 
-	//ÇúÃæÖØ¹¹
-	ui.statusBar->showMessage("Convert surface: Greedy projection triangulation");
-	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;		//´´½¨Ì°À·Èı½ÇĞÎÍ¶Ó°ÖØ½¨¶ÔÏó
-	pcl::PolygonMesh triangles;										//´´½¨¶à±ßĞÎÍø¸ñ¶ÔÏó£¬ÓÃÀ´´æ´¢ÖØ½¨½á¹û
-	//ÉèÖÃ²ÎÊı
-	gp3.setSearchRadius(radius);				//ÉèÖÃÁ¬½ÓµãÖ®¼ä×î´ó¾àÀë£¬ÓÃÓÚÈ·¶¨k½üÁÚµÄÇò°ë¾¶	
-	gp3.setMu(mu);							//ÉèÖÃ×î½üÁÚ¾àÀëµÄ³Ë×Ó£¬ÒÔµÃµ½Ã¿¸öµãµÄ×îÖÕËÑË÷°ë¾¶
-	gp3.setMaximumNearestNeighbors(nnn);	//ÉèÖÃËÑË÷µÄ×î½üÁÚµãµÄ×î´óÊıÁ¿
-	gp3.setMaximumSurfaceAngle(eps_angle);	//45¶È ×î´óÆ½Ãæ½Ç
-	gp3.setMinimumAngle(minmum_angle);			//10¶È Ã¿¸öÈı½ÇµÄ×î´ó½Ç¶È£¿
-	gp3.setMaximumAngle(maxmum_angle);		//120¶È
-	gp3.setNormalConsistency(false);		//Èô·¨ÏòÁ¿Ò»ÖÂ£¬ÉèÎªtrue
-	//ÉèÖÃµãÔÆÊı¾İºÍËÑË÷·½Ê½
+	//æ›²é¢é‡æ„
+	ui.statusBar->showMessage(tr("Convert surface: Greedy projection triangulation"));
+	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;		//åˆ›å»ºè´ªå©ªä¸‰è§’å½¢æŠ•å½±é‡å»ºå¯¹è±¡
+	pcl::PolygonMesh triangles;										//åˆ›å»ºå¤šè¾¹å½¢ç½‘æ ¼å¯¹è±¡ï¼Œç”¨æ¥å­˜å‚¨é‡å»ºç»“æœ
+	//è®¾ç½®å‚æ•°
+	gp3.setSearchRadius(radius);				//è®¾ç½®è¿æ¥ç‚¹ä¹‹é—´æœ€å¤§è·ç¦»ï¼Œç”¨äºç¡®å®škè¿‘é‚»çš„çƒåŠå¾„	
+	gp3.setMu(mu);							//è®¾ç½®æœ€è¿‘é‚»è·ç¦»çš„ä¹˜å­ï¼Œä»¥å¾—åˆ°æ¯ä¸ªç‚¹çš„æœ€ç»ˆæœç´¢åŠå¾„
+	gp3.setMaximumNearestNeighbors(nnn);	//è®¾ç½®æœç´¢çš„æœ€è¿‘é‚»ç‚¹çš„æœ€å¤§æ•°é‡
+	gp3.setMaximumSurfaceAngle(eps_angle);	//45åº¦ æœ€å¤§å¹³é¢è§’
+	gp3.setMinimumAngle(minmum_angle);			//10åº¦ æ¯ä¸ªä¸‰è§’çš„æœ€å¤§è§’åº¦ï¼Ÿ
+	gp3.setMaximumAngle(maxmum_angle);		//120åº¦
+	gp3.setNormalConsistency(false);		//è‹¥æ³•å‘é‡ä¸€è‡´ï¼Œè®¾ä¸ºtrue
+	//è®¾ç½®ç‚¹äº‘æ•°æ®å’Œæœç´¢æ–¹å¼
 	gp3.setInputCloud(cloud_with_normals);
 	gp3.setSearchMethod(tree2);
-	// ¿ªÊ¼ÖØ½¨
+	// å¼€å§‹é‡å»º
 	gp3.reconstruct(triangles);
-	QMessageBox::information(this, "informaiton", "Reconstruction finished");
+	QMessageBox::information(this, tr("informaiton"), tr("Reconstruction finished"));
 
-	//ÖØ½¨Íê³É£¬ÏÔÊ¾
+	//é‡å»ºå®Œæˆï¼Œæ˜¾ç¤º
 	ui.statusBar->showMessage("");
-	viewer->addPolygonMesh(triangles, "my"); //ÉèÖÃÒªÏÔÊ¾µÄÍø¸ñ¶ÔÏó
-	//ÉèÖÃÍø¸ñÄ£ĞÍÏÔÊ¾Ä£Ê½
-	viewer->setRepresentationToSurfaceForAllActors();		//Íø¸ñÄ£ĞÍÒÔÃæÆ¬ĞÎÊ½ÏÔÊ¾		//TODO ²ÎÊıÑ¡Ôñ
-	//viewer->setRepresentationToPointsForAllActors();		//Íø¸ñÄ£ĞÍÒÔµãĞÎÊ½ÏÔÊ¾
-	//viewer->setRepresentationToWireframeForAllActors();	//Íø¸ñÄ£ĞÍÒÔÏß¿òÍ¼Ä£Ê½ÏÔÊ¾
+	viewer->addPolygonMesh(triangles, "my"); //è®¾ç½®è¦æ˜¾ç¤ºçš„ç½‘æ ¼å¯¹è±¡
+	//è®¾ç½®ç½‘æ ¼æ¨¡å‹æ˜¾ç¤ºæ¨¡å¼
+	viewer->setRepresentationToSurfaceForAllActors();		//ç½‘æ ¼æ¨¡å‹ä»¥é¢ç‰‡å½¢å¼æ˜¾ç¤º		//TODO å‚æ•°é€‰æ‹©
+	//viewer->setRepresentationToPointsForAllActors();		//ç½‘æ ¼æ¨¡å‹ä»¥ç‚¹å½¢å¼æ˜¾ç¤º
+	//viewer->setRepresentationToWireframeForAllActors();	//ç½‘æ ¼æ¨¡å‹ä»¥çº¿æ¡†å›¾æ¨¡å¼æ˜¾ç¤º
 
-	// Êä³ö´°¿Ú
-	consoleLog("Convert surface", "", "", "");
+	// è¾“å‡ºçª—å£
+	consoleLog(tr("Convert surface"), "", "", "");
 
 	viewer->removeAllShapes();
 
@@ -704,7 +709,7 @@ void PointCloudTools::convertWireframe(ReconstructionClass rc)
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//±éÀúËùÓĞÏÔÊ¾µÄµã
+		//éå†æ‰€æœ‰æ˜¾ç¤ºçš„ç‚¹
 		if ((*it)->visible)
 		{
 			for (int i = 0; i < (*it)->cloud->size(); i++)
@@ -717,10 +722,10 @@ void PointCloudTools::convertWireframe(ReconstructionClass rc)
 		}
 	}
 
-	//¼ì²éµãÔÆÊı¾İ
+	//æ£€æŸ¥ç‚¹äº‘æ•°æ®
 	if (cloud_xyz->size() == 0)
 	{
-		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		QMessageBox::critical(this, tr("Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return ;
 	}
 
@@ -732,54 +737,54 @@ void PointCloudTools::convertWireframe(ReconstructionClass rc)
 	double minmum_angle = rc.minAngle;
 	double maxmum_angle = rc.maxAngle;
 
-	//·¨Ïò¹À¼Æ
-	ui.statusBar->showMessage("Convert wireframe: Normal estimation.");
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//´´½¨·¨Ïß¹À¼Æ¶ÔÏó n
-	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//´´½¨·¨ÏòÊı¾İÖ¸Õë normals
-	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//´´½¨ kdtree ÓÃÓÚ·¨Ïò¼ÆËãÊ±½üÁÚËÑË÷
-	tree->setInputCloud(cloud_xyz); //Îª kdtree ÊäÈëµãÔÆ
-	n.setInputCloud(cloud_xyz); //Îª·¨Ïò¹À¼Æ¶ÔÏóÊäÈëµãÔÆ
-	n.setSearchMethod(tree);  //ÉèÖÃ·¨Ïò¹À¼ÆÊ±Ëù²ÉÈ¡µÄËÑË÷·½Ê½Îªkdtree
-	n.setKSearch(k); //ÉèÖÃ·¨Ïò¹À¼ÆÊ±£¬k½üÁÚËÑË÷µÄµãÊı
-	n.compute(*normals); //½øĞĞ·¨Ïò¹À¼Æ
+	//æ³•å‘ä¼°è®¡
+	ui.statusBar->showMessage(tr("Convert wireframe: Normal estimation."));
+	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;									//åˆ›å»ºæ³•çº¿ä¼°è®¡å¯¹è±¡ n
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);			//åˆ›å»ºæ³•å‘æ•°æ®æŒ‡é’ˆ normals
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);	//åˆ›å»º kdtree ç”¨äºæ³•å‘è®¡ç®—æ—¶è¿‘é‚»æœç´¢
+	tree->setInputCloud(cloud_xyz); //ä¸º kdtree è¾“å…¥ç‚¹äº‘
+	n.setInputCloud(cloud_xyz); //ä¸ºæ³•å‘ä¼°è®¡å¯¹è±¡è¾“å…¥ç‚¹äº‘
+	n.setSearchMethod(tree);  //è®¾ç½®æ³•å‘ä¼°è®¡æ—¶æ‰€é‡‡å–çš„æœç´¢æ–¹å¼ä¸ºkdtree
+	n.setKSearch(k); //è®¾ç½®æ³•å‘ä¼°è®¡æ—¶ï¼Œkè¿‘é‚»æœç´¢çš„ç‚¹æ•°
+	n.compute(*normals); //è¿›è¡Œæ³•å‘ä¼°è®¡
 
-	QMessageBox::information(this, "information", "Normal estimation finished");
+	QMessageBox::information(this, tr("information"), tr("Normal estimation finished"));
 
-	// µãÔÆÊı¾İÓë·¨ÏòÊı¾İÆ´½Ó 
-	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);	//´´½¨Í¬Ê±°üº¬µãºÍ·¨ÏßµÄÊı¾İ½á¹¹µÄÖ¸Õë
-	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);									//½«ÒÑ»ñµÃµÄµãÊı¾İºÍ·¨ÏòÊı¾İÆ´½Ó
-	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);		//´´½¨ÁíÒ»¸ökdtreeÓÃÓÚÖØ½¨
-	tree2->setInputCloud(cloud_with_normals);				//ÎªkdtreeÊäÈëµãÔÆÊı¾İ£¬¸ÃµãÔÆÊı¾İÀàĞÍÎªµãºÍ·¨Ïò
+	// ç‚¹äº‘æ•°æ®ä¸æ³•å‘æ•°æ®æ‹¼æ¥ 
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);	//åˆ›å»ºåŒæ—¶åŒ…å«ç‚¹å’Œæ³•çº¿çš„æ•°æ®ç»“æ„çš„æŒ‡é’ˆ
+	pcl::concatenateFields(*cloud_xyz, *normals, *cloud_with_normals);									//å°†å·²è·å¾—çš„ç‚¹æ•°æ®å’Œæ³•å‘æ•°æ®æ‹¼æ¥
+	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);		//åˆ›å»ºå¦ä¸€ä¸ªkdtreeç”¨äºé‡å»º
+	tree2->setInputCloud(cloud_with_normals);				//ä¸ºkdtreeè¾“å…¥ç‚¹äº‘æ•°æ®ï¼Œè¯¥ç‚¹äº‘æ•°æ®ç±»å‹ä¸ºç‚¹å’Œæ³•å‘
 
 
 
-	// ÇúÃæÖØ½¨Ä£¿é
-	ui.statusBar->showMessage("Convert wireframe: Greedy projection triangulation.");
-	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;	//´´½¨Ì°À·Èı½ÇĞÎÍ¶Ó°ÖØ½¨¶ÔÏó
-	pcl::PolygonMesh triangles;									//´´½¨¶à±ßĞÎÍø¸ñ¶ÔÏó£¬ÓÃÀ´´æ´¢ÖØ½¨½á¹û
-	//ÉèÖÃ²ÎÊı
-	gp3.setSearchRadius(radius);			//ÉèÖÃÁ¬½ÓµãÖ®¼ä×î´ó¾àÀë£¬ÓÃÓÚÈ·¶¨k½üÁÚµÄÇò°ë¾¶
-	gp3.setMu(mu);							//ÉèÖÃ×î½üÁÚ¾àÀëµÄ³Ë×Ó£¬ÒÔµÃµ½Ã¿¸öµãµÄ×îÖÕËÑË÷°ë¾¶
-	gp3.setMaximumNearestNeighbors(nnn);	//ÉèÖÃËÑË÷µÄ×î½üÁÚµãµÄ×î´óÊıÁ¿
-	gp3.setMaximumSurfaceAngle(eps_angle);	//45¶È ×î´óÆ½Ãæ½Ç
-	gp3.setMinimumAngle(minmum_angle);		//10¶È Ã¿¸öÈı½ÇµÄ×î´ó½Ç¶È£¿
-	gp3.setMaximumAngle(maxmum_angle);		//120¶È
-	gp3.setNormalConsistency(false);		//Èô·¨ÏòÁ¿Ò»ÖÂ£¬ÉèÎªtrue
-	gp3.setInputCloud(cloud_with_normals);	//ÉèÖÃµãÔÆÊı¾İ
-	gp3.setSearchMethod(tree2);				//ÉèÖÃµãÔÆËÑË÷·½Ê½
-	gp3.reconstruct(triangles);				// ¿ªÊ¼ÖØ½¨
-	QMessageBox::information(this, "informaiton", "Reconstruction finished");
+	// æ›²é¢é‡å»ºæ¨¡å—
+	ui.statusBar->showMessage(tr("Convert wireframe: Greedy projection triangulation."));
+	pcl::GreedyProjectionTriangulation<pcl::PointNormal> gp3;	//åˆ›å»ºè´ªå©ªä¸‰è§’å½¢æŠ•å½±é‡å»ºå¯¹è±¡
+	pcl::PolygonMesh triangles;									//åˆ›å»ºå¤šè¾¹å½¢ç½‘æ ¼å¯¹è±¡ï¼Œç”¨æ¥å­˜å‚¨é‡å»ºç»“æœ
+	//è®¾ç½®å‚æ•°
+	gp3.setSearchRadius(radius);			//è®¾ç½®è¿æ¥ç‚¹ä¹‹é—´æœ€å¤§è·ç¦»ï¼Œç”¨äºç¡®å®škè¿‘é‚»çš„çƒåŠå¾„
+	gp3.setMu(mu);							//è®¾ç½®æœ€è¿‘é‚»è·ç¦»çš„ä¹˜å­ï¼Œä»¥å¾—åˆ°æ¯ä¸ªç‚¹çš„æœ€ç»ˆæœç´¢åŠå¾„
+	gp3.setMaximumNearestNeighbors(nnn);	//è®¾ç½®æœç´¢çš„æœ€è¿‘é‚»ç‚¹çš„æœ€å¤§æ•°é‡
+	gp3.setMaximumSurfaceAngle(eps_angle);	//45åº¦ æœ€å¤§å¹³é¢è§’
+	gp3.setMinimumAngle(minmum_angle);		//10åº¦ æ¯ä¸ªä¸‰è§’çš„æœ€å¤§è§’åº¦ï¼Ÿ
+	gp3.setMaximumAngle(maxmum_angle);		//120åº¦
+	gp3.setNormalConsistency(false);		//è‹¥æ³•å‘é‡ä¸€è‡´ï¼Œè®¾ä¸ºtrue
+	gp3.setInputCloud(cloud_with_normals);	//è®¾ç½®ç‚¹äº‘æ•°æ®
+	gp3.setSearchMethod(tree2);				//è®¾ç½®ç‚¹äº‘æœç´¢æ–¹å¼
+	gp3.reconstruct(triangles);				// å¼€å§‹é‡å»º
+	QMessageBox::information(this, tr("informaiton"), tr("Reconstruction finished"));
 
-	//¹¹½¨Íê³ÉÏÔÊ¾
+	//æ„å»ºå®Œæˆæ˜¾ç¤º
 	ui.statusBar->showMessage("");
-	viewer->addPolygonMesh(triangles, "my"); //ÉèÖÃÒªÏÔÊ¾µÄÍø¸ñ¶ÔÏó
-	//ÉèÖÃÍø¸ñÄ£ĞÍÏÔÊ¾Ä£Ê½
-	//viewer->setRepresentationToSurfaceForAllActors(); //Íø¸ñÄ£ĞÍÒÔÃæÆ¬ĞÎÊ½ÏÔÊ¾
-	//viewer->setRepresentationToPointsForAllActors();	//Íø¸ñÄ£ĞÍÒÔµãĞÎÊ½ÏÔÊ¾
-	viewer->setRepresentationToWireframeForAllActors(); //Íø¸ñÄ£ĞÍÒÔÏß¿òÍ¼Ä£Ê½ÏÔÊ¾
+	viewer->addPolygonMesh(triangles, "my"); //è®¾ç½®è¦æ˜¾ç¤ºçš„ç½‘æ ¼å¯¹è±¡
+	//è®¾ç½®ç½‘æ ¼æ¨¡å‹æ˜¾ç¤ºæ¨¡å¼
+	//viewer->setRepresentationToSurfaceForAllActors(); //ç½‘æ ¼æ¨¡å‹ä»¥é¢ç‰‡å½¢å¼æ˜¾ç¤º
+	//viewer->setRepresentationToPointsForAllActors();	//ç½‘æ ¼æ¨¡å‹ä»¥ç‚¹å½¢å¼æ˜¾ç¤º
+	viewer->setRepresentationToWireframeForAllActors(); //ç½‘æ ¼æ¨¡å‹ä»¥çº¿æ¡†å›¾æ¨¡å¼æ˜¾ç¤º
 
-	// Êä³ö´°¿Ú
-	consoleLog("Convert surface", "", "", "");
+	// è¾“å‡ºçª—å£
+	consoleLog(tr("Convert surface"), "", "", "");
 
 	viewer->removeAllShapes();
 
@@ -792,7 +797,7 @@ void PointCloudTools::convertFilter(FilterClass fc)
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//±éÀúËùÓĞÏÔÊ¾µÄµã
+		//éå†æ‰€æœ‰æ˜¾ç¤ºçš„ç‚¹
 		if ((*it)->visible)
 		{
 			for (int i = 0; i < (*it)->cloud->size(); i++)
@@ -805,32 +810,32 @@ void PointCloudTools::convertFilter(FilterClass fc)
 		}
 	}
 
-	//¼ì²éµãÔÆÊı¾İ
+	//æ£€æŸ¥ç‚¹äº‘æ•°æ®
 	if (cloud_xyz->size() == 0)
 	{
-		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		QMessageBox::critical(this, tr("Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
 	int nr_k = fc.nr_k;
 	double stddev_multi = fc.stddev_mult;
 
-	ui.statusBar->showMessage("Filting");
-	//ÂË²¨
+	ui.statusBar->showMessage(tr("Filting"));
+	//æ»¤æ³¢
 	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
 	sor.setInputCloud(cloud_xyz);
-	sor.setMeanK(nr_k);							//ÉèÖÃÁÚ¾ÓÊı				
-	sor.setStddevMulThresh(stddev_multi);		//ÉèÖÃ±ê×¼²î·Å´óÏµÊı
+	sor.setMeanK(nr_k);							//è®¾ç½®é‚»å±…æ•°				
+	sor.setStddevMulThresh(stddev_multi);		//è®¾ç½®æ ‡å‡†å·®æ”¾å¤§ç³»æ•°
 	sor.filter(*cloud_filtered);
 
-	//¼ì²éÖØÃû
+	//æ£€æŸ¥é‡å
 	string basename = "filted";
 	string comparename = "";
 	int filenum = 0;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//ÃüÃû¹æÔò£ºfilted - x.pcd
+		//å‘½åè§„åˆ™ï¼šfilted - x.pcd
 		if (filenum == 0)
 			comparename = basename + ".pcd";
 		else
@@ -842,23 +847,23 @@ void PointCloudTools::convertFilter(FilterClass fc)
 			filenum++;
 		}
 	}
-	//È«Òş²Ø
+	//å…¨éšè—
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
 		(*it)->visible = false;
 	}
-	//±éÀúÎÄ¼şÊ÷£¬¸üĞÂicon
+	//éå†æ–‡ä»¶æ ‘ï¼Œæ›´æ–°icon
 	QTreeWidgetItemIterator it(ui.dataTree);
 	while (*it) {
 		if ((*it)->text(0).endsWith(".pcd", Qt::CaseInsensitive) || (*it)->text(0).endsWith(".ply", Qt::CaseInsensitive))
 		{
-			QColor item_color = QColor(112, 122, 132, 255);		//ÉèÖÃiconÍ¼±ê°ëÍ¸Ã÷
+			QColor item_color = QColor(112, 122, 132, 255);		//è®¾ç½®iconå›¾æ ‡åŠé€æ˜
 			(*it)->setTextColor(0, item_color);
 		}
 		
 		++it;
 	}
-	//µãÔÆÉèÖÃ
+	//ç‚¹äº‘è®¾ç½®
 	mycloud = new MyCloud();
 	mycloud->dirname = QDir::currentPath().toStdString();
 	mycloud->filename = comparename;
@@ -868,7 +873,7 @@ void PointCloudTools::convertFilter(FilterClass fc)
 	pcl::copyPointCloud(*cloud_filtered, *(mycloud->cloud));
 	mycloud_vec.push_back(mycloud);
 
-	//ÉèÖÃ×ÊÔ´¹ÜÀí
+	//è®¾ç½®èµ„æºç®¡ç†
 	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
@@ -876,9 +881,9 @@ void PointCloudTools::convertFilter(FilterClass fc)
 	setCloudColor(255, 255, 255);
 	showPointcloudAdd();
 
-	//×´Ì¬Êä³ö
+	//çŠ¶æ€è¾“å‡º
 	ui.statusBar->showMessage("");
-	consoleLog("Filter", "", "", "");
+	consoleLog(tr("Filter"), "", "", "");
 	return ;
 }
 
@@ -888,7 +893,7 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz(new pcl::PointCloud<pcl::PointXYZ>);
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//±éÀúËùÓĞÏÔÊ¾µÄµã
+		//éå†æ‰€æœ‰æ˜¾ç¤ºçš„ç‚¹
 		if ((*it)->visible)
 		{
 			for (int i = 0; i < (*it)->cloud->size(); i++)
@@ -901,10 +906,10 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 		}
 	}
 
-	//¼ì²éµãÔÆÊı¾İ
+	//æ£€æŸ¥ç‚¹äº‘æ•°æ®
 	if (cloud_xyz->size() == 0)
 	{
-		QMessageBox::critical(this, "Error", "No point cloud data.", QMessageBox::Yes);
+		QMessageBox::critical(this, tr("Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
@@ -912,21 +917,21 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	float ly = vc.ly;
 	float lz = vc.lz;
 
-	ui.statusBar->showMessage("Down sampling");
-	//½µ²ÉÑù
+	ui.statusBar->showMessage(tr("Down sampling"));
+	//é™é‡‡æ ·
 	pcl::VoxelGrid<pcl::PointXYZ> sor;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
 	sor.setInputCloud(cloud_xyz);						
-	sor.setLeafSize(lx, ly, lz);						//ÉèÖÃ¹ıÂËÆ÷Ò¶´óĞ¡
+	sor.setLeafSize(lx, ly, lz);						//è®¾ç½®è¿‡æ»¤å™¨å¶å¤§å°
 	sor.filter(*cloud_filtered);
 
-	//¼ì²éÖØÃû
+	//æ£€æŸ¥é‡å
 	string basename = "voxel";
 	string comparename = "";
 	int filenum = 0;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
-		//ÃüÃû¹æÔò£ºfilted - x.pcd
+		//å‘½åè§„åˆ™ï¼šfilted - x.pcd
 		if (filenum == 0)
 			comparename = basename + ".pcd";
 		else
@@ -938,23 +943,23 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 			filenum++;
 		}
 	}
-	//È«Òş²Ø
+	//å…¨éšè—
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
 		(*it)->visible = false;
 	}
-	//±éÀúÎÄ¼şÊ÷£¬¸üĞÂicon
+	//éå†æ–‡ä»¶æ ‘ï¼Œæ›´æ–°icon
 	QTreeWidgetItemIterator it(ui.dataTree);
 	while (*it) {
 		if ((*it)->text(0).endsWith(".pcd", Qt::CaseInsensitive) || (*it)->text(0).endsWith(".ply", Qt::CaseInsensitive))
 		{
-			QColor item_color = QColor(112, 122, 132, 255);		//ÉèÖÃiconÍ¼±ê°ëÍ¸Ã÷
+			QColor item_color = QColor(112, 122, 132, 255);		//è®¾ç½®iconå›¾æ ‡åŠé€æ˜
 			(*it)->setTextColor(0, item_color);
 		}
 		
 		++it;
 	}
-	//µãÔÆÉèÖÃ
+	//ç‚¹äº‘è®¾ç½®
 	mycloud = new MyCloud();
 	mycloud->dirname = QDir::currentPath().toStdString();
 	mycloud->filename = comparename;
@@ -964,7 +969,7 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	pcl::copyPointCloud(*cloud_filtered, *(mycloud->cloud));
 	mycloud_vec.push_back(mycloud);
 
-	//ÉèÖÃ×ÊÔ´¹ÜÀí
+	//è®¾ç½®èµ„æºç®¡ç†
 	QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 	cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 	ui.dataTree->addTopLevelItem(cloudName);
@@ -972,9 +977,9 @@ void PointCloudTools::convertVoxel(VoxelGridClass vc)
 	setCloudColor(255, 255, 255);
 	showPointcloudAdd();
 
-	//×´Ì¬Êä³ö
+	//çŠ¶æ€è¾“å‡º
 	ui.statusBar->showMessage("");
-	consoleLog("Voxel down shampled", "", "", "");
+	consoleLog(tr("Voxel down shampled"), "", "", "");
 
 	return ;
 }
@@ -1006,15 +1011,15 @@ void PointCloudTools::about()
 	aboutwin->setModal(true);
 	aboutwin->show();
 
-	consoleLog("About", "", "", "");
+	consoleLog(tr("About"), "", "", "");
 }
 
 void PointCloudTools::help()
 {
 	QDesktopServices::openUrl(QUrl(QLatin1String("https://github.com/HadenSun/PointCloudTools")));
 
-	// Êä³ö´°¿Ú
-	consoleLog("Help", "Cloudviewer help", "https://github.com/HadenSun/PointCloudTools", "");
+	// è¾“å‡ºçª—å£
+	consoleLog(tr("Help"), tr("PointCloudTools help"), "https://github.com/HadenSun/PointCloudTools", "");
 }
 
 void PointCloudTools::colormapBtnPressed()
@@ -1043,19 +1048,19 @@ void PointCloudTools::convertBtnPressed()
 	double p2 = ui.p2Lineedit->text().toDouble();
 	double k3 = ui.k3Lineedit->text().toDouble();
 
-	//»û±ä½ÃÕı
+	//ç•¸å˜çŸ«æ­£
 	cv::Mat img;
 
-	//ÄÚ²Î¾ØÕó
-	cv::Mat cameraMatrix = cv::Mat::eye(3, 3, CV_64F);		//3*3µ¥Î»¾ØÕó
+	//å†…å‚çŸ©é˜µ
+	cv::Mat cameraMatrix = cv::Mat::eye(3, 3, CV_64F);		//3*3å•ä½çŸ©é˜µ
 	cameraMatrix.at<double>(0, 0) = fx;
 	cameraMatrix.at<double>(0, 1) = 0;
 	cameraMatrix.at<double>(0, 2) = cx;
 	cameraMatrix.at<double>(1, 1) = fy;
 	cameraMatrix.at<double>(1, 2) = cy;
 	cameraMatrix.at<double>(2, 2) = 1;
-	//»û±ä²ÎÊı
-	cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64F);		//5*1È«0¾ØÕó
+	//ç•¸å˜å‚æ•°
+	cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64F);		//5*1å…¨0çŸ©é˜µ
 	distCoeffs.at<double>(0, 0) = k1;
 	distCoeffs.at<double>(1, 0) = k2;
 	distCoeffs.at<double>(2, 0) = p1;
@@ -1065,24 +1070,24 @@ void PointCloudTools::convertBtnPressed()
 	cv::Size imageSize = mypicture->depthMat.size();
 	cv::Mat map1, map2;
 
-	//²ÎÊı1£ºÏà»úÄÚ²Î¾ØÕó
-	//²ÎÊı2£º»û±ä¾ØÕó
-	//²ÎÊı3£º¿ÉÑ¡ÊäÈë£¬µÚÒ»ºÍµÚ¶şÏà»ú×ø±êÖ®¼äµÄĞı×ª¾ØÕó
-	//²ÎÊı4£ºĞ£ÕıºóµÄ3X3Ïà»ú¾ØÕó
-	//²ÎÊı5£ºÎŞÊ§ÕæÍ¼Ïñ³ß´ç
-	//²ÎÊı6£ºmap1Êı¾İÀàĞÍ£¬CV_32FC1»òCV_16SC2
-	//²ÎÊı7¡¢8£ºÊä³öX/Y×ø±êÖØÓ³Éä²ÎÊı
-	initUndistortRectifyMap(cameraMatrix, distCoeffs, cv::Mat(), cameraMatrix, imageSize, CV_32FC1, map1, map2);	//¼ÆËã»û±äÓ³Éä
-	//²ÎÊı1£º»û±äÔ­Ê¼Í¼Ïñ
-	//²ÎÊı2£ºÊä³öÍ¼Ïñ
-	//²ÎÊı3¡¢4£ºX\Y×ø±êÖØÓ³Éä
-	//²ÎÊı5£ºÍ¼ÏñµÄ²åÖµ·½Ê½
-	//²ÎÊı6£º±ß½çÌî³ä·½Ê½
-	remap(mypicture->depthMat, img, map1, map2, cv::INTER_LINEAR);																	//»û±ä½ÃÕı
+	//å‚æ•°1ï¼šç›¸æœºå†…å‚çŸ©é˜µ
+	//å‚æ•°2ï¼šç•¸å˜çŸ©é˜µ
+	//å‚æ•°3ï¼šå¯é€‰è¾“å…¥ï¼Œç¬¬ä¸€å’Œç¬¬äºŒç›¸æœºåæ ‡ä¹‹é—´çš„æ—‹è½¬çŸ©é˜µ
+	//å‚æ•°4ï¼šæ ¡æ­£åçš„3X3ç›¸æœºçŸ©é˜µ
+	//å‚æ•°5ï¼šæ— å¤±çœŸå›¾åƒå°ºå¯¸
+	//å‚æ•°6ï¼šmap1æ•°æ®ç±»å‹ï¼ŒCV_32FC1æˆ–CV_16SC2
+	//å‚æ•°7ã€8ï¼šè¾“å‡ºX/Yåæ ‡é‡æ˜ å°„å‚æ•°
+	initUndistortRectifyMap(cameraMatrix, distCoeffs, cv::Mat(), cameraMatrix, imageSize, CV_32FC1, map1, map2);	//è®¡ç®—ç•¸å˜æ˜ å°„
+	//å‚æ•°1ï¼šç•¸å˜åŸå§‹å›¾åƒ
+	//å‚æ•°2ï¼šè¾“å‡ºå›¾åƒ
+	//å‚æ•°3ã€4ï¼šX\Yåæ ‡é‡æ˜ å°„
+	//å‚æ•°5ï¼šå›¾åƒçš„æ’å€¼æ–¹å¼
+	//å‚æ•°6ï¼šè¾¹ç•Œå¡«å……æ–¹å¼
+	remap(mypicture->depthMat, img, map1, map2, cv::INTER_LINEAR);																	//ç•¸å˜çŸ«æ­£
 
 
 
-	//µãÔÆ±ä»»
+	//ç‚¹äº‘å˜æ¢
 	int imgWidth = img.size().width;
 	int imgHeight = img.size().height;
 	PointCloudT::Ptr pointcloud(new PointCloudT);
@@ -1091,13 +1096,13 @@ void PointCloudTools::convertBtnPressed()
 	{
 		for (int j = 0; j < imgWidth; j++)
 		{
-			float picDist = sqrt((i - imgHeight / 2.0)*(i - imgHeight / 2.0) + (j - imgWidth / 2.0)*(j - imgWidth / 2.0));	//Í¼ÏñÉÏµãµ½ÖĞĞÄµÄÏñËØµã¸öÊı
-			float picAngle = atan2(fx*(i - imgHeight / 2.0), fy*(j - imgWidth / 2.0));												//Í¼ÏñÉÏx,yºÍÖĞĞÄµã½Ç¶È¹ØÏµ
+			float picDist = sqrt((i - imgHeight / 2.0)*(i - imgHeight / 2.0) + (j - imgWidth / 2.0)*(j - imgWidth / 2.0));	//å›¾åƒä¸Šç‚¹åˆ°ä¸­å¿ƒçš„åƒç´ ç‚¹ä¸ªæ•°
+			float picAngle = atan2(fx*(i - imgHeight / 2.0), fy*(j - imgWidth / 2.0));												//å›¾åƒä¸Šx,yå’Œä¸­å¿ƒç‚¹è§’åº¦å…³ç³»
 			float angle = atan(sqrt((j - imgWidth / 2.0)*(j - imgWidth / 2.0) / fx / fx + (i - imgHeight / 2.0)*(i - imgHeight / 2.0) / fy / fy));
-			float dist = img.at<ushort>(i, j) / a;				//Ô­Ê¼Í¼ÏñÉî¶È
+			float dist = img.at<ushort>(i, j) / a;				//åŸå§‹å›¾åƒæ·±åº¦
 
 			pcl::PointXYZRGBA p;
-			p.z = dist*cos(angle);									//×ø±ê±ä»»ºóµÄÉî¶È
+			p.z = dist*cos(angle);									//åæ ‡å˜æ¢åçš„æ·±åº¦
 			p.x = -dist*sin(angle)*cos(picAngle);
 			p.y = -dist*sin(angle)*sin(picAngle);
 
@@ -1114,7 +1119,7 @@ void PointCloudTools::convertBtnPressed()
 	{
 		for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 		{
-			//µãÔÆÎÄ¼şÖØÃû´¦Àí
+			//ç‚¹äº‘æ–‡ä»¶é‡åå¤„ç†
 			if ((*it)->fullname == mypicture->fullname + ".pcd")
 			{
 				(*it)->cloud = pointcloud;
@@ -1136,22 +1141,22 @@ void PointCloudTools::convertBtnPressed()
 		mycloud->visible = true;
 		mycloud_vec.push_back(mycloud);
 
-		//¸üĞÂ×ÊÔ´Ê÷
+		//æ›´æ–°èµ„æºæ ‘
 		QTreeWidgetItem *cloudName = new QTreeWidgetItem(QStringList() << QString::fromLocal8Bit(mycloud->filename.c_str()));
 		cloudName->setIcon(0, QIcon(":/Resources/images/point.png"));
 		ui.dataTree->addTopLevelItem(cloudName);
 	}
-	//¼ÆÊ±½áÊø
+	//è®¡æ—¶ç»“æŸ
 	QString time_cost = timeOff();
-	consoleLog("Convert", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mycloud->filename.c_str()), "Time cost: " + time_cost + " s, Points: " + QString::number(mycloud->cloud->points.size()));
+	consoleLog(tr("Convert"), QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mycloud->filename.c_str()), tr("Time cost: ") + time_cost + " s, Points: " + QString::number(mycloud->cloud->points.size()));
 	
 
-	showPointcloudAdd();		//¸üĞÂµãÔÆ´°¿Ú
+	showPointcloudAdd();		//æ›´æ–°ç‚¹äº‘çª—å£
 }
 
 void PointCloudTools::filterBtnPressed()
 {
-	//±éÀúmycloud_vec£¬·ÀÖ¹Ã»ÓĞµãÔÆÊı¾İ
+	//éå†mycloud_vecï¼Œé˜²æ­¢æ²¡æœ‰ç‚¹äº‘æ•°æ®
 	bool flag = false;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
@@ -1164,8 +1169,8 @@ void PointCloudTools::filterBtnPressed()
 
 	if (!flag)
 	{
-		//Ã»ÓĞÓĞĞ§µãÔÆ£¬Òì³£ÌáÊ¾
-		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		//æ²¡æœ‰æœ‰æ•ˆç‚¹äº‘ï¼Œå¼‚å¸¸æç¤º
+		QMessageBox::critical(this, tr("Process Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
@@ -1178,7 +1183,7 @@ void PointCloudTools::filterBtnPressed()
 
 void PointCloudTools::voxelBtnPressed()
 {
-	//±éÀúmycloud_vec£¬·ÀÖ¹Ã»ÓĞµãÔÆÊı¾İ
+	//éå†mycloud_vecï¼Œé˜²æ­¢æ²¡æœ‰ç‚¹äº‘æ•°æ®
 	bool flag = false;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
@@ -1191,8 +1196,8 @@ void PointCloudTools::voxelBtnPressed()
 
 	if (!flag)
 	{
-		//Ã»ÓĞÓĞĞ§µãÔÆ£¬Òì³£ÌáÊ¾
-		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		//æ²¡æœ‰æœ‰æ•ˆç‚¹äº‘ï¼Œå¼‚å¸¸æç¤º
+		QMessageBox::critical(this, tr("Process Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
@@ -1205,7 +1210,7 @@ void PointCloudTools::voxelBtnPressed()
 
 void PointCloudTools::wireframeBtnPressed()
 {
-	//±éÀúmycloud_vec£¬·ÀÖ¹Ã»ÓĞµãÔÆÊı¾İ
+	//éå†mycloud_vecï¼Œé˜²æ­¢æ²¡æœ‰ç‚¹äº‘æ•°æ®
 	bool flag = false;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
@@ -1218,8 +1223,8 @@ void PointCloudTools::wireframeBtnPressed()
 
 	if (!flag)
 	{
-		//Ã»ÓĞÓĞĞ§µãÔÆ£¬Òì³£ÌáÊ¾
-		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		//æ²¡æœ‰æœ‰æ•ˆç‚¹äº‘ï¼Œå¼‚å¸¸æç¤º
+		QMessageBox::critical(this, tr("Process Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
@@ -1233,7 +1238,7 @@ void PointCloudTools::wireframeBtnPressed()
 
 void PointCloudTools::surfaceBtnPressed()
 {
-	//±éÀúmycloud_vec£¬·ÀÖ¹Ã»ÓĞµãÔÆÊı¾İ
+	//éå†mycloud_vecï¼Œé˜²æ­¢æ²¡æœ‰ç‚¹äº‘æ•°æ®
 	bool flag = false;
 	for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 	{
@@ -1246,8 +1251,8 @@ void PointCloudTools::surfaceBtnPressed()
 
 	if (!flag)
 	{
-		//Ã»ÓĞÓĞĞ§µãÔÆ£¬Òì³£ÌáÊ¾
-		QMessageBox::critical(this, "Process Error", "No point cloud data.", QMessageBox::Yes);
+		//æ²¡æœ‰æœ‰æ•ˆç‚¹äº‘ï¼Œå¼‚å¸¸æç¤º
+		QMessageBox::critical(this, tr("Process Error"), tr("No point cloud data."), QMessageBox::Yes);
 		return;
 	}
 
@@ -1269,7 +1274,7 @@ void PointCloudTools::colormap(ColormapClass cc)
 	int type = cc.type;
 	if (max < min)
 	{
-		QMessageBox::warning(this, "Warrning", "The max number is smaller than the min number!", QMessageBox::Yes);
+		QMessageBox::warning(this, tr("Warrning"), tr("The max number is smaller than the min number!"), QMessageBox::Yes);
 		return;
 	}
 
@@ -1277,16 +1282,16 @@ void PointCloudTools::colormap(ColormapClass cc)
 
 	float scal = 255.0 / (max - min);
 	cv::Mat colorMat;
-	mypicture->depthMat.convertTo(colorMat, CV_8U, scal, -min*scal);		//×ª8Î»»Ò¶È
-	cv::applyColorMap(colorMat, colorMat, type);						//×ª²ÊÉ«Í¼
+	mypicture->depthMat.convertTo(colorMat, CV_8U, scal, -min*scal);		//è½¬8ä½ç°åº¦
+	cv::applyColorMap(colorMat, colorMat, type);						//è½¬å½©è‰²å›¾
 	mypicture->colorMat = colorMat.clone();
 
-	cv::cvtColor(colorMat, colorMat, CV_BGR2RGB);						//OpencvÄ¬ÈÏBGR´æ´¢£¬QtĞèÒªRGB
+	cv::cvtColor(colorMat, colorMat, CV_BGR2RGB);						//Opencvé»˜è®¤BGRå­˜å‚¨ï¼ŒQtéœ€è¦RGB
 	QImage qimg = QImage((const unsigned char*)(colorMat.data), colorMat.cols, colorMat.rows, QImage::Format_RGB888);
 	ui.imageColor->setPixmap(QPixmap::fromImage(qimg));
 
 	QString time_cost = timeOff();
-	//ĞÅÏ¢ÏÔÊ¾
+	//ä¿¡æ¯æ˜¾ç¤º
 	QString type_str;
 	switch (type)
 	{
@@ -1300,7 +1305,7 @@ void PointCloudTools::colormap(ColormapClass cc)
 		type_str = "";
 		break;
 	}
-	consoleLog("Colormap", QString::fromLocal8Bit(mypicture->filename.c_str()), "Min: " + QString::number(min) + " Max: " + QString::number(max) + " Type:" + type_str, "Time cost: " + time_cost + " s");
+	consoleLog(tr("Colormap"), QString::fromLocal8Bit(mypicture->filename.c_str()), "Min: " + QString::number(min) + " Max: " + QString::number(max) + " Type:" + type_str, "Time cost: " + time_cost + " s");
 }
 
 void PointCloudTools::convert()
@@ -1321,26 +1326,26 @@ void PointCloudTools::pSliderReleased()
 	int selected_item_count = ui.dataTree->selectedItems().size();
 	if (selected_item_count == 0)
 	{
-		//Ã»ÓĞÑ¡ÔñÎÄ¼ş£¬ËùÓĞÏÔÊ¾µã´óĞ¡¶¼¸Ä±ä
+		//æ²¡æœ‰é€‰æ‹©æ–‡ä»¶ï¼Œæ‰€æœ‰æ˜¾ç¤ºç‚¹å¤§å°éƒ½æ”¹å˜
 		for (int i = 0; i != mycloud_vec.size(); i++)
 		{
 			viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, p, "cloud" + mycloud_vec[i]->filename);
 		}
 
-		//Êä³ö
-		consoleLog("Change cloud size", "All point clouds", "Size: " + QString::number(p), "");
+		//è¾“å‡º
+		consoleLog(tr("Change cloud size"), tr("All point clouds"), tr("Size: ") + QString::number(p), "");
 
 	}
 	else
 	{
-		//±éÀúÑ¡ÔñµÄµãÔÆÎÄ¼ş
+		//éå†é€‰æ‹©çš„ç‚¹äº‘æ–‡ä»¶
 		for (int i = 0; i != selected_item_count; i++)
 		{
-			//¸ù¾İÑ¡ÔñµãÔÆÃû×ÖÖ±½Ó±ä»»µã´óĞ¡
+			//æ ¹æ®é€‰æ‹©ç‚¹äº‘åå­—ç›´æ¥å˜æ¢ç‚¹å¤§å°
 			viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, p, "cloud" + itemList[i]->text(0).toStdString());
 		}
-		//Êä³ö
-		consoleLog("Change cloud size", "Point clouds selected", "Size: " + QString::number(p), "");
+		//è¾“å‡º
+		consoleLog(tr("Change points size"), tr("Point clouds selected"), tr("Size: ") + QString::number(p), "");
 	}
 
 	ui.screen->update();
@@ -1356,13 +1361,13 @@ void PointCloudTools::colorBtnPressed()
 
 void PointCloudTools::pColormap()
 {
-	//µãÔÆ¸ù¾İ¾àÀëÈ¾É«
+	//ç‚¹äº‘æ ¹æ®è·ç¦»æŸ“è‰²
 	int minNum = ui.colorMapLeft->text().toFloat();
 	int maxNum = ui.colorMapRight->text().toFloat();
-	int axis = 0;		//Ä¬ÈÏz
+	int axis = 0;		//é»˜è®¤z
 	if (maxNum < minNum)
 	{
-		QMessageBox::warning(this, "Warning", "The colormap properties have problems.");
+		QMessageBox::warning(this, tr("Warning"), tr("The colormap properties have problems."));
 		return;
 	}
 
@@ -1381,7 +1386,7 @@ void PointCloudTools::pColormap()
 	uint8_t b = 0;
 	float value;
 
-	// Èç¹ûÎ´Ñ¡ÖĞÈÎºÎµãÔÆ£¬Ôò¶ÔÊÓÍ¼´°¿ÚÖĞµÄËùÓĞµãÔÆ½øĞĞ×ÅÉ«
+	// å¦‚æœæœªé€‰ä¸­ä»»ä½•ç‚¹äº‘ï¼Œåˆ™å¯¹è§†å›¾çª—å£ä¸­çš„æ‰€æœ‰ç‚¹äº‘è¿›è¡Œç€è‰²
 	if (selected_item_count == 0){
 		for (int i = 0; i != mycloud_vec.size(); i++){
 			for (int j = 0; j != mycloud_vec[i]->cloud->points.size(); j++){
@@ -1399,18 +1404,18 @@ void PointCloudTools::pColormap()
 			}
 		}
 
-		// Êä³ö´°¿Ú
-		consoleLog("Colormap", "All point clous", "", "");
+		// è¾“å‡ºçª—å£
+		consoleLog(tr("Colormap"), tr("All point clouds"), "", "");
 
 	}
 	else
 	{
 		for (int i = 0; i != selected_item_count; i++){
 			QString name = itemList[i]->text(0);
-			//±éÀúmycloud_vec
+			//éå†mycloud_vec
 			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 			{
-				//ÕÒµ½Í¬ÃûµãÔÆÊı¾İ
+				//æ‰¾åˆ°åŒåç‚¹äº‘æ•°æ®
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
 					for (int j = 0; j != (*it)->cloud->size(); j++)
@@ -1433,8 +1438,8 @@ void PointCloudTools::pColormap()
 			}
 		}
 
-		// Êä³ö´°¿Ú
-		consoleLog("Colormap", "Point clouds selected", "Min:" + QString::number(minNum) + " Max:" + QString::number(maxNum), "");
+		// è¾“å‡ºçª—å£
+		consoleLog(tr("Colormap"), tr("Point clouds selected"), "Min:" + QString::number(minNum) + " Max:" + QString::number(maxNum), "");
 	}
 
 	showPointcloudAdd();
@@ -1445,14 +1450,14 @@ void PointCloudTools::cooCbxChecked(int value)
 	switch (value)
 	{
 	case 0:
-		viewer->removeCoordinateSystem();  //ÒÆ³ı×ø±êÏµ
-		// Êä³ö´°¿Ú
-		consoleLog("Remove coordinate system", "Remove", "", "");
+		viewer->removeCoordinateSystem();  //ç§»é™¤åæ ‡ç³»
+		// è¾“å‡ºçª—å£
+		consoleLog(tr("Remove coordinate system"), tr("Remove"), "", "");
 		break;
 	case 2:
-		viewer->addCoordinateSystem();  //Ìí¼Ó×ø±êÏµ
-		// Êä³ö´°¿Ú
-		consoleLog("Add coordinate system", "Add", "", "");
+		viewer->addCoordinateSystem();  //æ·»åŠ åæ ‡ç³»
+		// è¾“å‡ºçª—å£
+		consoleLog(tr("Add coordinate system"), tr("Add"), "", "");
 		break;
 	}
 	ui.screen->update();
@@ -1465,15 +1470,15 @@ void PointCloudTools::itemSelected(QTreeWidgetItem*, int)
 
 void PointCloudTools::popMenu(const QPoint&)
 {
-	QTreeWidgetItem* curItem = ui.dataTree->currentItem(); //»ñÈ¡µ±Ç°±»µã»÷µÄ½Úµã
-	if (curItem == NULL)return;           //ÕâÖÖÇé¿öÊÇÓÒ¼üµÄÎ»ÖÃ²»ÔÚtreeItemµÄ·¶Î§ÄÚ£¬¼´ÔÚ¿Õ°×Î»ÖÃÓÒ»÷
+	QTreeWidgetItem* curItem = ui.dataTree->currentItem(); //è·å–å½“å‰è¢«ç‚¹å‡»çš„èŠ‚ç‚¹
+	if (curItem == NULL)return;           //è¿™ç§æƒ…å†µæ˜¯å³é”®çš„ä½ç½®ä¸åœ¨treeItemçš„èŒƒå›´å†…ï¼Œå³åœ¨ç©ºç™½ä½ç½®å³å‡»
 	QString name = curItem->text(0);
 	int id = ui.dataTree->indexOfTopLevelItem(curItem);
 
-	QAction hideItemAction("Hide", this);
-	QAction showItemAction("Show", this);
-	QAction deleteItemAction("Delete", this);
-	QAction changeColorAction("Change color", this);
+	QAction hideItemAction(tr("Hide"), this);
+	QAction showItemAction(tr("Show"), this);
+	QAction deleteItemAction(tr("Delete"), this);
+	QAction changeColorAction(tr("Change color"), this);
 
 	connect(&hideItemAction, &QAction::triggered, this, &PointCloudTools::hideItem);
 	connect(&showItemAction, &QAction::triggered, this, &PointCloudTools::showItem);
@@ -1513,7 +1518,7 @@ void PointCloudTools::popMenu(const QPoint&)
 		
 
 
-	menu.exec(QCursor::pos()); //ÔÚµ±Ç°Êó±êÎ»ÖÃÏÔÊ¾
+	menu.exec(QCursor::pos()); //åœ¨å½“å‰é¼ æ ‡ä½ç½®æ˜¾ç¤º
 }
 
 void PointCloudTools::hideItem()
@@ -1521,21 +1526,21 @@ void PointCloudTools::hideItem()
 	QList<QTreeWidgetItem*> itemList = ui.dataTree->selectedItems();
 	for (int i = 0; i != itemList.size(); i++)
 	{
-		//±éÀúÑ¡ÔñµÄÔªËØ
+		//éå†é€‰æ‹©çš„å…ƒç´ 
 		QTreeWidgetItem* curItem = itemList[i];
-		QColor item_color = QColor(112, 122, 132, 255);		//ÉèÖÃiconÍ¼±ê°ëÍ¸Ã÷
+		QColor item_color = QColor(112, 122, 132, 255);		//è®¾ç½®iconå›¾æ ‡åŠé€æ˜
 		curItem->setTextColor(0, item_color);
 		QString name = curItem->text(0);
 		if (getFileType(name.toStdString()) == "pcd" || getFileType(name.toStdString()) == "ply")
 		{
-			//Ö»ÓĞµãÔÆÎÄ¼şÓĞÒş²ØÑ¡Ïî
+			//åªæœ‰ç‚¹äº‘æ–‡ä»¶æœ‰éšè—é€‰é¡¹
 			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					//Æ¥Åäµ½µãÔÆ
+					//åŒ¹é…åˆ°ç‚¹äº‘
 					(*it)->visible = false;
-					consoleLog("Hide PointCloud", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					consoleLog(tr("Hide PointCloud"), QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 
 					break;
 				}
@@ -1553,16 +1558,16 @@ void PointCloudTools::showItem()
 	for (int i = 0; i != itemList.size(); i++)
 	{
 		QTreeWidgetItem* curItem = itemList[i];
-		curItem->setTextColor(0, QColor(0, 0, 0, 255));		//ÉèÖÃicon°ëÍ¸Ã÷
+		curItem->setTextColor(0, QColor(0, 0, 0, 255));		//è®¾ç½®iconåŠé€æ˜
 		QString name = curItem->text(0);
 		if (getFileType(name.toStdString()) == "png")
 		{
-			// Ñ¡ÔñÍ¼Æ¬
+			// é€‰æ‹©å›¾ç‰‡
 			for (auto it = mypicture_vec.begin(); it != mypicture_vec.end(); it++)
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					//Éî¶ÈÍ¼ÏÔÊ¾
+					//æ·±åº¦å›¾æ˜¾ç¤º
 					mypicture = *it;
 					cv::Mat zip;
 					(*it)->depthMat.convertTo(zip, CV_8U, 1.0 / 256.0);
@@ -1570,39 +1575,39 @@ void PointCloudTools::showItem()
 					QImage qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_Indexed8);
 					ui.imageDepth->setPixmap(QPixmap::fromImage(qimg));
 
-					//±êÌâĞŞ¸Ä
+					//æ ‡é¢˜ä¿®æ”¹
 					ui.imageDock->setWindowTitle(QString::fromLocal8Bit(mypicture->filename.c_str()));
 
-					//Î±²ÊÉ«Í¼ÏÔÊ¾
+					//ä¼ªå½©è‰²å›¾æ˜¾ç¤º
 					if (!(*it)->colorMat.empty())
 					{
-						//ÒÑ¾­×ª»»¹ı£¬Ö±½ÓÏÔÊ¾
+						//å·²ç»è½¬æ¢è¿‡ï¼Œç›´æ¥æ˜¾ç¤º
 						cv::cvtColor(mypicture->colorMat, zip, CV_BGR2RGB);
 						qimg = QImage((const unsigned char*)(zip.data), zip.cols, zip.rows, QImage::Format_RGB888);
 						ui.imageColor->setPixmap(QPixmap::fromImage(qimg));
 					}
 					else
 					{
-						//Ã»ÓĞ×ª»»¹ı£¬Áô°×
+						//æ²¡æœ‰è½¬æ¢è¿‡ï¼Œç•™ç™½
 						ui.imageColor->clear();
 					}
 
-					consoleLog("Show Picture", QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mypicture->fullname.c_str()), "");
+					consoleLog(tr("Show Picture"), QString::fromLocal8Bit(mypicture->filename.c_str()), QString::fromLocal8Bit(mypicture->fullname.c_str()), "");
 					break;
 				}
 			}
 		}
 		else
 		{
-			//Ñ¡ÔñµãÔÆ
+			//é€‰æ‹©ç‚¹äº‘
 			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					//Æ¥Åäµ½µãÔÆ
+					//åŒ¹é…åˆ°ç‚¹äº‘
 					(*it)->visible = true;
 
-					consoleLog("Show PointCloud", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					consoleLog(tr("Show PointCloud"), QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 
 					break;
 				}
@@ -1624,23 +1629,23 @@ void PointCloudTools::deleteItem()
 
 		if (getFileType(name.toStdString()) == "png")
 		{
-			// Ñ¡ÔñÍ¼Æ¬
+			// é€‰æ‹©å›¾ç‰‡
 			for (auto it = mypicture_vec.begin(); it != mypicture_vec.end(); it++)
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					consoleLog("Delete picture", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					consoleLog(tr("Delete picture"), QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 
-					//ÅĞ¶ÏÊÇ·ñÕıÔÚÊ¹ÓÃ
+					//åˆ¤æ–­æ˜¯å¦æ­£åœ¨ä½¿ç”¨
 					if (mypicture->filename == (*it)->filename)
 					{
-						//Çå¿ÕÏÔÊ¾ÇøÓò
+						//æ¸…ç©ºæ˜¾ç¤ºåŒºåŸŸ
 						ui.imageColor->clear();
 						ui.imageDepth->clear();
 						mypicture = NULL;
 					}
 
-					//ÄÚ´æÖĞÇå¿Õ
+					//å†…å­˜ä¸­æ¸…ç©º
 					mypicture_vec.erase(it);
 
 					break;
@@ -1649,16 +1654,16 @@ void PointCloudTools::deleteItem()
 		}
 		else
 		{
-			//Ñ¡ÔñµãÔÆ
+			//é€‰æ‹©ç‚¹äº‘
 			for (auto it = mycloud_vec.begin(); it != mycloud_vec.end(); it++)
 			{
 				if (QString::fromLocal8Bit((*it)->filename.c_str()) == name)
 				{
-					//Æ¥Åäµ½µãÔÆ
+					//åŒ¹é…åˆ°ç‚¹äº‘
 
-					consoleLog("Delete picture", QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
+					consoleLog(tr("Delete picture"), QString::fromLocal8Bit((*it)->filename.c_str()), QString::fromLocal8Bit((*it)->fullname.c_str()), "");
 					
-					//±éÀúmypicture_vec£¬¶ÔÓ¦µÄ×ª»»±êÖ¾±äfalse
+					//éå†mypicture_vecï¼Œå¯¹åº”çš„è½¬æ¢æ ‡å¿—å˜false
 					for (int j = 0; j != mypicture_vec.size(); j++)
 					{
 						if (mypicture_vec[j]->filename+".pcd" == (*it)->filename)
@@ -1669,7 +1674,7 @@ void PointCloudTools::deleteItem()
 					}
 					mycloud = NULL;
 
-					//ÄÚ´æÇå¿Õ
+					//å†…å­˜æ¸…ç©º
 					mycloud_vec.erase(it);
 
 					break;
@@ -1677,7 +1682,7 @@ void PointCloudTools::deleteItem()
 			}
 		}
 
-		//¸üĞÂdataTree
+		//æ›´æ–°dataTree
 		delete curItem;
 	}
 
@@ -1687,9 +1692,9 @@ void PointCloudTools::deleteItem()
 
 void PointCloudTools::popMenuInConsole(const QPoint&)
 {
-	QAction clearConsoleAction("Clear console", this);
-	QAction enableConsoleAction("Enable console", this);
-	QAction disableConsoleAction("Disable console", this);
+	QAction clearConsoleAction(tr("Clear console"), this);
+	QAction enableConsoleAction(tr("Enable console"), this);
+	QAction disableConsoleAction(tr("Disable console"), this);
 
 	connect(&clearConsoleAction, &QAction::triggered, this, &PointCloudTools::clearConsole);
 	connect(&enableConsoleAction, &QAction::triggered, this, &PointCloudTools::enableConsole);
@@ -1710,7 +1715,7 @@ void PointCloudTools::popMenuInConsole(const QPoint&)
 		menu.actions()[2]->setVisible(false);
 	}
 
-	menu.exec(QCursor::pos()); //ÔÚµ±Ç°Êó±êÎ»ÖÃÏÔÊ¾
+	menu.exec(QCursor::pos()); //åœ¨å½“å‰é¼ æ ‡ä½ç½®æ˜¾ç¤º
 }
 
 void PointCloudTools::clearConsole()
@@ -1731,58 +1736,58 @@ void PointCloudTools::disableConsole()
 
 void PointCloudTools::initial()
 {
-	//½çÃæ³õÊ¼»¯
-	setWindowIcon(QIcon(tr(":Resources/images/logo.png")));
+	//ç•Œé¢åˆå§‹åŒ–
+	setWindowIcon(QIcon(":Resources/images/logo.png"));
 	setWindowTitle(tr("PointCloud Tools"));
 
 	mypicture = new MyPicture();
 
-	//µãÔÆ³õÊ¼»¯
+	//ç‚¹äº‘åˆå§‹åŒ–
 	mycloud = new MyCloud();
 	mycloud->cloud.reset(new PointCloudT);
 	mycloud->cloud->resize(1);
 	viewer.reset(new pcl::visualization::PCLVisualizer("viewer", false));
 
-	//µãÔÆµã»÷ÊÂ¼ş»Øµ÷ÉèÖÃ
+	//ç‚¹äº‘ç‚¹å‡»äº‹ä»¶å›è°ƒè®¾ç½®
 	clicked_points.reset(new PointCloudT);
 	viewer->registerPointPickingCallback(&PointCloudTools::pp_callback, *this, NULL);
 
-	//µãÔÆui½çÃæÔªËØ°ó¶¨
+	//ç‚¹äº‘uiç•Œé¢å…ƒç´ ç»‘å®š
 	ui.screen->SetRenderWindow(viewer->getRenderWindow());
 	viewer->setupInteractor(ui.screen->GetInteractor(), ui.screen->GetRenderWindow());
 	ui.screen->update();
-	//ÉèÖÃ±³¾°ÑÕÉ«
+	//è®¾ç½®èƒŒæ™¯é¢œè‰²
 	viewer->setBackgroundColor(30 / 255.0, 30 / 255.0, 30 / 255.0);
 
-	ui.consoleTable->setSelectionMode(QAbstractItemView::NoSelection);		//½ûÖ¹µã»÷Êä³ö´°¿ÚµÄitem
-	ui.dataTree->setSelectionMode(QAbstractItemView::ExtendedSelection);	//ÔÊĞídataTree¶àÑ¡
+	ui.consoleTable->setSelectionMode(QAbstractItemView::NoSelection);		//ç¦æ­¢ç‚¹å‡»è¾“å‡ºçª—å£çš„item
+	ui.dataTree->setSelectionMode(QAbstractItemView::ExtendedSelection);	//å…è®¸dataTreeå¤šé€‰
 
 	setConsoleTable();
 
-	//ÉèÖÃÄ¬ÈÏÖ÷Ìâ
+	//è®¾ç½®é»˜è®¤ä¸»é¢˜
 	QString qss = windows_qss;
 	qApp->setStyleSheet(qss);
 
-	//¶ÁÈ¡config.ini£¬ÅäÖÃÄÚ²ÎºÍ»û±äÏµÊı
+	//è¯»å–config.iniï¼Œé…ç½®å†…å‚å’Œç•¸å˜ç³»æ•°
 	setConvertParameters();
 
-	// Êä³ö´°¿Ú
-	consoleLog("Software start", "PointCloud Tools", "Welcome to use PointCloud Tools", "Haden");
+	// è¾“å‡ºçª—å£
+	consoleLog(tr("Software start"), tr("PointCloud Tools"), tr("Welcome to use PointCloud Tools"), tr("Haden"));
 
 }
 
 void PointCloudTools::setConsoleTable(){
-	// ÉèÖÃÊä³ö´°¿Ú
+	// è®¾ç½®è¾“å‡ºçª—å£
 	QStringList header2;
-	header2 << "Time" << "Operation" << "Operation obeject" << "Details" << "Note";
+	header2 << tr("Time") << tr("Operation") << tr("Operation obeject") << tr("Details") << tr("Note");
 	ui.consoleTable->setHorizontalHeaderLabels(header2);
 	ui.consoleTable->setColumnWidth(0, 150);
 	ui.consoleTable->setColumnWidth(1, 200);
 	ui.consoleTable->setColumnWidth(2, 200);
 	ui.consoleTable->setColumnWidth(3, 300);
 
-	//ui.consoleTable->setEditTriggers(QAbstractItemView::NoEditTriggers); //ÉèÖÃ²»¿É±à¼­
-	ui.consoleTable->verticalHeader()->setDefaultSectionSize(22); //ÉèÖÃĞĞ¾à
+	//ui.consoleTable->setEditTriggers(QAbstractItemView::NoEditTriggers); //è®¾ç½®ä¸å¯ç¼–è¾‘
+	ui.consoleTable->verticalHeader()->setDefaultSectionSize(22); //è®¾ç½®è¡Œè·
 
 	ui.consoleTable->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -1832,15 +1837,15 @@ void PointCloudTools::consoleLog(QString operation, QString object, QString deta
 	int rows = ui.consoleTable->rowCount();
 	int new_rows = rows + 1;
 	ui.consoleTable->setRowCount(new_rows);
-	QDateTime time = QDateTime::currentDateTime();		//»ñÈ¡ÏµÍ³Ê±¼ä
-	QString time_str = time.toString("MM-dd hh:mm:ss");	//±ê×¼»¯ÏÔÊ¾Ê±¼ä
+	QDateTime time = QDateTime::currentDateTime();		//è·å–ç³»ç»Ÿæ—¶é—´
+	QString time_str = time.toString("MM-dd hh:mm:ss");	//æ ‡å‡†åŒ–æ˜¾ç¤ºæ—¶é—´
 	ui.consoleTable->setItem(rows, 0, new QTableWidgetItem(time_str));
 	ui.consoleTable->setItem(rows, 1, new QTableWidgetItem(operation));
 	ui.consoleTable->setItem(rows, 2, new QTableWidgetItem(object));
 	ui.consoleTable->setItem(rows, 3, new QTableWidgetItem(details));
 	ui.consoleTable->setItem(rows, 4, new QTableWidgetItem(note));
 
-	ui.consoleTable->scrollToBottom();					//»¬¶¯µ½µ×²¿
+	ui.consoleTable->scrollToBottom();					//æ»‘åŠ¨åˆ°åº•éƒ¨
 }
 
 void PointCloudTools::gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b)
@@ -1851,14 +1856,14 @@ void PointCloudTools::gray2rainbow(float value, int min, int max, uint8_t* r, ui
 	float par = (float)255 / (max - min);
 
 	grayValue = value;
-	if (grayValue < min)        //¿ÉÄÜ»á³öÏÖÕÒµ½µÄmin²¢²»ÊÇÕæÕıµÄ×îĞ¡Öµ
+	if (grayValue < min)        //å¯èƒ½ä¼šå‡ºç°æ‰¾åˆ°çš„minå¹¶ä¸æ˜¯çœŸæ­£çš„æœ€å°å€¼
 	{
 		*b = 0;
 		*g = 0;
 		*r = 0;
 		return;
 	}
-	else if (grayValue > max)                     //Ò²¿ÉÄÜ»á³öÏÖÕÒµ½µÄmax²¢²»ÊÇÕæÕıµÄ×î´óÖµ
+	else if (grayValue > max)                     //ä¹Ÿå¯èƒ½ä¼šå‡ºç°æ‰¾åˆ°çš„maxå¹¶ä¸æ˜¯çœŸæ­£çš„æœ€å¤§å€¼
 	{
 		*b = 0;
 		*g = 0;
@@ -1869,7 +1874,7 @@ void PointCloudTools::gray2rainbow(float value, int min, int max, uint8_t* r, ui
 	{
 		tempvalue = (float)(grayValue - min);
 	}
-	tempvalue = tempvalue*par;          //ÎªÁË°ÑÉî¶ÈÖµ¹æ»®µ½(0~255Ö®¼ä)
+	tempvalue = tempvalue*par;          //ä¸ºäº†æŠŠæ·±åº¦å€¼è§„åˆ’åˆ°(0~255ä¹‹é—´)
 	/*
 	* color    R   G   B   gray
 	* red      255 0   0   255
@@ -1929,17 +1934,17 @@ void PointCloudTools::pp_callback(const pcl::visualization::PointPickingEvent& e
 	clicked_points->points.clear();
 	clicked_points->points.push_back(current_point);
 
-	// ºìÉ«µã±ê³öÑ¡Ôñµã
+	// çº¢è‰²ç‚¹æ ‡å‡ºé€‰æ‹©ç‚¹
 	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGBA> red(clicked_points, 255, 0, 0);
 	viewer->removePointCloud("clicked_points");
 	viewer->addPointCloud(clicked_points, red, "clicked_points");
 	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 10, "clicked_points");
 
 	QString details = QString("X:%1 Y:%2 Z:%3").arg((int)current_point.x, 5, 10, QLatin1Char(' ')).arg((int)current_point.y, 5, 10, QLatin1Char(' ')).arg((int)current_point.z, 5, 10, QLatin1Char(' '));
-	consoleLog("Choose point", "", details, "");
+	consoleLog(tr("Choose point"), "", details, "");
 }
 
-//Ìí¼ÓµãÔÆµ½viewer,²¢ÏÔÊ¾µãÔÆ
+//æ·»åŠ ç‚¹äº‘åˆ°viewer,å¹¶æ˜¾ç¤ºç‚¹äº‘
 void PointCloudTools::showPointcloudAdd()
 {
 	viewer->removeAllPointClouds();
@@ -1973,4 +1978,15 @@ void PointCloudTools::setA(unsigned int a)
 	{
 		mycloud->cloud->points[i].a = a;
 	}
+}
+
+void PointCloudTools::changeChinese()
+{
+	
+	
+}
+
+void PointCloudTools::changeEnglish()
+{
+
 }

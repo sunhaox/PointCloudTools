@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VoxelGridWin</string>
+   <string>VoxelGrid</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

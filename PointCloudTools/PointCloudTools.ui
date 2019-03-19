@@ -317,7 +317,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>PointCloud</string>
+    <string>Files</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -343,7 +343,7 @@
        </property>
        <column>
         <property name="text">
-         <string>Point Cloud File</string>
+         <string>Files</string>
         </property>
        </column>
       </widget>

@@ -1,4 +1,4 @@
-#include "Tools.h"
+ï»¿#include "Tools.h"
 
 QTime time;
 
@@ -10,7 +10,7 @@ Tools::~Tools()
 {
 }
 
-//ÌáÈ¡È«Â·¾¶ÖÐµÄÎÄ¼þÃû£¨´øºó×º£©
+//æå–å…¨è·¯å¾„ä¸­çš„æ–‡ä»¶åï¼ˆå¸¦åŽç¼€ï¼‰
 std::string getFileName(std::string file_name)
 {
 	std::string subname;
@@ -21,7 +21,7 @@ std::string getFileName(std::string file_name)
 	return subname;
 }
 
-//ÌáÈ¡È«Â·¾¶ÖÐµÄÎÄ¼þºó×º£©
+//æå–å…¨è·¯å¾„ä¸­çš„æ–‡ä»¶åŽç¼€ï¼‰
 std::string getFileType(std::string file_name)
 {
 	std::string subname;
@@ -33,7 +33,7 @@ std::string getFileType(std::string file_name)
 	return subname;
 }
 
-//ÌáÈ¡Â·¾¶ÖÐÎÄ¼þ¼ÐÂ·¾¶
+//æå–è·¯å¾„ä¸­æ–‡ä»¶å¤¹è·¯å¾„
 std::string getFileDir(std::string file_name)
 {
 	std::string subname = getFileName(file_name);
@@ -42,16 +42,16 @@ std::string getFileDir(std::string file_name)
 	return dirname;
 }
 
-//¼ÆÊ±¿ªÊ¼
+//è®¡æ—¶å¼€å§‹
 void timeStart()
 {
 	time.start();
 }
 
-//¼ÆÊ±½áÊø
+//è®¡æ—¶ç»“æŸ
 QString timeOff()
 {
-	int timediff = time.elapsed();   //·µ»Ø´ÓÉÏ´Îstart()»òrestart()¿ªÊ¼ÒÔÀ´µÄÊ±¼ä²î£¬µ¥Î»ms
+	int timediff = time.elapsed();   //è¿”å›žä»Žä¸Šæ¬¡start()æˆ–restart()å¼€å§‹ä»¥æ¥çš„æ—¶é—´å·®ï¼Œå•ä½ms
 	float f = timediff / 1000.0;
 	QString tr_timediff = QString("%1").arg(f);  //float->QString
 	return tr_timediff;

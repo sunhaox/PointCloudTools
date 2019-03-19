@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <vtkAutoInit.h> 
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
@@ -70,8 +70,8 @@ private:
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
 	PointCloudT::Ptr clicked_points;
 
-	bool enable_console = true;		//console¿ÉÓÃ×´Ì¬
-	bool save_as_binary = false;	//¶ş½øÖÆ±£´æ
+	bool enable_console = true;		//consoleå¯ç”¨çŠ¶æ€
+	bool save_as_binary = false;	//äºŒè¿›åˆ¶ä¿å­˜
 
 
 	/***** Slots of QMenuBar and QToolBar *****/
@@ -107,15 +107,15 @@ private:
 	void help();
 
 	/***** Methods ******/
-	void initial();				//³õÊ¼»¯
-	void setConsoleTable();		//ÉèÖÃ¿ØÖÆÌ¨´°¿Ú
-	void setConvertParameters();	//´Óconfig.ini¶ÁÈ¡ÄÚ²Î¡¢»û±ä²ÎÊı
-	void consoleLog(QString operation, QString object, QString details, QString note);		//¿ØÖÆÌ¨ÏÔÊ¾²Ù×÷
-	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//Î±²ÊÉ«×ª»»
-	void pp_callback(const pcl::visualization::PointPickingEvent& event, void *args);		//µã»÷ÏàÓ¦ÊÂ¼ş
-	void showPointcloudAdd();																//Ìí¼ÓµãÔÆµ½viewer²¢ÏÔÊ¾
-	void setCloudColor(unsigned int r, unsigned int g, unsigned int b);						//ÉèÖÃËùÓĞµãÔÆÑÕÉ«
-	void setA(unsigned int a);																//ÉèÖÃËùÓĞµãÍ¸Ã÷¶È
+	void initial();				//åˆå§‹åŒ–
+	void setConsoleTable();		//è®¾ç½®æ§åˆ¶å°çª—å£
+	void setConvertParameters();	//ä»config.iniè¯»å–å†…å‚ã€ç•¸å˜å‚æ•°
+	void consoleLog(QString operation, QString object, QString details, QString note);		//æ§åˆ¶å°æ˜¾ç¤ºæ“ä½œ
+	void gray2rainbow(float value, int min, int max, uint8_t* r, uint8_t* g, uint8_t* b);	//ä¼ªå½©è‰²è½¬æ¢
+	void pp_callback(const pcl::visualization::PointPickingEvent& event, void *args);		//ç‚¹å‡»ç›¸åº”äº‹ä»¶
+	void showPointcloudAdd();																//æ·»åŠ ç‚¹äº‘åˆ°viewerå¹¶æ˜¾ç¤º
+	void setCloudColor(unsigned int r, unsigned int g, unsigned int b);						//è®¾ç½®æ‰€æœ‰ç‚¹äº‘é¢œè‰²
+	void setA(unsigned int a);																//è®¾ç½®æ‰€æœ‰ç‚¹é€æ˜åº¦
 	int saveFile(bool save_as_binary, QString save_filename);
 
 public slots:
@@ -129,10 +129,10 @@ public slots:
 	// Process menu slots 
 	void colormap(ColormapClass cc);
 	void convert();	
-	void convertSurface(ReconstructionClass rc);	//·¨Ïß¹À¼Æ¡¢ÇúÃæÖØ½¨¡¢Íø¸ñÃæÆ¬ÏÔÊ¾
-	void convertWireframe(ReconstructionClass rc); //·¨Ïß¹À¼Æ¡¢ÇúÃæÖØ½¨¡¢Íø¸ñÏß¿òÏÔÊ¾
-	void convertFilter(FilterClass fc);	//»ùÓÚÍ³¼ÆÂË²¨
-	void convertVoxel(VoxelGridClass vc);		//ÌåËØ½µ²ÉÑù
+	void convertSurface(ReconstructionClass rc);	//æ³•çº¿ä¼°è®¡ã€æ›²é¢é‡å»ºã€ç½‘æ ¼é¢ç‰‡æ˜¾ç¤º
+	void convertWireframe(ReconstructionClass rc); //æ³•çº¿ä¼°è®¡ã€æ›²é¢é‡å»ºã€ç½‘æ ¼çº¿æ¡†æ˜¾ç¤º
+	void convertFilter(FilterClass fc);	//åŸºäºç»Ÿè®¡æ»¤æ³¢
+	void convertVoxel(VoxelGridClass vc);		//ä½“ç´ é™é‡‡æ ·
 
 	/***** Slots of RGB widget *****/
 	// Change color or size of cloud when slider is released or colorBtn is pressed
@@ -158,5 +158,7 @@ public slots:
 	void enableConsole();
 	void disableConsole();
 
-	
+	/***** Slots of language change *****/
+	void changeChinese();
+	void changeEnglish();
 };

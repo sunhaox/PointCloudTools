@@ -1,4 +1,4 @@
-#include "ReconstructionWin.h"
+ï»¿#include "ReconstructionWin.h"
 
 ReconstructionWin::ReconstructionWin(QWidget *parent)
 	: QDialog(parent)
@@ -16,7 +16,7 @@ void ReconstructionWin::yesBtnPressed()
 {
 	ReconstructionClass rc;
 
-	//»ñÈ¡ÊäÈëÊý¾Ý
+	//èŽ·å–è¾“å…¥æ•°æ®
 	rc.ksearch = ui.normalKEdit->text().toInt();
 	rc.maxAngle = ui.greedyMaxAngEdit->text().toDouble();
 	rc.minAngle = ui.greedyMinAngEdit->text().toDouble();
@@ -26,7 +26,7 @@ void ReconstructionWin::yesBtnPressed()
 	rc.searchRadius = ui.greedySearchRadiusEdit->text().toDouble();
 
 	this->hide();
-	//·¢ËÍÐÅºÅ
+	//å‘é€ä¿¡å·
 	emit infoSend(rc);
 
 	this->close();
