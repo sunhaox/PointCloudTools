@@ -9,12 +9,12 @@
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="AboutWin.ui" line="32"/>
+        <location filename="AboutWin.ui" line="36"/>
         <source>Point Cloud Tools</source>
         <translation>点云工具箱</translation>
     </message>
     <message>
-        <location filename="AboutWin.ui" line="67"/>
+        <location filename="AboutWin.ui" line="71"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.9.1&lt;/p&gt;&lt;p&gt;Copyright(c) 2019 &lt;span style=&quot; font-weight:600;&quot;&gt;Haden Sun&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;All rights reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.9.1&lt;/p&gt;&lt;p&gt;Copyright(c) 2019 &lt;span style=&quot; font-weight:600;&quot;&gt;Haden Sun&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;All rights reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html</translation>
     </message>
@@ -27,62 +27,62 @@
         <translation>伪彩色参数</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="44"/>
+        <location filename="ColormapWin.ui" line="48"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="57"/>
+        <location filename="ColormapWin.ui" line="61"/>
         <source>No</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="70"/>
+        <location filename="ColormapWin.ui" line="74"/>
         <source>Min</source>
         <translation>最小值</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="83"/>
+        <location filename="ColormapWin.ui" line="87"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="96"/>
+        <location filename="ColormapWin.ui" line="100"/>
         <source>Max</source>
         <translation>最大值</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="109"/>
+        <location filename="ColormapWin.ui" line="113"/>
         <source>3000</source>
         <translation>30000</translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="147"/>
+        <location filename="ColormapWin.ui" line="151"/>
         <source>AUTUMN</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="185"/>
+        <location filename="ColormapWin.ui" line="189"/>
         <source>BONE</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="223"/>
+        <location filename="ColormapWin.ui" line="227"/>
         <source>HOT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="261"/>
+        <location filename="ColormapWin.ui" line="265"/>
         <source>HSV</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="274"/>
+        <location filename="ColormapWin.ui" line="278"/>
         <source>JET</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ColormapWin.ui" line="340"/>
+        <location filename="ColormapWin.ui" line="344"/>
         <source>RAINBOW</source>
         <translation></translation>
     </message>
@@ -95,27 +95,27 @@
         <translation>滤波参数</translation>
     </message>
     <message>
-        <location filename="FilterWin.ui" line="22"/>
+        <location filename="FilterWin.ui" line="26"/>
         <source>The number of points to use for mean distance estimation</source>
         <translation>平均距离估计使用点数</translation>
     </message>
     <message>
-        <location filename="FilterWin.ui" line="29"/>
+        <location filename="FilterWin.ui" line="33"/>
         <source>50</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="FilterWin.ui" line="36"/>
+        <location filename="FilterWin.ui" line="40"/>
         <source>The standard deviation multiplier</source>
         <translation>标准差放大系数</translation>
     </message>
     <message>
-        <location filename="FilterWin.ui" line="43"/>
+        <location filename="FilterWin.ui" line="47"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="FilterWin.ui" line="52"/>
+        <location filename="FilterWin.ui" line="56"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>
@@ -123,499 +123,504 @@
 <context>
     <name>PointCloudTools</name>
     <message>
-        <location filename="PointCloudTools.cpp" line="76"/>
+        <location filename="PointCloudTools.cpp" line="81"/>
         <source>Open image file</source>
         <translation>打开图片文件</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="76"/>
+        <location filename="PointCloudTools.cpp" line="81"/>
         <source>Depth Image(*.png);;PointCloud File(*.pcd *.ply);;All file(*.*)</source>
         <translation>深度图像(*.png);;点云文件(*.pcd *.ply);;所有文件(*.*)</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="90"/>
+        <location filename="PointCloudTools.cpp" line="95"/>
         <source> image or pointcloud open</source>
         <translation>打开图片或点云文件</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="106"/>
-        <location filename="PointCloudTools.cpp" line="107"/>
-        <location filename="PointCloudTools.cpp" line="180"/>
-        <location filename="PointCloudTools.cpp" line="181"/>
-        <location filename="PointCloudTools.cpp" line="198"/>
-        <location filename="PointCloudTools.cpp" line="199"/>
+        <location filename="PointCloudTools.cpp" line="111"/>
+        <location filename="PointCloudTools.cpp" line="112"/>
+        <location filename="PointCloudTools.cpp" line="185"/>
+        <location filename="PointCloudTools.cpp" line="186"/>
+        <location filename="PointCloudTools.cpp" line="203"/>
+        <location filename="PointCloudTools.cpp" line="204"/>
         <source>Open Error</source>
         <translation>打开文件错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="106"/>
-        <location filename="PointCloudTools.cpp" line="180"/>
-        <location filename="PointCloudTools.cpp" line="198"/>
+        <location filename="PointCloudTools.cpp" line="111"/>
+        <location filename="PointCloudTools.cpp" line="185"/>
+        <location filename="PointCloudTools.cpp" line="203"/>
         <source>File may corrupted!</source>
         <translation>文件可能损坏！</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="107"/>
-        <location filename="PointCloudTools.cpp" line="181"/>
-        <location filename="PointCloudTools.cpp" line="199"/>
+        <location filename="PointCloudTools.cpp" line="112"/>
+        <location filename="PointCloudTools.cpp" line="186"/>
+        <location filename="PointCloudTools.cpp" line="204"/>
         <source>Can not open file! File may corrupted!</source>
         <translation>无法打开文件！文件可能损坏！</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="134"/>
-        <location filename="PointCloudTools.cpp" line="157"/>
-        <location filename="PointCloudTools.cpp" line="231"/>
+        <location filename="PointCloudTools.cpp" line="139"/>
+        <location filename="PointCloudTools.cpp" line="162"/>
+        <location filename="PointCloudTools.cpp" line="236"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="134"/>
+        <location filename="PointCloudTools.cpp" line="139"/>
         <source>Image type:</source>
         <translation>图片类型：</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="134"/>
+        <location filename="PointCloudTools.cpp" line="139"/>
         <source>Should open 16bits depth image.</source>
         <translation>应该打开16bits深度图像。</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="157"/>
-        <location filename="PointCloudTools.cpp" line="231"/>
-        <location filename="PointCloudTools.cpp" line="1146"/>
+        <location filename="PointCloudTools.cpp" line="162"/>
+        <location filename="PointCloudTools.cpp" line="236"/>
+        <location filename="PointCloudTools.cpp" line="1151"/>
         <source>Time cost: </source>
         <translation>计算时间：</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="211"/>
-        <location filename="PointCloudTools.cpp" line="372"/>
+        <location filename="PointCloudTools.cpp" line="216"/>
+        <location filename="PointCloudTools.cpp" line="377"/>
         <source>File format error</source>
         <translation>文件格式错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="211"/>
+        <location filename="PointCloudTools.cpp" line="216"/>
         <source>Can not open files excpet .png .pcd .ply</source>
         <translation>请打开.png .pcd或.ply文件！</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="217"/>
+        <location filename="PointCloudTools.cpp" line="222"/>
         <source>Reading file error</source>
         <translation>读取文件错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="217"/>
+        <location filename="PointCloudTools.cpp" line="222"/>
         <source>We can not open the file</source>
         <translation>无法打开文件！</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="231"/>
+        <location filename="PointCloudTools.cpp" line="236"/>
         <source> s; Load points:</source>
         <translation>s；加载点数：</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="254"/>
+        <location filename="PointCloudTools.cpp" line="259"/>
         <source>Clear</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="254"/>
+        <location filename="PointCloudTools.cpp" line="259"/>
         <source>All point clouds and picture</source>
         <translation>所有点和图片</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="264"/>
-        <location filename="PointCloudTools.cpp" line="284"/>
+        <location filename="PointCloudTools.cpp" line="269"/>
+        <location filename="PointCloudTools.cpp" line="289"/>
         <source>Save point cloud</source>
         <translation>保存点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="264"/>
-        <location filename="PointCloudTools.cpp" line="284"/>
+        <location filename="PointCloudTools.cpp" line="269"/>
+        <location filename="PointCloudTools.cpp" line="289"/>
         <source>Point Cloud data(*.pcd *.ply);;All File(*.*)</source>
         <translation>点云数据(*.pcd *.ply);;所有文件(*.*)</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="279"/>
+        <location filename="PointCloudTools.cpp" line="284"/>
         <source>Save</source>
         <translation>点云保存</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="279"/>
-        <location filename="PointCloudTools.cpp" line="299"/>
+        <location filename="PointCloudTools.cpp" line="284"/>
+        <location filename="PointCloudTools.cpp" line="304"/>
         <source>PointCloud save</source>
         <translation>保存点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="299"/>
+        <location filename="PointCloudTools.cpp" line="304"/>
         <source>Save Binary</source>
         <translation>点云二进制保存</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="321"/>
+        <location filename="PointCloudTools.cpp" line="326"/>
         <source>Save Error</source>
         <translation>保存错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="321"/>
-        <location filename="PointCloudTools.cpp" line="633"/>
-        <location filename="PointCloudTools.cpp" line="723"/>
-        <location filename="PointCloudTools.cpp" line="811"/>
-        <location filename="PointCloudTools.cpp" line="907"/>
-        <location filename="PointCloudTools.cpp" line="1168"/>
-        <location filename="PointCloudTools.cpp" line="1195"/>
-        <location filename="PointCloudTools.cpp" line="1222"/>
-        <location filename="PointCloudTools.cpp" line="1250"/>
+        <location filename="PointCloudTools.cpp" line="326"/>
+        <location filename="PointCloudTools.cpp" line="638"/>
+        <location filename="PointCloudTools.cpp" line="728"/>
+        <location filename="PointCloudTools.cpp" line="816"/>
+        <location filename="PointCloudTools.cpp" line="912"/>
+        <location filename="PointCloudTools.cpp" line="1173"/>
+        <location filename="PointCloudTools.cpp" line="1200"/>
+        <location filename="PointCloudTools.cpp" line="1227"/>
+        <location filename="PointCloudTools.cpp" line="1255"/>
         <source>No point cloud data.</source>
         <translation>没有点云数据</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="372"/>
+        <location filename="PointCloudTools.cpp" line="377"/>
         <source>Can not save file except .ply .pcd</source>
         <translation>请保存.ply或.pcd文件</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="379"/>
+        <location filename="PointCloudTools.cpp" line="384"/>
         <source>Saving file error</source>
         <translation>保存文件错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="379"/>
+        <location filename="PointCloudTools.cpp" line="384"/>
         <source>We can not save the file</source>
         <translation>无法保存文件</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="393"/>
-        <location filename="PointCloudTools.cpp" line="444"/>
+        <location filename="PointCloudTools.cpp" line="398"/>
+        <location filename="PointCloudTools.cpp" line="449"/>
         <source>Select color for point cloud</source>
         <translation>选择点云颜色</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="411"/>
-        <location filename="PointCloudTools.cpp" line="434"/>
+        <location filename="PointCloudTools.cpp" line="416"/>
+        <location filename="PointCloudTools.cpp" line="439"/>
         <source>Change cloud color</source>
         <translation>改变点云颜色</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="411"/>
-        <location filename="PointCloudTools.cpp" line="1331"/>
-        <location filename="PointCloudTools.cpp" line="1403"/>
+        <location filename="PointCloudTools.cpp" line="416"/>
+        <location filename="PointCloudTools.cpp" line="1336"/>
+        <location filename="PointCloudTools.cpp" line="1408"/>
         <source>All point clouds</source>
         <translation>所有点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="434"/>
-        <location filename="PointCloudTools.cpp" line="1343"/>
-        <location filename="PointCloudTools.cpp" line="1437"/>
+        <location filename="PointCloudTools.cpp" line="439"/>
+        <location filename="PointCloudTools.cpp" line="1348"/>
+        <location filename="PointCloudTools.cpp" line="1442"/>
         <source>Point clouds selected</source>
         <translation>选择的点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="450"/>
+        <location filename="PointCloudTools.cpp" line="455"/>
         <source>Change bg color</source>
         <translation>改变背景颜色</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="450"/>
+        <location filename="PointCloudTools.cpp" line="455"/>
         <source>Background</source>
         <translation>背景</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="526"/>
+        <location filename="PointCloudTools.cpp" line="531"/>
         <source>Generate cube</source>
         <translation>生成立方体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="526"/>
+        <location filename="PointCloudTools.cpp" line="531"/>
         <source>cube</source>
         <translation>立方体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="567"/>
+        <location filename="PointCloudTools.cpp" line="572"/>
         <source>Generate sphere</source>
         <translation>生成球体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="567"/>
+        <location filename="PointCloudTools.cpp" line="572"/>
         <source>sphere</source>
         <translation>球体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="607"/>
+        <location filename="PointCloudTools.cpp" line="612"/>
         <source>Generate cylinder</source>
         <translation>生成圆柱体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="607"/>
+        <location filename="PointCloudTools.cpp" line="612"/>
         <source>cylinder</source>
         <translation>圆柱体</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="633"/>
-        <location filename="PointCloudTools.cpp" line="723"/>
-        <location filename="PointCloudTools.cpp" line="811"/>
-        <location filename="PointCloudTools.cpp" line="907"/>
+        <location filename="PointCloudTools.cpp" line="638"/>
+        <location filename="PointCloudTools.cpp" line="728"/>
+        <location filename="PointCloudTools.cpp" line="816"/>
+        <location filename="PointCloudTools.cpp" line="912"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="647"/>
+        <location filename="PointCloudTools.cpp" line="652"/>
         <source>Convert surface: Normal estimation.</source>
         <translation>曲面拟合：计算法向量...</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="657"/>
-        <location filename="PointCloudTools.cpp" line="746"/>
+        <location filename="PointCloudTools.cpp" line="662"/>
+        <location filename="PointCloudTools.cpp" line="751"/>
         <source>information</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="657"/>
-        <location filename="PointCloudTools.cpp" line="746"/>
+        <location filename="PointCloudTools.cpp" line="662"/>
+        <location filename="PointCloudTools.cpp" line="751"/>
         <source>Normal estimation finished</source>
         <translation>法向量计算完成</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="666"/>
+        <location filename="PointCloudTools.cpp" line="671"/>
         <source>Convert surface: Greedy projection triangulation</source>
         <translation>曲面拟合：贪婪投射三角测量...</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="682"/>
-        <location filename="PointCloudTools.cpp" line="771"/>
+        <location filename="PointCloudTools.cpp" line="687"/>
+        <location filename="PointCloudTools.cpp" line="776"/>
         <source>informaiton</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="682"/>
-        <location filename="PointCloudTools.cpp" line="771"/>
+        <location filename="PointCloudTools.cpp" line="687"/>
+        <location filename="PointCloudTools.cpp" line="776"/>
         <source>Reconstruction finished</source>
         <translation>曲面拟合完成</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="693"/>
-        <location filename="PointCloudTools.cpp" line="782"/>
+        <location filename="PointCloudTools.cpp" line="698"/>
+        <location filename="PointCloudTools.cpp" line="787"/>
         <source>Convert surface</source>
         <translation>曲面拟合</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="736"/>
+        <location filename="PointCloudTools.cpp" line="741"/>
         <source>Convert wireframe: Normal estimation.</source>
         <translation>曲面拟合：计算法向量...</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="757"/>
+        <location filename="PointCloudTools.cpp" line="762"/>
         <source>Convert wireframe: Greedy projection triangulation.</source>
         <translation>曲面拟合：贪婪投射三角测量..</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="818"/>
+        <location filename="PointCloudTools.cpp" line="823"/>
         <source>Filting</source>
         <translation>滤波中</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="881"/>
+        <location filename="PointCloudTools.cpp" line="886"/>
         <source>Filter</source>
         <translation>滤波</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="915"/>
+        <location filename="PointCloudTools.cpp" line="920"/>
         <source>Down sampling</source>
         <translation>下采样</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="977"/>
+        <location filename="PointCloudTools.cpp" line="982"/>
         <source>Voxel down shampled</source>
         <translation>体素下采样</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1009"/>
+        <location filename="PointCloudTools.cpp" line="1014"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1017"/>
+        <location filename="PointCloudTools.cpp" line="1022"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1017"/>
+        <location filename="PointCloudTools.cpp" line="1022"/>
         <source>PointCloudTools help</source>
         <translation>点云工具箱帮助</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1146"/>
+        <location filename="PointCloudTools.cpp" line="1151"/>
         <source>Convert</source>
         <translation>点云生成</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1168"/>
-        <location filename="PointCloudTools.cpp" line="1195"/>
-        <location filename="PointCloudTools.cpp" line="1222"/>
-        <location filename="PointCloudTools.cpp" line="1250"/>
+        <location filename="PointCloudTools.cpp" line="1173"/>
+        <location filename="PointCloudTools.cpp" line="1200"/>
+        <location filename="PointCloudTools.cpp" line="1227"/>
+        <location filename="PointCloudTools.cpp" line="1255"/>
         <source>Process Error</source>
         <translation>计算错误</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1272"/>
+        <location filename="PointCloudTools.cpp" line="1277"/>
         <source>Warrning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1272"/>
+        <location filename="PointCloudTools.cpp" line="1277"/>
         <source>The max number is smaller than the min number!</source>
         <translation>最大值小于最小值！</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1303"/>
-        <location filename="PointCloudTools.cpp" line="1403"/>
-        <location filename="PointCloudTools.cpp" line="1437"/>
+        <location filename="PointCloudTools.cpp" line="1308"/>
+        <location filename="PointCloudTools.cpp" line="1408"/>
+        <location filename="PointCloudTools.cpp" line="1442"/>
         <source>Colormap</source>
         <translation>伪彩色参数</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1331"/>
+        <location filename="PointCloudTools.cpp" line="1336"/>
         <source>Change cloud size</source>
         <translation>改变点大小</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1331"/>
-        <location filename="PointCloudTools.cpp" line="1343"/>
+        <location filename="PointCloudTools.cpp" line="1336"/>
+        <location filename="PointCloudTools.cpp" line="1348"/>
         <source>Size: </source>
         <translation>大小：</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1365"/>
+        <location filename="PointCloudTools.cpp" line="1348"/>
+        <source>Change points size</source>
+        <translation>改变点云大小</translation>
+    </message>
+    <message>
+        <location filename="PointCloudTools.cpp" line="1370"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1365"/>
+        <location filename="PointCloudTools.cpp" line="1370"/>
         <source>The colormap properties have problems.</source>
         <translation>伪彩色参数错误。</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1450"/>
+        <location filename="PointCloudTools.cpp" line="1455"/>
         <source>Remove coordinate system</source>
         <translation>移除坐标系标示</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1450"/>
+        <location filename="PointCloudTools.cpp" line="1455"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1455"/>
+        <location filename="PointCloudTools.cpp" line="1460"/>
         <source>Add coordinate system</source>
         <translation>添加坐标系标示</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1455"/>
+        <location filename="PointCloudTools.cpp" line="1460"/>
         <source>Add</source>
         <translation>添加</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1473"/>
+        <location filename="PointCloudTools.cpp" line="1478"/>
         <source>Hide</source>
         <translation>隐藏</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1474"/>
+        <location filename="PointCloudTools.cpp" line="1479"/>
         <source>Show</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1475"/>
+        <location filename="PointCloudTools.cpp" line="1480"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1476"/>
+        <location filename="PointCloudTools.cpp" line="1481"/>
         <source>Change color</source>
         <translation>改变颜色</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1538"/>
+        <location filename="PointCloudTools.cpp" line="1543"/>
         <source>Hide PointCloud</source>
         <translation>隐藏点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1590"/>
+        <location filename="PointCloudTools.cpp" line="1595"/>
         <source>Show Picture</source>
         <translation>显示图片</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1605"/>
+        <location filename="PointCloudTools.cpp" line="1610"/>
         <source>Show PointCloud</source>
         <translation>显示点云</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1632"/>
-        <location filename="PointCloudTools.cpp" line="1659"/>
+        <location filename="PointCloudTools.cpp" line="1637"/>
+        <location filename="PointCloudTools.cpp" line="1664"/>
         <source>Delete picture</source>
         <translation>删除图片</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1690"/>
+        <location filename="PointCloudTools.cpp" line="1695"/>
         <source>Clear console</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1691"/>
+        <location filename="PointCloudTools.cpp" line="1696"/>
         <source>Enable console</source>
         <translation>启用</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1692"/>
+        <location filename="PointCloudTools.cpp" line="1697"/>
         <source>Disable console</source>
         <translation>禁用</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1736"/>
-        <location filename="PointCloudTools.cpp" line="1770"/>
+        <location filename="PointCloudTools.cpp" line="1741"/>
+        <location filename="PointCloudTools.cpp" line="1775"/>
         <source>PointCloud Tools</source>
         <translation>点云工具箱</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1770"/>
+        <location filename="PointCloudTools.cpp" line="1775"/>
         <source>Software start</source>
         <translation>启动</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1770"/>
+        <location filename="PointCloudTools.cpp" line="1775"/>
         <source>Welcome to use PointCloud Tools</source>
         <translation>欢迎使用点云工具箱</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1770"/>
+        <location filename="PointCloudTools.cpp" line="1775"/>
         <source>Haden</source>
         <translation>花生</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1777"/>
+        <location filename="PointCloudTools.cpp" line="1782"/>
         <source>Time</source>
         <translation>时间</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1777"/>
+        <location filename="PointCloudTools.cpp" line="1782"/>
         <source>Operation</source>
         <translation>操作</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1777"/>
+        <location filename="PointCloudTools.cpp" line="1782"/>
         <source>Operation obeject</source>
         <translation>对象</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1777"/>
+        <location filename="PointCloudTools.cpp" line="1782"/>
         <source>Details</source>
-        <translation>细节</translation>
+        <translation>说明</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1777"/>
+        <location filename="PointCloudTools.cpp" line="1782"/>
         <source>Note</source>
         <translation>备注</translation>
     </message>
     <message>
-        <location filename="PointCloudTools.cpp" line="1939"/>
+        <location filename="PointCloudTools.cpp" line="1944"/>
         <source>Choose point</source>
         <translation>选择点云</translation>
     </message>
@@ -824,7 +829,7 @@
     <message>
         <location filename="PointCloudTools.ui" line="643"/>
         <source>Details</source>
-        <translation>细节</translation>
+        <translation>详细说明</translation>
     </message>
     <message>
         <location filename="PointCloudTools.ui" line="651"/>
@@ -1101,87 +1106,87 @@
         <translation>曲面拟合参数</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="26"/>
+        <location filename="ReconstructionWin.ui" line="30"/>
         <source>Normal Estimation</source>
         <translation>法向量计算</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="40"/>
+        <location filename="ReconstructionWin.ui" line="44"/>
         <source>K Search</source>
         <translation>K Search</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="50"/>
+        <location filename="ReconstructionWin.ui" line="54"/>
         <source>20</source>
         <translation>20</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="62"/>
+        <location filename="ReconstructionWin.ui" line="66"/>
         <source>Greedy Projection Triangulation</source>
         <translation>贪婪投射三角测量</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="68"/>
+        <location filename="ReconstructionWin.ui" line="72"/>
         <source>2.5</source>
         <translation>2.5</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="75"/>
+        <location filename="ReconstructionWin.ui" line="79"/>
         <source>Search Radius</source>
         <translation>搜素半径</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="85"/>
+        <location filename="ReconstructionWin.ui" line="89"/>
         <source>25</source>
         <translation>25</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="92"/>
+        <location filename="ReconstructionWin.ui" line="96"/>
         <source>Mu</source>
         <translation>Mu</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="102"/>
+        <location filename="ReconstructionWin.ui" line="106"/>
         <source>Max Surface Angle（rad)</source>
         <translation>曲面最大角度（rad）</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="112"/>
+        <location filename="ReconstructionWin.ui" line="116"/>
         <source>Min Angle(rad)</source>
         <translation>最小角度（rad）</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="122"/>
+        <location filename="ReconstructionWin.ui" line="126"/>
         <source>1.5707963</source>
         <translation>1.5707963</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="129"/>
+        <location filename="ReconstructionWin.ui" line="133"/>
         <source>0.1745329222222222</source>
         <translation>0.1745329222222222</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="136"/>
+        <location filename="ReconstructionWin.ui" line="140"/>
         <source>Max Neighbors</source>
         <translation>最大近邻数</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="146"/>
+        <location filename="ReconstructionWin.ui" line="150"/>
         <source>100</source>
         <translation>100</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="153"/>
+        <location filename="ReconstructionWin.ui" line="157"/>
         <source>Max Angle(rad)</source>
         <translation>最大角度（rad）</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="163"/>
+        <location filename="ReconstructionWin.ui" line="167"/>
         <source>2.094395066666667</source>
         <translation>2.094395066666667</translation>
     </message>
     <message>
-        <location filename="ReconstructionWin.ui" line="173"/>
+        <location filename="ReconstructionWin.ui" line="177"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>
@@ -1194,29 +1199,29 @@
         <translation>体素降采样</translation>
     </message>
     <message>
-        <location filename="VoxelGridWin.ui" line="22"/>
+        <location filename="VoxelGridWin.ui" line="26"/>
         <source>Leaf size of X:</source>
         <translation>X叶子大小：</translation>
     </message>
     <message>
-        <location filename="VoxelGridWin.ui" line="29"/>
-        <location filename="VoxelGridWin.ui" line="43"/>
-        <location filename="VoxelGridWin.ui" line="57"/>
+        <location filename="VoxelGridWin.ui" line="33"/>
+        <location filename="VoxelGridWin.ui" line="47"/>
+        <location filename="VoxelGridWin.ui" line="61"/>
         <source>1.0</source>
         <translation>1.0</translation>
     </message>
     <message>
-        <location filename="VoxelGridWin.ui" line="36"/>
+        <location filename="VoxelGridWin.ui" line="40"/>
         <source>Leaf size of Y:</source>
         <translation>Y叶子大小：</translation>
     </message>
     <message>
-        <location filename="VoxelGridWin.ui" line="50"/>
+        <location filename="VoxelGridWin.ui" line="54"/>
         <source>Leaf size of Z:</source>
         <translation>Z叶子大小：</translation>
     </message>
     <message>
-        <location filename="VoxelGridWin.ui" line="66"/>
+        <location filename="VoxelGridWin.ui" line="70"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>

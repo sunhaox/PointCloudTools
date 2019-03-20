@@ -39,6 +39,9 @@ public:
         if (FilterWin->objectName().isEmpty())
             FilterWin->setObjectName(QStringLiteral("FilterWin"));
         FilterWin->resize(448, 109);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Resources/images/settings.png"), QSize(), QIcon::Normal, QIcon::Off);
+        FilterWin->setWindowIcon(icon);
         verticalLayout = new QVBoxLayout(FilterWin);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);

@@ -18,6 +18,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <pcl/surface/gp3.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/voxel_grid.h>
+#include <vtkRenderWindow.h>
 
 #include <QtWidgets/QMainWindow>
 #include <vector>
@@ -36,7 +37,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "QVTKWidget.h"
-#include <vtkRenderWindow.h>
+#include <QTranslator>
 #include <QTextEdit>
 #include <QTime>
 #include <QMouseEvent> 
@@ -58,6 +59,52 @@ class PointCloudTools : public QMainWindow
 
 public:
 	PointCloudTools(QWidget *parent = Q_NULLPTR);
+
+public slots:
+	/***** Slots of image widget *****/
+	void colormapBtnPressed();
+	void convertBtnPressed();
+	void surfaceBtnPressed();
+	void filterBtnPressed();
+	void voxelBtnPressed();
+	void wireframeBtnPressed();
+	// Process menu slots 
+	void colormap(ColormapClass cc);
+	void convert();
+	void convertSurface(ReconstructionClass rc);	//法线估计、曲面重建、网格面片显示
+	void convertWireframe(ReconstructionClass rc); //法线估计、曲面重建、网格线框显示
+	void convertFilter(FilterClass fc);	//基于统计滤波
+	void convertVoxel(VoxelGridClass vc);		//体素降采样
+
+	/***** Slots of RGB widget *****/
+	// Change color or size of cloud when slider is released or colorBtn is pressed
+	void pSliderChanged(int value);
+	void pSliderReleased();
+	void colorBtnPressed();
+	// colorMap slot
+	void pColormap();
+	void cooCbxChecked(int value);
+
+	/***** Slots of dataTree(QTreeWidget) widget *****/
+	// Item in dataTree is left-clicked
+	void itemSelected(QTreeWidgetItem*, int);
+	// Item in dataTree is right-clicked
+	void popMenu(const QPoint&);
+	void hideItem();
+	void showItem();
+	void deleteItem();
+
+	/***** Slots of console(QTreeWidget) widget *****/
+	void popMenuInConsole(const QPoint&);
+	void clearConsole();
+	void enableConsole();
+	void disableConsole();
+
+	/***** Slots of language change *****/
+	void changeChinese();
+	void changeEnglish();
+
+	
 
 private:
 	Ui::PointCloudToolsClass ui;
@@ -118,47 +165,5 @@ private:
 	void setA(unsigned int a);																//设置所有点透明度
 	int saveFile(bool save_as_binary, QString save_filename);
 
-public slots:
-	/***** Slots of image widget *****/
-	void colormapBtnPressed();
-	void convertBtnPressed();
-	void surfaceBtnPressed();
-	void filterBtnPressed();
-	void voxelBtnPressed();
-	void wireframeBtnPressed();
-	// Process menu slots 
-	void colormap(ColormapClass cc);
-	void convert();	
-	void convertSurface(ReconstructionClass rc);	//法线估计、曲面重建、网格面片显示
-	void convertWireframe(ReconstructionClass rc); //法线估计、曲面重建、网格线框显示
-	void convertFilter(FilterClass fc);	//基于统计滤波
-	void convertVoxel(VoxelGridClass vc);		//体素降采样
 
-	/***** Slots of RGB widget *****/
-	// Change color or size of cloud when slider is released or colorBtn is pressed
-	void pSliderChanged(int value);
-	void pSliderReleased();
-	void colorBtnPressed();
-	// colorMap slot
-	void pColormap();
-	void cooCbxChecked(int value);
-
-	/***** Slots of dataTree(QTreeWidget) widget *****/
-	// Item in dataTree is left-clicked
-	void itemSelected(QTreeWidgetItem*, int);
-	// Item in dataTree is right-clicked
-	void popMenu(const QPoint&);
-	void hideItem();
-	void showItem();
-	void deleteItem();
-
-	/***** Slots of console(QTreeWidget) widget *****/
-	void popMenuInConsole(const QPoint&);
-	void clearConsole();
-	void enableConsole();
-	void disableConsole();
-
-	/***** Slots of language change *****/
-	void changeChinese();
-	void changeEnglish();
 };

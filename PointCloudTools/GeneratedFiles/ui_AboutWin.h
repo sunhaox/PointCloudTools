@@ -31,6 +31,9 @@ public:
         if (AboutWin->objectName().isEmpty())
             AboutWin->setObjectName(QStringLiteral("AboutWin"));
         AboutWin->resize(430, 267);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Resources/images/logo.png"), QSize(), QIcon::Normal, QIcon::Off);
+        AboutWin->setWindowIcon(icon);
         label = new QLabel(AboutWin);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(140, 40, 241, 41));

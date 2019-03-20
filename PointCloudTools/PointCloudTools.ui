@@ -91,19 +91,9 @@
     <property name="title">
      <string>Generate</string>
     </property>
-    <widget class="QMenu" name="menuBasic_shapes">
-     <property name="title">
-      <string>Basic shapes</string>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>:/Resources/images/shape.png</normaloff>:/Resources/images/shape.png</iconset>
-     </property>
-     <addaction name="sphereAction"/>
-     <addaction name="cylinderAction"/>
-    </widget>
     <addaction name="cubeAction"/>
-    <addaction name="menuBasic_shapes"/>
+    <addaction name="sphereAction"/>
+    <addaction name="cylinderAction"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">

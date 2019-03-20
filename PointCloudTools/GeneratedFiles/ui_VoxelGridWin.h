@@ -41,6 +41,9 @@ public:
         if (VoxelGridWin->objectName().isEmpty())
             VoxelGridWin->setObjectName(QStringLiteral("VoxelGridWin"));
         VoxelGridWin->resize(482, 98);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Resources/images/settings.png"), QSize(), QIcon::Normal, QIcon::Off);
+        VoxelGridWin->setWindowIcon(icon);
         verticalLayout = new QVBoxLayout(VoxelGridWin);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);

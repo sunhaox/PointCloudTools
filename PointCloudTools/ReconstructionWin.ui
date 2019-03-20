@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Reconstruction</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="PointCloudTools.qrc">
+    <normaloff>:/Resources/images/settings.png</normaloff>:/Resources/images/settings.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
@@ -187,6 +191,8 @@
   <tabstop>greedyMaxAngEdit</tabstop>
   <tabstop>yesBtn</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="PointCloudTools.qrc"/>
+ </resources>
  <connections/>
 </ui>

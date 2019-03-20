@@ -55,6 +55,9 @@ public:
         if (ReconstructionWin->objectName().isEmpty())
             ReconstructionWin->setObjectName(QStringLiteral("ReconstructionWin"));
         ReconstructionWin->resize(400, 219);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Resources/images/settings.png"), QSize(), QIcon::Normal, QIcon::Off);
+        ReconstructionWin->setWindowIcon(icon);
         gridLayout = new QGridLayout(ReconstructionWin);
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);

@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>About</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="PointCloudTools.qrc">
+    <normaloff>:/Resources/images/logo.png</normaloff>:/Resources/images/logo.png</iconset>
+  </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -78,6 +82,8 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="PointCloudTools.qrc"/>
+ </resources>
  <connections/>
 </ui>

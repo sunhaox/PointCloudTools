@@ -25,5 +25,6 @@
         <file>Resources/images/logo.png</file>
         <file>Resources/images/point.png</file>
         <file>Resources/images/pic.png</file>
+        <file>Resources/images/settings.png</file>
     </qresource>
 </RCC>

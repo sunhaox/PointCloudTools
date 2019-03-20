@@ -31,6 +31,10 @@
   <property name="windowTitle">
    <string>Colormap</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="PointCloudTools.qrc">
+    <normaloff>:/Resources/images/settings.png</normaloff>:/Resources/images/settings.png</iconset>
+  </property>
   <widget class="QPushButton" name="yesBtn">
    <property name="geometry">
     <rect>
@@ -354,6 +358,8 @@
   <tabstop>yesBtn</tabstop>
   <tabstop>noBtn</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="PointCloudTools.qrc"/>
+ </resources>
  <connections/>
 </ui>

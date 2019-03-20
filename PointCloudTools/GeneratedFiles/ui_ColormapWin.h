@@ -56,6 +56,9 @@ public:
         ColormapWin->setSizePolicy(sizePolicy);
         ColormapWin->setMinimumSize(QSize(350, 170));
         ColormapWin->setMaximumSize(QSize(350, 170));
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/Resources/images/settings.png"), QSize(), QIcon::Normal, QIcon::Off);
+        ColormapWin->setWindowIcon(icon);
         yesBtn = new QPushButton(ColormapWin);
         yesBtn->setObjectName(QStringLiteral("yesBtn"));
         yesBtn->setGeometry(QRect(90, 140, 75, 23));

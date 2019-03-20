@@ -11,6 +11,7 @@ public:
 	AboutWin(QWidget *parent = Q_NULLPTR);
 	~AboutWin();
 
+
 private:
 	Ui::AboutWin ui;
 };

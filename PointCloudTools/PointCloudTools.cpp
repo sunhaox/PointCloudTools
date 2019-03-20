@@ -69,8 +69,8 @@ PointCloudTools::PointCloudTools(QWidget *parent)
 	connect(ui.consoleTable, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(popMenuInConsole(const QPoint&)));
 
 	/***** Slots of language change *****/
-	connect(ui.chineseAction, SIGNAL(clicked()), this, SLOT(changeChinese()));
-	connect(ui.englishAction, SIGNAL(clicked()), this, SLOT(changeEnglish()));
+	connect(ui.chineseAction, &QAction::triggered, this, &PointCloudTools::changeChinese);
+	connect(ui.englishAction, &QAction::triggered, this, &PointCloudTools::changeEnglish);
 
 	// Initialization
 	initial();
@@ -1982,8 +1982,7 @@ void PointCloudTools::setA(unsigned int a)
 
 void PointCloudTools::changeChinese()
 {
-	
-	
+
 }
 
 void PointCloudTools::changeEnglish()
