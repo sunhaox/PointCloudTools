@@ -1083,7 +1083,7 @@ void PointCloudTools::convertBtnPressed()
 	//参数3、4：X\Y坐标重映射
 	//参数5：图像的插值方式
 	//参数6：边界填充方式
-	remap(mypicture->depthMat, img, map1, map2, cv::INTER_LINEAR);																	//畸变矫正
+	remap(mypicture->depthMat, img, map1, map2, cv::INTER_NEAREST);																	//畸变矫正
 
 
 
@@ -1099,6 +1099,10 @@ void PointCloudTools::convertBtnPressed()
 			float picDist = sqrt((i - imgHeight / 2.0)*(i - imgHeight / 2.0) + (j - imgWidth / 2.0)*(j - imgWidth / 2.0));	//图像上点到中心的像素点个数
 			float picAngle = atan2(fx*(i - imgHeight / 2.0), fy*(j - imgWidth / 2.0));												//图像上x,y和中心点角度关系
 			float angle = atan(sqrt((j - imgWidth / 2.0)*(j - imgWidth / 2.0) / fx / fx + (i - imgHeight / 2.0)*(i - imgHeight / 2.0) / fy / fy));
+
+			if (img.at<ushort>(i, j) >= 3000 || img.at<ushort>(i, j) == 0)
+				continue;
+
 			float dist = img.at<ushort>(i, j) / a;				//原始图像深度
 
 			pcl::PointXYZRGBA p;
