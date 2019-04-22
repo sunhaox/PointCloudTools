@@ -42,7 +42,7 @@ Min下输入伪彩色下限，Max下输入伪彩色上限，超出范围的像�
 相机内参矩阵形式为：![相机内参](image/4.png "相机内参")  
 相机径向畸变模型为：![畸变系数](image/5.png "畸变系数")  
 α为缩放系数，转换后的点云距离 dist = pix / α  
-更多原理介绍见 [王乐,罗宇,王海宽,费敏锐.ToF深度相机测量误差校正模型[J].系统仿真学报,2017,29(10):2323-2329.](http://kns.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFQ&dbname=CJFDLAST2018&filename=XTFZ201710013&uid=WEEvREcwSlJHSldRa1FhdXNXaEd1OFFtSXo4Sm13QTFidGg0NkprV0NZTT0=$9A4hF_YAuvQ5obgVAqNKPCYcEjKensW4IQMovwHtwkF4VYPoHbKxJw!!&v=MTU0MTlJUFRuTmRMRzRIOWJOcjQ5RVo0UjhlWDFMdXhZUzdEaDFUM3FUcldNMUZyQ1VSTE9mWk9kdUZDamtWTHI=)  
+更多原理介绍见 [深度图像转点云-花生屋](http://sunhx.cn/a/tuxiang/2019/0420/50.html)  
 程序运行目录下，可以通过编辑config.ini文件，程序会自动填充畸变参数，避免每次运行程序都输入参数。  
 **注意：请根据实际采集相机填写畸变矫正参数**  
 
