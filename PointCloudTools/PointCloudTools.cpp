@@ -1085,11 +1085,57 @@ void PointCloudTools::convertBtnPressed()
 	//参数6：边界填充方式
 	remap(mypicture->depthMat, img, map1, map2, cv::INTER_NEAREST);																	//畸变矫正
 
+	//滤波
+	cv::Mat rst = cv::Mat::zeros(img.size(), CV_16U);
+	for (int y = 0; y < img.size().height; y++)
+	{
+		for (int x = 0; x < img.size().width; x++)
+		{
+			if (y == 0 || y == img.size().height - 1 || x == 0 || x == img.size().width - 1)
+			{
+				rst.at<ushort>(y, x) = 0;
+				continue;
+			}
 
+			//遍历周围邻居
+			ushort dis[8];
+			dis[0] = img.at<ushort>(y - 1, x - 1);
+			dis[1] = img.at<ushort>(y - 1, x);
+			dis[2] = img.at<ushort>(y - 1, x + 1);
+			dis[3] = img.at<ushort>(y, x - 1);
+			ushort m = img.at<ushort>(y, x);
+			dis[4] = img.at<ushort>(y, x + 1);
+			dis[5] = img.at<ushort>(y + 1, x - 1);
+			dis[6] = img.at<ushort>(y - 1, x);
+			dis[7] = img.at<ushort>(y - 1, x + 1);
+
+			//计算周围有效点数量和均值
+			int counter = 0;
+			ushort min = 30000;
+			for (int i = 0; i < 8; i++)
+			{
+				if (dis[i] != 0 && dis[i] < 30000)
+				{
+					counter++;
+					if (min > dis[i])
+						min = dis[i];
+				}
+			}
+
+			//满足周围点都是有效点的，计算均值
+			if (counter >6)
+			{
+				rst.at<ushort>(y, x) = min;
+			}
+			else
+				rst.at<ushort>(y, x) = 0;
+
+		}
+	}
 
 	//点云变换
-	int imgWidth = img.size().width;
-	int imgHeight = img.size().height;
+	int imgWidth = rst.size().width;
+	int imgHeight = rst.size().height;
 	PointCloudT::Ptr pointcloud(new PointCloudT);
 
 	for (int i = 0; i < imgHeight; i++)
@@ -1100,10 +1146,10 @@ void PointCloudTools::convertBtnPressed()
 			float picAngle = atan2(fx*(i - imgHeight / 2.0), fy*(j - imgWidth / 2.0));												//图像上x,y和中心点角度关系
 			float angle = atan(sqrt((j - imgWidth / 2.0)*(j - imgWidth / 2.0) / fx / fx + (i - imgHeight / 2.0)*(i - imgHeight / 2.0) / fy / fy));
 
-			if (img.at<ushort>(i, j) >= 3000 || img.at<ushort>(i, j) == 0)
+			if (rst.at<ushort>(i, j) >= 30000 || rst.at<ushort>(i, j) == 0)
 				continue;
 
-			float dist = img.at<ushort>(i, j) / a;				//原始图像深度
+			float dist = rst.at<ushort>(i, j) / a;				//原始图像深度
 
 			pcl::PointXYZRGBA p;
 			p.z = dist*cos(angle);									//坐标变换后的深度

@@ -58,7 +58,7 @@
      <x>150</x>
      <y>100</y>
      <width>261</width>
-     <height>101</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -68,7 +68,7 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 0.9.1&lt;/p&gt;&lt;p&gt;Copyright(c) 2019 &lt;span style=&quot; font-weight:600;&quot;&gt;Haden Sun&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;All rights reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version 1.0.0&lt;/p&gt;&lt;p&gt;Copyright(c) 2019 &lt;span style=&quot; font-weight:600;&quot;&gt;Haden Sun&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;admin@sunhx.cn&lt;/p&gt;&lt;p&gt;All rights reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="textFormat">
     <enum>Qt::RichText</enum>

@@ -47,7 +47,7 @@ public:
         label_2->setPixmap(QPixmap(QString::fromUtf8("Resources/images/logo.png")));
         label_3 = new QLabel(AboutWin);
         label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setGeometry(QRect(150, 100, 261, 101));
+        label_3->setGeometry(QRect(150, 100, 261, 131));
         QFont font1;
         font1.setFamily(QString::fromUtf8("\345\276\256\350\275\257\351\233\205\351\273\221"));
         font1.setPointSize(12);
@@ -66,7 +66,7 @@ public:
         AboutWin->setWindowTitle(QApplication::translate("AboutWin", "About", 0));
         label->setText(QApplication::translate("AboutWin", "Point Cloud Tools", 0));
         label_2->setText(QString());
-        label_3->setText(QApplication::translate("AboutWin", "<html><head/><body><p>Version 0.9.1</p><p>Copyright(c) 2019 <span style=\" font-weight:600;\">Haden Sun</span>.</p><p>All rights reserved.</p></body></html>", 0));
+        label_3->setText(QApplication::translate("AboutWin", "<html><head/><body><p>Version 1.0.0</p><p>Copyright(c) 2019 <span style=\" font-weight:600;\">Haden Sun</span>.</p><p>admin@sunhx.cn</p><p>All rights reserved.</p></body></html>", 0));
     } // retranslateUi
 
 };
