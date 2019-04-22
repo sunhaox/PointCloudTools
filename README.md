@@ -1,4 +1,5 @@
 # PointCloudTools
+[![Release](https://img.shields.io/badge/release-1.0.0-green.svg?style=flat)](https://github.com/HadenSun/PointCloudTools/releases/tag/V1.0.0)  
 
 ## Description
 基于Qt、PCL和OpenCV的可视化点云操作软件，提供从8位、16位深度图像转点云的功能，并提供简单的点云曲面重构、三角化、滤波、降采样等功能。  
@@ -106,7 +107,11 @@ Min下输入伪彩色下限，Max下输入伪彩色上限，超出范围的像�
 
 ### 4. 其他功能  
 #### 4.1 主题颜色改变（未实现）
-#### 4.2 语言选择（未实现）
+#### 4.2 语言选择（未实现）  
+
+# Version
+* V1.0.0 2019/4/22  
+First version.
 
 # Thanks
 特别感谢 [nightn](http://nightn.com/) 及他的 [CloudViewer](https://github.com/nightn/CloudViewer)
